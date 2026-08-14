@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}肥猫商城-用户中心{% endblock %}
+{% block left_menu_active %}pass{% endblock %}
+{% block right_content %}
+			<div class="info_con clearfix">
+				<h3 class="common_title2">修改密码</h3>
+				<div class="site_con pass_change_con">
+                    <form ref="pwdForm" class="change_pwd" method="post" action="{{ url('users:pass') }}" @submit.prevent="on_submit" v-cloak>
+                        {{ csrf_input }}
+                        <div class="form_group">
+                            <label>当前密码：</label>
+                            <input type="password" v-model="old_password" @blur="check_old_password" name="old_password">
+							<span v-show="error_old_password" class="old_pwd_error">请填写当前密码</span>
+                            {% if origin_password_errmsg %}
+                                <span class="old_pwd_error">{{ origin_password_errmsg }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="form_group">
+                            <label>新密码：</label>
+							<input type="password" v-model="new_password" @blur="check_new_password" name="new_password">
+							<span v-show="error_new_password" class="new_pwd_error">[[ error_new_password_message ]]</span>
+                            {% if change_password_errmsg %}
+                                <span class="new_pwd_error">{{ change_password_errmsg }}</span>
+                            {% endif %}
+                            <p style="font-size:12px;color:#888;margin-top:4px;line-height:1.5;">
+                                新密码要求：8～20 位可打印字符，须含数字、小写、大写字母及至少一个特殊符号（如 @、_、! 等，即除字母、数字、空格外的符号）。
+                            </p>
+                        </div>
+                        <div class="form_group">
+                            <label>确认新密码：</label>
+                            <input type="password" v-model="new_password2" @blur="check_new_password2" name="new_password2">
+							<span v-show="error_new_password2" class="new_cpwd_error">[[ error_new_password2_message ]]</span>
+                        </div>
+                        <input type="submit" name="" value="确 定" class="info_submit">
+                        <input type="reset" name="" value="取 消" class="info_submit info_reset">
+                    </form>
+                </div>
+            </div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{{ static('js/user_center_pass.js') }}?v=2"></script>
+{% endblock %}

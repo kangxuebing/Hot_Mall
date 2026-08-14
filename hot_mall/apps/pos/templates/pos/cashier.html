@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>收银台 - Hot Mall</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header .scanner-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .main-content {
+            display: flex;
+            height: calc(100vh - 140px);
+        }
+        .left-panel {
+            width: 320px;
+            padding: 25px;
+            border-right: 2px solid #e0e0e0;
+            background: #fafafa;
+        }
+        .middle-panel {
+            width: 380px;
+            padding: 25px;
+            border-right: 2px solid #e0e0e0;
+            background: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+        }
+        .right-panel {
+            flex: 1;
+            padding: 25px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .scan-section {
+            margin-bottom: 25px;
+        }
+        .scan-section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .member-section {
+            margin-bottom: 25px;
+        }
+        .member-section h2 {
+            color: #333;
+            margin-bottom: 12px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .barcode-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 14px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .barcode-input:focus {
+            border-color: #667eea;
+        }
+        .product-info {
+            background: #f8f9fa;
+            padding: 18px;
+            border-radius: 8px;
+            margin-top: 15px;
+            display: none;
+            border: 1px solid #e8e8e8;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .product-info.show {
+            display: block;
+        }
+        .product-info h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        .product-info p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .product-info .price {
+            color: #e74c3c;
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .cart-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .payment-section h2,
+        .action-section h2,
+        .remark-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        .payment-section,
+        .action-section,
+        .remark-section {
+            margin-bottom: 25px;
+        }
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            min-height: 200px;
+        }
+        .cart-items::-webkit-scrollbar {
+            width: 8px;
+        }
+        .cart-items::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .cart-items::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .cart-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8e8e8;
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+        .cart-item:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            border-color: #d0d0d0;
+        }
+        .cart-item-info {
+            flex: 1;
+        }
+        .cart-item-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .cart-item-price {
+            color: #e74c3c;
+            font-size: 16px;
+        }
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #667eea;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .quantity-btn:hover {
+            background: #764ba2;
+            transform: scale(1.05);
+        }
+        .quantity-display {
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 30px;
+            text-align: center;
+        }
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+            font-size: 13px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .remove-btn:hover {
+            background: #c0392b;
+            transform: scale(1.05);
+        }
+        .total-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 1px solid #e8e8e8;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .total-row.total {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e0e0e0;
+        }
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .payment-btn {
+            padding: 18px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .payment-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .payment-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+        .checkout-btn {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+        }
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(102, 126, 234, 0.4);
+        }
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .remark-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            resize: vertical;
+            min-height: 80px;
+            font-size: 14px;
+        }
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .message.show {
+            display: block;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .suspend-btn {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(243, 156, 18, 0.3);
+        }
+        .suspend-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(243, 156, 18, 0.4);
+        }
+        .suspend-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .resume-btn {
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+        }
+        .resume-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(52, 152, 219, 0.4);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .modal-header h2 {
+            color: #333;
+            font-size: 24px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        .close-btn:hover {
+            color: #333;
+        }
+        .suspended-order-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .suspended-order-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .suspended-order-info {
+            flex: 1;
+        }
+        .suspended-order-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .suspended-order-info p {
+            color: #666;
+            margin: 3px 0;
+            font-size: 14px;
+        }
+        .suspended-order-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .resume-order-btn {
+            padding: 8px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .resume-order-btn:hover {
+            background: #2980b9;
+        }
+        .delete-order-btn {
+            padding: 8px 15px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete-order-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/info" class="back-btn">← 返回用户中心</a>
+            <h1>🏪 收银台</h1>
+            <div class="scanner-status">
+                <div class="status-indicator"></div>
+                <span>USB扫描器已连接</span>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="left-panel">
+                <div class="scan-section">
+                    <h2>📷 扫描条码</h2>
+                    <input type="text" class="barcode-input" id="barcodeInput" placeholder="请扫描或输入商品条码..." autofocus>
+                    
+                    <div class="product-info" id="productInfo">
+                        <h3 id="productName">商品名称</h3>
+                        <p id="productCaption">商品描述</p>
+                        <p>总库存: <span id="productStock">0</span></p>
+                        <p>可用库存: <span id="availableStock">0</span></p>
+                        <p>临保质期: <span id="nearExpiryStock">0</span></p>
+                        <p>过期商品: <span id="expiredStock">0</span></p>
+                        <p>条码: <span id="productBarcode">-</span></p>
+                        <p id="productExpirationDate" style="display: none;">过期日期: <span>-</span></p>
+                        <p id="productExpirationMessage" style="display: none; color: #d69e2e; font-weight: bold;"></p>
+                        <div class="price" id="productPrice">¥0.00</div>
+                    </div>
+                </div>
+                
+                <div class="member-section">
+                    <h2>👤 会员识别</h2>
+                    <input type="text" class="barcode-input" id="memberInput" placeholder="请输入会员手机号或用户名...">
+                    <button class="checkout-btn" id="queryMemberBtn" style="margin-top: 10px; padding: 12px 20px; font-size: 14px;">查询会员</button>
+                    
+                    <div class="product-info" id="memberInfo">
+                        <h3 id="memberName">会员名称</h3>
+                        <p>会员等级: <span id="memberLevel">-</span></p>
+                        <p>积分: <span id="memberPoints">0</span></p>
+                        <p>折扣率: <span id="memberDiscount">1.00</span></p>
+                        <p>累计消费: <span id="memberConsume">¥0.00</span></p>
+                        <button class="remove-btn" id="clearMemberBtn" style="margin-top: 10px;">清除会员</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="middle-panel">
+                <div class="payment-section">
+                    <h2>¥ 支付方式</h2>
+                    <div class="payment-methods">
+                        <button class="payment-btn active" data-method="1">💵 现金</button>
+                        <button class="payment-btn" data-method="2">📱 支付宝</button>
+                        <button class="payment-btn" data-method="3">💬 微信支付</button>
+                        <button class="payment-btn" data-method="4">💳 银行卡</button>
+                    </div>
+                </div>
+                
+                <div class="action-section">
+                    <h2>📋 订单操作</h2>
+                    <div class="action-buttons">
+                        <button class="suspend-btn" id="suspendBtn" disabled>📋 挂单</button>
+                        <button class="resume-btn" id="resumeBtn">📂 取单</button>
+                    </div>
+                    <button class="checkout-btn" id="checkoutBtn" disabled>✅ 确认收款</button>
+                </div>
+                
+                <div class="remark-section">
+                    <h2>📝 备注信息</h2>
+                    <textarea class="remark-input" id="remarkInput" placeholder="请输入备注信息（可选）"></textarea>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="cart-section" style="display: flex; flex-direction: column; height: 100%;">
+                    <h2><i class="fa fa-shopping-cart" style="margin-right: 8px;"></i>购物车</h2>
+                    <div class="cart-items" id="cartItems">
+                        <!-- 购物车商品将在这里动态添加 -->
+                    </div>
+                    
+                    <div class="total-section">
+                        <div class="total-row">
+                            <span>商品数量:</span>
+                            <span id="totalQuantity">0</span>
+                        </div>
+                        <div class="total-row" id="discountRow" style="display: none;">
+                            <span>会员折扣:</span>
+                            <span id="discountAmount" style="color: #e74c3c;">-¥0.00</span>
+                        </div>
+                        <div class="total-row total">
+                            <span>总计:</span>
+                            <span id="totalAmount">¥0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="message" id="message"></div>
+    
+    <!-- 挂单列表模态框 -->
+    <div class="modal" id="suspendedOrdersModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📂 挂单列表</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="suspended-order-list" id="suspendedOrderList">
+                <!-- 挂单列表将在这里动态添加 -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let cart = [];
+        let currentSKU = null;
+        let selectedPaymentMethod = 1;
+        let currentSuspendedOrderId = null; // 当前取出的挂单ID
+        let currentMember = null; // 当前选择的会员
+        
+        // 条码输入处理
+        document.getElementById('barcodeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const barcode = this.value.trim();
+                if (barcode) {
+                    scanBarcode(barcode);
+                    this.value = '';
+                }
+            }
+        });
+        
+        // 会员输入处理
+        document.getElementById('memberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const identifier = this.value.trim();
+                if (identifier) {
+                    queryMember(identifier);
+                    this.value = '';
+                }
+            }
+        });
+        
+        // 查询会员按钮
+        document.getElementById('queryMemberBtn').addEventListener('click', function() {
+            const identifier = document.getElementById('memberInput').value.trim();
+            if (identifier) {
+                queryMember(identifier);
+                document.getElementById('memberInput').value = '';
+            }
+        });
+        
+        // 清除会员按钮
+        document.getElementById('clearMemberBtn').addEventListener('click', function() {
+            currentMember = null;
+            document.getElementById('memberInfo').classList.remove('show');
+            updateCartDisplay();
+            showMessage('已清除会员信息', 'success');
+        });
+        
+        // 扫描条码
+        function scanBarcode(barcode) {
+            const csrfToken = getCookie('csrftoken');
+            console.log('CSRF Token:', csrfToken);
+            console.log('Scanning barcode:', barcode);
+            
+            fetch('/pos/scan/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: `barcode=${encodeURIComponent(barcode)}`
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                if (data.success) {
+                    currentSKU = data.sku;
+                    displayProductInfo(currentSKU);
+                    addToCart(currentSKU);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Scan error:', error);
+                showMessage('扫描失败: ' + error.message, 'error');
+            });
+        }
+        
+        // 显示商品信息
+        function displayProductInfo(sku) {
+            document.getElementById('productName').textContent = sku.name;
+            document.getElementById('productCaption').textContent = sku.caption;
+            document.getElementById('productStock').textContent = sku.stock;
+            document.getElementById('productBarcode').textContent = sku.barcode;
+            document.getElementById('productPrice').textContent = '¥' + sku.price;
+            
+            // 计算可用库存
+            const nearExpiryNum = sku.near_expiry_num || 0;
+            const expiredNum = sku.expired_num || 0;
+            const availableStock = sku.stock - nearExpiryNum - expiredNum;
+            
+            document.getElementById('availableStock').textContent = availableStock;
+            document.getElementById('nearExpiryStock').textContent = nearExpiryNum;
+            document.getElementById('expiredStock').textContent = expiredNum;
+            
+            // 显示过期日期（如果有）
+            const expirationDateElement = document.getElementById('productExpirationDate');
+            if (sku.expiration_date) {
+                expirationDateElement.querySelector('span').textContent = sku.expiration_date;
+                expirationDateElement.style.display = 'block';
+            } else {
+                expirationDateElement.style.display = 'none';
+            }
+            
+            // 显示保质期状态信息（如果有）
+            const expirationMessageElement = document.getElementById('productExpirationMessage');
+            if (sku.expiration_message) {
+                expirationMessageElement.textContent = sku.expiration_message;
+                expirationMessageElement.style.display = 'block';
+            } else {
+                expirationMessageElement.style.display = 'none';
+            }
+            
+            document.getElementById('productInfo').classList.add('show');
+        }
+        
+        // 查询会员
+        function queryMember(identifier) {
+            const csrfToken = getCookie('csrftoken');
+            
+            fetch('/pos/query-member/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: `identifier=${encodeURIComponent(identifier)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentMember = data.member;
+                    displayMemberInfo(currentMember);
+                    updateCartDisplay();
+                    showMessage(`会员识别成功: ${currentMember.username}`, 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Query member error:', error);
+                showMessage('查询会员失败: ' + error.message, 'error');
+            });
+        }
+        
+        // 显示会员信息
+        function displayMemberInfo(member) {
+            document.getElementById('memberName').textContent = member.username;
+            document.getElementById('memberLevel').textContent = member.member_level_display;
+            document.getElementById('memberPoints').textContent = member.points;
+            document.getElementById('memberDiscount').textContent = member.discount_rate;
+            document.getElementById('memberConsume').textContent = '¥' + member.total_consume;
+            document.getElementById('memberInfo').classList.add('show');
+            
+            // 会员识别后更新购物车价格显示
+            updateCartDisplay();
+        }
+        
+        // 添加到购物车
+        function addToCart(sku) {
+            const existingItem = cart.find(item => item.id === sku.id);
+            const originalPrice = parseFloat(sku.price);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: sku.id,
+                    name: sku.name,
+                    originalPrice: originalPrice,  // 保存原始价格
+                    price: originalPrice,  // 当前显示价格（会根据会员折扣变化）
+                    quantity: 1
+                });
+            }
+            updateCartDisplay();
+        }
+        
+        // 更新购物车显示
+        function updateCartDisplay() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            cartItemsContainer.innerHTML = '';
+            
+            let totalQuantity = 0;
+            let totalAmount = 0;
+            let originalAmount = 0;
+            
+            // 计算折扣率
+            const discountRate = currentMember ? parseFloat(currentMember.discount_rate) : 1.0;
+            
+            cart.forEach((item, index) => {
+                totalQuantity += item.quantity;
+                const originalPrice = item.originalPrice || item.price;  // 使用原始价格
+                const discountedPrice = currentMember ? originalPrice * discountRate : originalPrice;
+                totalAmount += discountedPrice * item.quantity;
+                originalAmount += originalPrice * item.quantity;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">
+                            ¥${discountedPrice.toFixed(2)}
+                            ${currentMember && discountRate < 1.0 ? `<span style="text-decoration: line-through; color: #999; font-size: 12px; margin-left: 5px;">¥${originalPrice.toFixed(2)}</span>` : ''}
+                        </div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="quantity-btn" onclick="updateQuantity(${index}, -1)">-</button>
+                        <span class="quantity-display">${item.quantity}</span>
+                        <button class="quantity-btn" onclick="updateQuantity(${index}, 1)">+</button>
+                        <button class="remove-btn" onclick="removeFromCart(${index})">删除</button>
+                    </div>
+                `;
+                cartItemsContainer.appendChild(cartItem);
+            });
+            
+            // 计算折扣金额
+            const discountAmount = originalAmount - totalAmount;
+            
+            document.getElementById('totalQuantity').textContent = totalQuantity;
+            document.getElementById('totalAmount').textContent = '¥' + totalAmount.toFixed(2);
+            
+            // 显示折扣信息
+            if (currentMember && discountAmount > 0) {
+                document.getElementById('discountRow').style.display = 'flex';
+                document.getElementById('discountAmount').textContent = '-¥' + discountAmount.toFixed(2);
+            } else {
+                document.getElementById('discountRow').style.display = 'none';
+            }
+            
+            document.getElementById('checkoutBtn').disabled = cart.length === 0;
+            document.getElementById('suspendBtn').disabled = cart.length === 0;
+        }
+        
+        // 更新数量
+        function updateQuantity(index, change) {
+            cart[index].quantity += change;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartDisplay();
+        }
+        
+        // 从购物车删除
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartDisplay();
+        }
+        
+        // 支付方式选择
+        document.querySelectorAll('.payment-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.payment-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                selectedPaymentMethod = parseInt(this.dataset.method);
+            });
+        });
+        
+        // 确认收款
+        document.getElementById('checkoutBtn').addEventListener('click', function() {
+            if (cart.length === 0) {
+                showMessage('购物车为空', 'error');
+                return;
+            }
+            
+            const items = cart.map(item => ({
+                sku_id: item.id,
+                quantity: item.quantity
+            }));
+            
+            const remark = document.getElementById('remarkInput').value;
+            const member_id = currentMember ? currentMember.id : '';
+            
+            // 计算实际应付金额（含折扣）
+            let totalAmount = 0;
+            const discountRate = currentMember ? parseFloat(currentMember.discount_rate) : 1.0;
+            
+            cart.forEach(item => {
+                const originalPrice = item.originalPrice || item.price;
+                const discountedPrice = currentMember ? originalPrice * discountRate : originalPrice;
+                totalAmount += discountedPrice * item.quantity;
+            });
+            
+            let body = `items=${encodeURIComponent(JSON.stringify(items))}&payment_method=${selectedPaymentMethod}&remark=${encodeURIComponent(remark)}&paid_amount=${totalAmount.toFixed(2)}`;
+            if (member_id) {
+                body += `&member_id=${member_id}`;
+            }
+            
+            fetch('/pos/create-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: body
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    let message = `订单创建成功！订单号: ${data.order_id}`;
+                    if (data.member) {
+                        message += `\n会员积分增加: ${data.member.points}`;
+                    }
+                    if (data.discount_amount && parseFloat(data.discount_amount) > 0) {
+                        message += `\n会员优惠: ¥${data.discount_amount}`;
+                    }
+                    showMessage(message, 'success');
+                    cart = [];
+                    currentMember = null;
+                    document.getElementById('memberInfo').classList.remove('show');
+                    updateCartDisplay();
+                    document.getElementById('productInfo').classList.remove('show');
+                    document.getElementById('remarkInput').value = '';
+                    
+                    // 删除当前挂单（如果存在）
+                    if (currentSuspendedOrderId) {
+                        deleteCurrentSuspendedOrder();
+                    }
+                    
+                    // 显示小票预览
+                    showReceiptPreview(data.order_id);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('创建订单失败: ' + error.message, 'error');
+            });
+        });
+        
+        // 显示消息
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = message;
+            messageDiv.className = 'message ' + type + ' show';
+            
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 获取CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        
+        // 显示小票预览
+        function showReceiptPreview(orderId) {
+            const receiptWindow = window.open(`/pos/receipt/${orderId}/`, 'receipt', 'width=400,height=600');
+            if (receiptWindow) {
+                receiptWindow.focus();
+            } else {
+                showMessage('无法打开小票窗口，请检查弹窗设置', 'error');
+            }
+        }
+        
+        // 挂单功能
+        document.getElementById('suspendBtn').addEventListener('click', function() {
+            if (cart.length === 0) {
+                showMessage('购物车为空，无法挂单', 'error');
+                return;
+            }
+            
+            const remark = document.getElementById('remarkInput').value;
+            const memberId = currentMember ? currentMember.id : '';
+            
+            fetch('/pos/suspend-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `cart_data=${encodeURIComponent(JSON.stringify(cart))}&remark=${encodeURIComponent(remark)}${memberId ? `&member_id=${memberId}` : ''}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('挂单成功！', 'success');
+                    cart = [];
+                    currentSuspendedOrderId = null; // 清空当前挂单ID
+                    updateCartDisplay();
+                    document.getElementById('productInfo').classList.remove('show');
+                    document.getElementById('remarkInput').value = '';
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('挂单失败: ' + error.message, 'error');
+            });
+        });
+        
+        // 取单功能 - 打开模态框
+        document.getElementById('resumeBtn').addEventListener('click', function() {
+            loadSuspendedOrders();
+            document.getElementById('suspendedOrdersModal').classList.add('show');
+        });
+        
+        // 加载挂单列表
+        function loadSuspendedOrders() {
+            fetch('/pos/suspended-orders/', {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displaySuspendedOrders(data.orders);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('获取挂单列表失败: ' + error.message, 'error');
+            });
+        }
+        
+        // 显示挂单列表
+        function displaySuspendedOrders(orders) {
+            const container = document.getElementById('suspendedOrderList');
+            container.innerHTML = '';
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">暂无挂单</p>';
+                return;
+            }
+            
+            orders.forEach(order => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'suspended-order-item';
+                orderItem.innerHTML = `
+                    <div class="suspended-order-info">
+                        <h4>挂单 #${order.id}</h4>
+                        <p>商品数量: ${order.total_count}</p>
+                        <p>总金额: ¥${order.total_amount}</p>
+                        <p>时间: ${order.create_time}</p>
+                        ${order.member ? `<p>会员: ${order.member.username} (${order.member.member_level_display})</p>` : ''}
+                        ${order.remark ? `<p>备注: ${order.remark}</p>` : ''}
+                    </div>
+                    <div class="suspended-order-actions">
+                        <button class="resume-order-btn" onclick="resumeOrder(${order.id})">取单</button>
+                        <button class="delete-order-btn" onclick="deleteSuspendedOrder(${order.id})">删除</button>
+                    </div>
+                `;
+                container.appendChild(orderItem);
+            });
+        }
+        
+        // 取单功能
+        function resumeOrder(orderId) {
+            fetch('/pos/resume-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `suspended_order_id=${orderId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    cart = data.cart_data;
+                    currentSuspendedOrderId = data.suspended_order_id; // 保存当前挂单ID
+                    currentMember = data.member || null;
+                    document.getElementById('remarkInput').value = data.remark || '';
+                    if (currentMember) {
+                        displayMemberInfo(currentMember);
+                    } else {
+                        document.getElementById('memberInfo').classList.remove('show');
+                    }
+                    updateCartDisplay();
+                    closeModal();
+                    showMessage('取单成功！', 'success');
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('取单失败: ' + error.message, 'error');
+            });
+        }
+        
+        // 删除挂单
+        function deleteSuspendedOrder(orderId) {
+            if (!confirm('确定要删除这个挂单吗？')) {
+                return;
+            }
+            
+            fetch('/pos/delete-suspended-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `suspended_order_id=${orderId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage('删除挂单成功', 'success');
+                    loadSuspendedOrders(); // 重新加载挂单列表
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('删除挂单失败: ' + error.message, 'error');
+            });
+        }
+
+        // 删除当前挂单（静默删除，不提示）
+        function deleteCurrentSuspendedOrder() {
+            if (!currentSuspendedOrderId) {
+                return;
+            }
+            
+            fetch('/pos/delete-suspended-order/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: `suspended_order_id=${currentSuspendedOrderId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    currentSuspendedOrderId = null;
+                }
+            })
+            .catch(error => {
+                console.error('删除挂单失败:', error);
+            });
+        }
+        
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('suspendedOrdersModal').classList.remove('show');
+        }
+    </script>
+</body>
+</html>

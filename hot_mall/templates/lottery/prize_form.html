@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}{% if prize %}编辑奖品{% else %}添加奖品{% endif %} - 肥猫商城{% endblock %}
+
+
+{% block right_content %}
+<style>
+    .breadcrumb {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+    .breadcrumb a {
+        color: #666;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .breadcrumb a:hover {
+        color: #007bff;
+    }
+    .breadcrumb span {
+        color: #999;
+        margin: 0 8px;
+        font-size: 14px;
+    }
+    .breadcrumb span:last-child {
+        color: #333;
+        font-weight: 500;
+    }
+    .right_content[v-cloak] {
+        display: block !important;
+    }
+</style>
+<div class="main_content clearfix">
+    <div class="breadcrumb">
+        <a href="{{ url('lottery:prize_list') }}">奖品管理</a> <span>&gt;</span>
+        <span>{% if prize %}编辑{% else %}添加{% endif %}奖品</span>
+    </div>
+
+    <h2 class="main_title">{% if prize %}编辑奖品{% else %}添加奖品{% endif %}</h2>
+
+    <div class="common_main_list">
+        <form method="post" class="form-horizontal" id="prizeForm">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+            <!-- 后端返回表单错误提示区域 -->
+            {% if form_errors %}
+            <div class="col-sm-offset-2 col-sm-6 alert alert-danger">
+                {% for err in form_errors %}
+                    <div>{{ err }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">中奖等级 <span class="text-danger">*</span>：</label>
+                <div class="col-sm-6">
+                    <select name="prize_level" class="form-control" required>
+                        <option value="">请选择中奖等级</option>
+                        {% for level in prize_levels %}
+                        <option value="{{ level.id }}" {% if prize and prize.prize_level_id == level.id %}selected{% endif %}>{{ level.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="help-block">绑定对应的转盘中奖等级</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">商品 <span class="text-danger">*</span>：</label>
+                <div class="col-sm-6">
+                    <select name="sku" class="form-control" required>
+                        <option value="">请选择商品</option>
+                        {% for sku in skus %}
+                        <option value="{{ sku.id }}" {% if prize and prize.sku_id == sku.id %}selected{% endif %}>{{ sku.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="help-block">抽奖抽中后发放的商品</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-sm-2 control-label">奖品数量 <span class="text-danger">*</span>：</label>
+                <div class="col-sm-6">
+                    <input type="number" name="quantity" class="form-control" min="1"
+                           value="{% if prize %}{{ prize.quantity }}{% endif %}" required>
+                    <span class="help-block">该中奖等级内，此商品总可用份数</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-6">
+                    <button type="submit" class="btn btn-primary" id="submitBtn">保存</button>
+                    <a href="{{ url('lottery:prize_list') }}" class="btn btn-default">取消</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+$(function () {
+    // 防止表单重复提交
+    $('#prizeForm').on('submit', function () {
+        const $btn = $('#submitBtn');
+        $btn.prop('disabled', true).text('提交中...');
+    });
+})
+</script>
+{% endblock %}

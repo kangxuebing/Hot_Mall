@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-{{ title }}{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <div class="container-fluid p-0">
+        <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+            {{ title }}
+        </h3>
+        <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+            <div class="card-body p-4">
+                <form id="supplierForm" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="table-responsive mb-4">
+                        <table class="table"
+                               style="border-collapse:separate; border-spacing:0; font-size:14px; width:100%;">
+                            <tbody>
+                            <tr>
+                                <td colspan="4"
+                                    style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd; border-radius:6px 6px 0 0;">
+                                    基本信息
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333;">供应商名称 <span
+                                        class="text-danger">*</span></td>
+                                <td colspan="3" style="padding:12px;">
+                                    <input type="text" name="supl_name" class="form-control" v-model="form.supl_name">
+                                    <span class="text-danger" v-if="errors.supl_name">[[errors.supl_name]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333;">供应商地址</td>
+                                <td colspan="3" style="padding:12px;">
+                                    <input type="text" name="supl_addr" class="form-control" v-model="form.supl_addr">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="4"
+                                    style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd;">
+                                    联系方式
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">联系电话</td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="supl_phone" class="form-control" v-model="form.supl_phone">
+                                </td>
+                                <td style="padding:12px; font-weight:500; color:#333;">微信号</td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="wechat" class="form-control" v-model="form.wechat">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td colspan="4"
+                                    style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd;">
+                                    资质信息
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">营业执照号</td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="business_license" class="form-control"
+                                           v-model="form.business_license">
+                                </td>
+                                <td style="padding:12px; font-weight:500; color:#333;">等级</td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="level" class="form-control" v-model="form.level">
+                                </td>
+                            </tr>
+
+                            <tr class="mt-3">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333; background-color:#f8f9fa; border-radius:6px 0 0 6px;">
+                                    上传图片
+                                </td>
+                                <td colspan="3"
+                                    style="padding:12px; background-color:#fafbfc; border-radius:0 6px 6px 0;">
+                                    <input type="file" id="images-input" name="images"
+                                           class="form-control rounded-3" multiple accept="image/*">
+                                    <div id="temp-uploaded-images-box" class="mt-2"></div>
+                                    <div class="text-muted small mt-2">支持jpg、png、jpeg格式，单张图片不超过5MB</div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mb-4">
+                        <p class="fw-bold mb-3 image-section-title">已上传供应商图片</p>
+                        <div class="image-manage-layout">
+                            <div class="image-preview-column" id="image-preview-column">
+                                {% if supplier and supplier_images %}
+                                    {% for img in supplier_images %}
+                                        <button type="button"
+                                                class="preview-item {% if supplier.default_image and supplier.default_image.name == img.image.name %}is-default{% endif %}"
+                                                data-preview-item
+                                                data-image-id="{{ img.id }}"
+                                                data-supplier-id="{{ supplier.id }}"
+                                                data-image-url="{{ img.image.url }}"
+                                                data-image-name="供应商图片{{ loop.index }}"
+                                                data-is-default="{% if supplier.default_image and supplier.default_image.name == img.image.name %}1{% else %}0{% endif %}">
+                                            <img src="{{ img.image.url }}" alt="供应商图片缩略图" loading="lazy">
+                                            <span class="preview-item-mark">
+                                                {% if supplier.default_image and supplier.default_image.name == img.image.name %}
+                                                    默认{% else %}普通{% endif %}
+                                                </span>
+                                        </button>
+                                    {% endfor %}
+                                {% else %}
+                                    <div id="preview-empty-tip" class="preview-empty-tip">
+                                        请先选择图片，左侧将显示可滚动预览
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="image-detail-card" id="image-detail-panel">
+                                <div class="image-detail-preview-wrap">
+                                    <img id="selected-image-preview" src="" alt="预览">
+                                    <div id="no-image-selected" class="text-muted">请选择图片</div>
+                                </div>
+                                <div class="image-detail-info">
+                                    <p class="mb-2"><strong>图片名称：</strong><span id="selected-image-name">-</span>
+                                    </p>
+                                    <p class="mb-3"><strong>状态：</strong><span id="selected-image-status">-</span></p>
+                                    <div class="d-flex gap-2">
+                                        <a id="selected-set-default-btn" href="javascript:;"
+                                           class="btn btn-sm btn-success">设为默认</a>
+                                        <a id="selected-delete-btn" href="javascript:;"
+                                           class="btn btn-sm btn-danger">删除</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 30px;">
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" onclick="location.href='{{ url('suppliers:supplier_list') }}'"
+                                    class="btn btn-outline-secondary">取消
+                            </button>
+                            <!-- 改为Vue点击提交，禁用原生submit -->
+                            <button type="button" @click="submitForm" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+
+        .image-manage-layout {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .image-preview-column {
+            max-height: 420px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px;
+            background: #fff;
+        }
+
+        .preview-item {
+            width: 100%;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px;
+            margin-bottom: 8px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .preview-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .preview-item.active {
+            background: rgba(13, 110, 253, 0.05);
+            outline: 2px solid var(--primary-color);
+        }
+
+        .image-detail-card {
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .image-detail-preview-wrap {
+            width: 100%;
+            height: 360px;
+            background: var(--light-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .image-detail-preview-wrap img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: none;
+        }
+
+        .image-detail-preview-wrap img:not([src=""]) {
+            display: block;
+        }
+
+        .preview-empty-tip {
+            color: #6c757d;
+            font-size: 13px;
+            text-align: center;
+            padding: 20px 10px;
+            border: 1px dashed #dee2e6;
+            border-radius: 8px;
+        }
+
+        #no-image-selected {
+            display: none;
+        }
+    </style>
+
+    <!-- 全局变量 -->
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.currentSupplierId = '';
+        {% if supplier %}
+            window.currentSupplierId = '{{ supplier.id }}';
+            // 编辑页回填供应商数据给Vue
+            window.SUPPLIER_DATA = {
+                supl_name: "{{ supplier.supl_name|default('') }}",
+                supl_addr: "{{ supplier.supl_addr|default('') }}",
+                supl_phone: "{{ supplier.supl_phone|default('') }}",
+                wechat: "{{ supplier.wechat|default('') }}",
+                business_license: "{{ supplier.business_license|default('') }}",
+                level: "{{ supplier.level|default('') }}"
+            };
+        {% else %}
+            window.SUPPLIER_DATA = null;
+        {% endif %}
+    </script>
+
+    <!-- 移除原生JS表单校验，统一使用Vue校验 -->
+    <script src="/static/js/supplier_add.js"></script>
+{% endblock %}

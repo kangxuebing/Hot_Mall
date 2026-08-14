@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}奖项管理 - 肥猫商城{% endblock %}
+
+
+{% block right_content %}
+<div data-csrf-token="{{ csrf_token }}" data-delete-url="{{ url('lottery:prize_level_delete_ajax') }}" data-view="prize-level-list">
+    <div class="main_content clearfix">
+        <style>
+            .breadcrumb {
+                padding: 15px 0;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+            }
+            .breadcrumb a {
+                color: #666;
+                text-decoration: none;
+                transition: color 0.3s;
+            }
+            .breadcrumb a:hover {
+                color: #007bff;
+            }
+            .breadcrumb span {
+                color: #999;
+                margin: 0 8px;
+                font-size: 14px;
+            }
+            .breadcrumb span:last-child {
+                color: #333;
+                font-weight: 500;
+            }
+        </style>
+        <div class="breadcrumb">
+            <a href="#">抽奖游戏管理</a> <span>&gt;</span>
+            <span>奖项管理</span>
+        </div>
+        
+        <h2 class="main_title">奖项管理</h2>
+        
+        <div class="common_main_list">
+            <div class="filter_box" style="margin-bottom:15px;">
+                <a href="{{ url('lottery:prize_level_add') }}" class="btn btn-primary" style="padding:8px 16px;background:#007bff;color:#fff;text-decoration:none;border-radius:4px;">添加奖项</a>
+            </div>
+            
+            <table class="table table-bordered table-hover" style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="padding:10px;border:1px solid #ddd;">等级序号</th>
+                        <th style="padding:10px;border:1px solid #ddd;">等级名称</th>
+                        <th style="padding:10px;border:1px solid #ddd;">中奖概率(%)</th>
+                        <th style="padding:10px;border:1px solid #ddd;">转盘颜色</th>
+                        <th style="padding:10px;border:1px solid #ddd;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for level in prize_levels %}
+                    <tr data-level-id="{{ level.id }}">
+                        <td style="padding:10px;border:1px solid #ddd;">{{ level.level }}</td>
+                        <td style="padding:10px;border:1px solid #ddd;">{{ level.name }}</td>
+                        <td style="padding:10px;border:1px solid #ddd;">{{ level.probability }}</td>
+                        <td style="padding:10px;border:1px solid #ddd;">
+                            <span style="display:inline-block;width:30px;height:20px;background:{{ level.color }};border:1px solid #ccc;"></span>
+                            {{ level.color }}
+                        </td>
+                        <td style="padding:10px;border:1px solid #ddd;">
+                            <a href="{{ url('lottery:prize_level_edit', args=(level.id,)) }}" class="btn btn-sm btn-info" style="padding:5px 10px;background:#17a2b8;color:#fff;text-decoration:none;border-radius:3px;">编辑</a>
+                            <button type="button" class="btn btn-sm btn-danger del-level-btn" v-on:click="deleteLevel({{ level.id }}, $event)" style="padding:5px 10px;background:#dc3545;color:#fff;border-radius:3px;">删除</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" style="padding:10px;border:1px solid #ddd;text-align:center;">暂无奖项</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{{ static('js/lottery/prize_level_list.js') }}"></script>
+{% endblock %}

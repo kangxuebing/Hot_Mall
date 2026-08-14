@@ -1,0 +1,254 @@
+{% extends 'base.html' %}
+{% block title %}中奖历史记录 - 肥猫商城{% endblock %}
+
+{% block right_content %}
+<div data-csrf-token="{{ csrf_token }}" data-view="lottery-record-list">
+<div class="main_content clearfix">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .lottery-container {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+        }
+        .breadcrumb {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+        .breadcrumb a {
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .breadcrumb a:hover {
+            color: #007bff;
+        }
+        .breadcrumb span {
+            color: #999;
+            margin: 0 8px;
+            font-size: 14px;
+        }
+        .breadcrumb span:last-child {
+            color: #333;
+            font-weight: 500;
+        }
+        .search-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .search-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+        .search-btn:hover {
+            transform: scale(1.02);
+        }
+        .reset-btn {
+            padding: 10px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .reset-btn:hover {
+            background: #5a6268;
+        }
+        .details-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .details-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .details-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .details-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .details-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+        .details-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-won {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-lost {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .pagination button:hover {
+            background: #f0f0f0;
+        }
+        .pagination button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+    
+    <div class="lottery-container">
+        <div class="breadcrumb">
+            <a href="#">抽奖游戏管理</a> <span>&gt;</span>
+            <span>中奖历史记录</span>
+        </div>
+
+        <h2 class="main_title" style="margin-bottom: 20px;">中奖历史记录</h2>
+
+        <div class="search-container">
+            <div class="search-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" v-model="searchForm.username" placeholder="输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="is_won">中奖状态</label>
+                    <select id="is_won" v-model="searchForm.is_won">
+                        <option value="">全部记录</option>
+                        <option value="1">仅中奖</option>
+                        <option value="0">未中奖</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="startDate">开始日期</label>
+                    <input type="date" id="startDate" v-model="searchForm.start_date">
+                </div>
+                <div class="form-group">
+                    <label for="endDate">结束日期</label>
+                    <input type="date" id="endDate" v-model="searchForm.end_date">
+                </div>
+                <button class="search-btn" v-on:click="searchRecords">🔍 搜索</button>
+                <button class="reset-btn" v-on:click="resetSearch">🔄 重置</button>
+            </div>
+        </div>
+
+        <div class="details-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>用户</th>
+                        <th>奖项(中奖等级)</th>
+                        <th>奖品</th>
+                        <th>中奖状态</th>
+                        <th>IP地址</th>
+                        <th>抽奖时间</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="loading">
+                        <td colspan="6" class="no-data">加载中...</td>
+                    </tr>
+                    <tr v-else-if="records.length === 0">
+                        <td colspan="6" class="no-data">暂无中奖记录</td>
+                    </tr>
+                    <tr v-else v-for="item in records" :key="item.id">
+                        <td>[[ item.username ]]</td>
+                        <td>[[ item.prize_level ]]</td>
+                        <td>[[ item.prize ]]</td>
+                        <td><span :class="['status-badge', getStatusClass(item.is_won_status)]">[[ item.is_won ]]</span></td>
+                        <td>[[ item.ip_address ]]</td>
+                        <td>[[ item.create_time ]]</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" v-if="totalPages > 1">
+            <button v-on:click="loadLotteryRecords(currentPage - 1)" :disabled="currentPage === 1">上一页</button>
+            <button v-for="page in totalPages" :key="page" 
+                    v-on:click="loadLotteryRecords(page)" 
+                    :class="{ 'active': page === currentPage }">
+                [[ page ]]
+            </button>
+            <button v-on:click="loadLotteryRecords(currentPage + 1)" :disabled="currentPage === totalPages">下一页</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="{{ static('js/lottery/lottery_record_list.js') }}"></script>
+{% endblock %}

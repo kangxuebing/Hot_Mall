@@ -1,0 +1,319 @@
+{#<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">#}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<title>肥猫商城-人脸登录</title>
+    <link rel="stylesheet" type="text/css" href="{{ static('css/reset.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}">
+	<script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/axios-0.18.0.min.js') }}"></script>
+    <style>
+        .video-container {
+            width: 320px;
+            height: 240px;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #canvas {
+            display: none;
+        }
+        .capture-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            background: #ff6700;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .capture-btn:hover {
+            background: #e55600;
+        }
+        .capture-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        .login-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .login-tabs a {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+        .login-tabs a.cur {
+            border-bottom-color: #ff6700;
+            color: #ff6700;
+        }
+        .upload-option {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .upload-option label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .upload-option label:hover {
+            background: #0056b3;
+        }
+        .upload-option input[type="file"] {
+            display: none;
+        }
+        .preview-image {
+            max-width: 320px;
+            max-height: 240px;
+            margin: 10px auto;
+            display: none;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+        .toggle-method {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .toggle-method button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .toggle-method button.active {
+            background: #ff6700;
+        }
+    </style>
+</head>
+<body>
+	<div class="login_top clearfix">
+		<a href="{{ url('contents:index') }}" class="login_logo"><img src="{{ static('images/logo.png') }}"></a>
+	</div>
+	<div class="login_form_bg" id="app">
+		<div class="login_form_wrap clearfix">
+			<div class="login_banner fl"></div>
+			<div class="slogan fl">商品美 · 种类多 · 欢迎光临</div>
+			<div class="login_form fr">
+				<div class="login_title clearfix">
+					<div class="login-tabs">
+						<a href="{{ url('users:login') }}">账户登录</a>
+						<a href="javascript:;" class="cur">人脸登录</a>
+					</div>
+				</div>
+				<div class="form_con">
+					<div class="form_input cur">
+						<div class="toggle-method">
+							<button @click="useCamera = true" :class="{ active: useCamera }">摄像头拍照</button>
+							<button @click="useCamera = false" :class="{ active: !useCamera }">上传图片</button>
+						</div>
+						
+						<!-- Camera method -->
+						<div v-show="useCamera">
+							<div class="video-container">
+								<video id="video" autoplay playsinline></video>
+								<canvas id="canvas"></canvas>
+							</div>
+						</div>
+						
+						<!-- Upload method -->
+						<div v-show="!useCamera">
+							<div class="upload-option">
+								<label for="file-input">选择人脸图片</label>
+								<input type="file" id="file-input" accept="image/*" @change="handleFileChange">
+							</div>
+							<img id="preview-image" class="preview-image" :src="previewImage" v-show="previewImage">
+						</div>
+						
+						<div v-if="message" :class="['message', messageType]">[[ message ]]</div>
+						<button @click="loginFace" :disabled="capturing" class="capture-btn">
+							[[ capturing ? '识别中...' : '人脸识别登录' ]]
+						</button>
+						<div style="text-align: center; margin-top: 15px;">
+							<a href="{{ url('users:login') }}" style="color: #666;">返回账号登录</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="footer no-mp">
+		<div class="foot_link">
+			<a href="#">关于我们</a>
+			<span>|</span>
+			<a href="#">联系我们</a>
+			<span>|</span>
+			<a href="#">招聘人才</a>
+			<span>|</span>
+			<a href="#">友情链接</a>		
+		</div>
+		<p>CopyRight © 2026 中原肥猫商业股份有限公司 All Rights Reserved</p>
+		<p>电话：0396-****888 豫ICP备*******6号</p>
+	</div>
+    <script type="text/javascript" src="{{ static('js/common.js') }}"></script>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app',
+			delimiters: ['[[', ']]'],
+			data: {
+				message: '',
+				messageType: 'info',
+				capturing: false,
+				stream: null,
+				useCamera: true,
+				previewImage: null
+			},
+			mounted: function() {
+				this.startCamera();
+			},
+			beforeDestroy: function() {
+				this.stopCamera();
+			},
+			methods: {
+				startCamera: function() {
+					var self = this;
+					navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+						.then(function(stream) {
+							self.stream = stream;
+							document.getElementById('video').srcObject = stream;
+						})
+						.catch(function(err) {
+							self.message = '无法访问摄像头，请使用上传图片方式';
+							self.messageType = 'error';
+							self.useCamera = false;
+							console.error('Camera error:', err);
+						});
+				},
+				stopCamera: function() {
+					if (this.stream) {
+						this.stream.getTracks().forEach(function(track) {
+							track.stop();
+						});
+					}
+				},
+				handleFileChange: function(event) {
+					var self = this;
+					var file = event.target.files[0];
+					if (file) {
+						var reader = new FileReader();
+						reader.onload = function(e) {
+							self.previewImage = e.target.result;
+						};
+						reader.readAsDataURL(file);
+					}
+				},
+				loginFace: function() {
+					var self = this;
+					if (this.capturing) return;
+					
+					this.capturing = true;
+					this.message = '正在识别...';
+					this.messageType = 'info';
+					
+					var image_data;
+					
+					if (this.useCamera) {
+						// Capture from camera
+						var video = document.getElementById('video');
+						var canvas = document.getElementById('canvas');
+						var context = canvas.getContext('2d');
+						
+						canvas.width = video.videoWidth;
+						canvas.height = video.videoHeight;
+						context.drawImage(video, 0, 0, canvas.width, canvas.height);
+						
+						image_data = canvas.toDataURL('image/jpeg', 0.8);
+					} else {
+						// Use uploaded image
+						if (!this.previewImage) {
+							this.message = '请先选择图片';
+							this.messageType = 'error';
+							this.capturing = false;
+							return;
+						}
+						image_data = this.previewImage;
+					}
+					
+					var formData = new FormData();
+					formData.append('image_data', image_data);
+					formData.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+					
+					axios.post('{{ url("users:face_login") }}', formData, {
+						headers: {
+							'X-CSRFToken': this.getCookie('csrftoken')
+						}
+					})
+					.then(function(response) {
+						if (response.data.code === '0') {
+							self.message = '登录成功，正在跳转...';
+							self.messageType = 'success';
+							setTimeout(function() {
+								window.location.href = '{{ url("contents:index") }}';
+							}, 1000);
+						} else {
+							self.message = response.data.errmsg || '登录失败';
+							self.messageType = 'error';
+							self.capturing = false;
+						}
+					})
+					.catch(function(error) {
+						self.message = '网络错误，请重试';
+						self.messageType = 'error';
+						self.capturing = false;
+						console.error('Login error:', error);
+					});
+				},
+				getCookie: function(name) {
+					var cookieValue = null;
+					if (document.cookie && document.cookie !== '') {
+						var cookies = document.cookie.split(';');
+						for (var i = 0; i < cookies.length; i++) {
+							var cookie = cookies[i].trim();
+							if (cookie.substring(0, name.length + 1) === (name + '=')) {
+								cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+								break;
+							}
+						}
+					}
+					return cookieValue;
+				}
+			}
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-进货记录管理{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        进货记录管理</h3>
+
+    <!-- 搜索框 -->
+    <div class="card shadow-sm mb-4" style="border-radius:10px; border:none; background:#fff;">
+        <div class="card-body p-3">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="供应商名称" v-model="searchKeyword">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" placeholder="起始日期" v-model="startDate">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" placeholder="结束日期" v-model="endDate">
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-primary w-100" @click="search">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+        <div class="card-body p-4">
+
+            <div class="table-responsive">
+                <table class="table table-hover"
+                       style="font-size:14px; border-collapse:separate; border-spacing:0;">
+                    <thead style="background:linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            ID
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            供应商
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            商品名称
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            规格
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            条码
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            生产日期
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            保质期(天)
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            过期日期
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            进货数量
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            合格数量
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            临保质期数量
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            破损数量
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            单价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            总价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            进货时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作人
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr v-if="filteredRecords.length === 0">
+                        <td colspan="17" class="text-center text-muted py-5">
+                            <i class="fas fa-inbox"></i> 暂无进货记录
+                        </td>
+                    </tr>
+                    <tr v-for="r in filteredRecords"
+                        :key="r.id"
+                        style="height:60px; background:#fafbfc; border-bottom:1px solid #e9ecef;">
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.id ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[
+                            r.supplier_name ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.product_name ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.product_spec || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.barcode || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.production_date || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.shelf_life || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.expiration_date || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.purchase_num ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.qualified_num || 0 ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.near_expiry_num || 0 ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.damaged_num || 0 ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.purchase_price ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ r.total_price ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#666; font-size:12px;">
+                            [[ r.purchase_time ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ r.operator || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                <a :href="'/purchupd/' + r.id + '/'" class="btn btn-outline-primary btn-sm">修改</a>
+                                <a href="javascript:;" @click.prevent="deletePurchaseRecord(r.id)"
+                                   class="btn btn-outline-danger btn-sm">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-4" v-if="filteredRecords.length > 0">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none; display: flex; align-items: center;">
+                        第 [[ currentPage ]] 页 / 共 [[ totalPages ]] 页
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="lastPage()">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        window.__PURCHASE_LIST_TOTAL_PAGES__ = {{ page_obj.paginator.num_pages }};
+        window.PURCHASE_RECORD_DATA = [
+            {% for r in records %}
+                {
+                    id: {{ r.id }},
+                    supplier_name: "{{ r.supplier.supl_name if r.supplier else '' }}",
+                    product_name: "{{ r.product_name|default('') }}",
+                    product_spec: "{{ r.product_spec|default('') }}",
+                    barcode: "{{ r.barcode|default('') }}",
+                    production_date: "{{ r.production_date.strftime('%Y-%m-%d') if r.production_date else '' }}",
+                    shelf_life: {{ r.shelf_life|default(0) }},
+                    expiration_date: "{{ r.expiration_date.strftime('%Y-%m-%d') if r.expiration_date else '' }}",
+                    purchase_num: {{ r.purchase_num|default(0) }},
+                    qualified_num: {{ r.qualified_num|default(0) }},
+                    near_expiry_num: {{ r.near_expiry_num|default(0) }},
+                    damaged_num: {{ r.damaged_num|default(0) }},
+                    purchase_price: {{ r.purchase_price|default(0) }},
+                    total_price: {{ r.total_price|default(0) }},
+                    purchase_time: "{{ r.purchase_time.strftime('%Y-%m-%d %H:%M') if r.purchase_time else '' }}",
+                    operator: "{{ r.operator|default('') }}"
+                }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ];
+    </script>
+    <script src="/static/js/purchase_list.js"></script>
+{% endblock %}

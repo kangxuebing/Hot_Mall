@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-{{ title }}{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+{% block right_content %}
+    <div class="container-fluid p-0">
+        <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+            {{ title }}
+        </h3>
+        <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+            <div class="card-body p-4">
+                <form id="channelForm" method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="table-responsive mb-4">
+                        <table class="table"
+                               style="border-collapse:separate; border-spacing:0; font-size:14px; width:100%;">
+                            <tbody>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333;">频道组 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <select name="group" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for group in groups %}
+                                            <option value="{{ group.id }}"
+                                                    {% if form.instance.id and form.instance.group.id == group.id %}selected{% endif %}>{{ group.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.group">[[ errors.group ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">类别 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <select name="category" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}"
+                                                    {% if form.instance.id and form.instance.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.category">[[ errors.category ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">URL <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="url" class="form-control"
+                                           value="{{ form['url'].value()|default('') }}">
+                                    <span class="text-danger" v-if="errors.url">[[ errors.url ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">顺序 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <input type="number" name="sequence" class="form-control"
+                                           value="{{ form['sequence'].value()|default('') }}">
+                                    <span class="text-danger" v-if="errors.sequence">[[ errors.sequence ]]</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 30px;">
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" onclick="location.href='{{ url('goods:channel_list') }}'"
+                                    class="btn btn-outline-secondary">取消
+                            </button>
+                            <button type="button" @click="submitForm()" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+    </style>
+
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.currentChannelId = '';
+        {% if form.instance.id %}
+            window.currentChannelId = '{{ form.instance.id }}';
+            window.CHANNEL_DATA = {
+                group: "{{ form.instance.group_id|default('') }}",
+                category: "{{ form.instance.category_id|default('') }}",
+                url: "{{ form.instance.url|default('') }}",
+                sequence: "{{ form.instance.sequence|default('') }}"
+            };
+        {% else %}
+            window.CHANNEL_DATA = null;
+        {% endif %}
+    </script>
+
+    <script src="/static/js/vue-2.5.16.js"></script>
+    <script src="/static/js/channel_add.js"></script>
+{% endblock %}

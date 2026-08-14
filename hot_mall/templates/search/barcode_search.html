@@ -1,0 +1,154 @@
+{#<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">#}
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>肥猫商城-条码搜索</title>
+    <link rel="stylesheet" type="text/css" href="{{ static('css/reset.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ static('css/main.css') }}">
+    <script type="text/javascript" src="{{ static('js/jquery-1.12.4.min.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/vue-2.5.16.js') }}"></script>
+    <script type="text/javascript" src="{{ static('js/axios-0.18.0.min.js') }}"></script>
+</head>
+<body>
+<div id="app">
+    <div class="header_con">
+        <div class="header" v-cloak>
+            <div class="welcome fl">欢迎来到肥猫商城!</div>
+            <div class="fr">
+                <div v-if="username" class="login_btn fl">
+                    欢迎您：<em>[[ username ]]</em>
+                    <span>|</span>
+                    <a href="{{ url('users:logout') }}">退出</a>
+                </div>
+                <div v-else class="login_btn fl">
+                    <a href="{{ url('users:login') }}">登录</a>
+                    <span>|</span>
+                    <a href="{{ url('users:register') }}">注册</a>
+                </div>
+                <div class="user_link fl">
+                    <span>|</span>
+                    <a href="{{ url('users:info') }}">用户中心</a>
+                    <span>|</span>
+                    <a href="{{ url('carts:info') }}">我的购物车</a>
+                    <span>|</span>
+                    <a href="{{ url('users:myorderinfo',args=(1,)) }}">我的订单</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="search_bar clearfix">
+        <a href="{{ url('contents:index') }}" class="logo fl"><img src="{{ static('images/logo.png') }}"></a>
+        <div class="search_wrap fl">
+            <form method="get" action="{{ url('goods:barcode_search') }}" class="search_con">
+                <input type="text" class="input_text fl" name="q" placeholder="输入条码搜索商品" value="{{ barcode }}">
+                <input type="submit" class="input_btn fr" name="" value="搜索">
+            </form>
+        </div>
+    </div>
+    <div class="main_wrap clearfix">
+        <div class="barcode_result">
+            {% if error %}
+                <div class="error_msg">
+                    <p>{{ error }}</p>
+                    <p class="tip">请检查条码是否正确，或尝试使用商品名称搜索</p>
+                </div>
+            {% elif sku %}
+                <div class="sku_detail">
+                    <h2>商品信息</h2>
+                    <div class="sku_info">
+                        <div class="sku_image">
+                            <a href="{{ url('goods:detail', args=(sku.id,)) }}">
+                                <img src="{{ sku.default_image.url }}" alt="{{ sku.name }}">
+                            </a>
+                        </div>
+                        <div class="sku_basic">
+                            <h3><a href="{{ url('goods:detail', args=(sku.id,)) }}">{{ sku.name }}</a></h3>
+                            <p class="caption">{{ sku.caption }}</p>
+                            <p class="barcode">条码: {{ sku.barcode }}</p>
+                            <div class="price_info">
+                                <span class="price">￥{{ sku.price }}</span>
+                                <span class="market_price">市场价: ￥{{ sku.market_price }}</span>
+                            </div>
+                            <p class="stock">库存: {{ sku.stock }} 件</p>
+                            <div class="operate">
+                                <a href="{{ url('goods:detail', args=(sku.id,)) }}" class="btn_detail">查看详情</a>
+                                <a href="javascript:;" class="btn_add_cart" @click="addToCart({{ sku.id }})">加入购物车</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="empty_msg">
+                    <p>请输入商品条码进行搜索</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="footer">
+        <div class="foot_link">
+            <a href="#">关于我们</a>
+            <span>|</span>
+            <a href="#">联系我们</a>
+            <span>|</span>
+            <a href="#">招聘人才</a>
+            <span>|</span>
+            <a href="#">友情链接</a>
+        </div>
+        <p>CopyRight © 2026 中原肥猫商业股份有限公司 All Rights Reserved</p>
+        <p>电话：0396-****888 豫ICP备*******6号</p>
+    </div>
+</div>
+<script type="text/javascript" src="{{ static('js/common.js') }}"></script>
+<script>
+var app = new Vue({
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    data: {
+        username: '',
+        cart_total_count: 0,
+        carts: [],
+    },
+    mounted: function() {
+        this.getUsername();
+        this.getCartCount();
+    },
+    methods: {
+        getUsername: function() {
+            var that = this;
+            axios.get('/users/username/')
+                .then(function(response) {
+                    if (response.data.code === '0') {
+                        that.username = response.data.username;
+                    }
+                });
+        },
+        getCartCount: function() {
+            var that = this;
+            axios.get('/carts/info/')
+                .then(function(response) {
+                    if (response.data.code === '0') {
+                        that.cart_total_count = response.data.cart_total_count;
+                        that.carts = response.data.carts;
+                    }
+                });
+        },
+        addToCart: function(sku_id) {
+            var that = this;
+            axios.post('/carts/add/', {
+                sku_id: sku_id,
+                count: 1
+            })
+            .then(function(response) {
+                if (response.data.code === '0') {
+                    that.getCartCount();
+                    alert('添加成功');
+                } else {
+                    alert(response.data.errmsg);
+                }
+            });
+        }
+    }
+});
+</script>
+</body>
+</html>

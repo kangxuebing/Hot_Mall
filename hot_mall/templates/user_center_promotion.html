@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-促销商品管理{% endblock %}
+{% block left_menu_active %}promotion{% endblock %}
+{% block right_content %}
+<h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+    促销商品管理
+</h3>
+
+<div class="card shadow-sm" style="border-radius:10px; border:none; background:#fff;">
+    <div class="card-body p-4">
+        <div class="row mb-3">
+            <div class="col-md-12 text-right">
+                <input type="text" v-model="keyword" @keyup.enter="loadPromotions(1)" 
+                       class="form-control" placeholder="搜索商品名称..." 
+                       style="max-width:300px; display:inline-block;">
+            </div>
+        </div>
+        
+        <div class="table-responsive" style="overflow-x:auto;padding-bottom:16px;margin-bottom:16px;">
+            <table class="table" style="font-size:14px; line-height:1.6; border-collapse: separate; border-spacing:0;">
+                <thead style="background: linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            商品名称
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            折扣类型
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            折扣率/优惠金额
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            开始时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            结束时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            状态
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr v-if="loading">
+                        <td colspan="7" class="text-center text-muted py-5">加载中...</td>
+                    </tr>
+                    <tr v-else-if="promotionList.length === 0">
+                        <td colspan="7" class="text-center text-muted py-5">暂无促销商品</td>
+                    </tr>
+                    <tr v-else v-for="promotion in promotionList" :key="promotion.id"
+                        style="height:60px; background:#fafbfc; border-bottom:1px solid #e9ecef;">
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">
+                            [[ promotion.sku_name ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#555;">
+                            [[ promotion.discount_type_display ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#e53e3e; font-weight:bold;">
+                            <span v-if="promotion.discount_type === 1">[[ promotion.discount_rate ]]折</span>
+                            <span v-else>¥[[ promotion.discount_amount ]]</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ formatDate(promotion.start_time) ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ formatDate(promotion.end_time) ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <span v-if="promotion.is_active" class="badge bg-success rounded-pill px-3">启用</span>
+                            <span v-else class="badge bg-secondary rounded-pill px-3">禁用</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:120px; margin:0 auto;">
+                                <a :href="'/pos/promotion/edit/' + promotion.id + '/'" class="btn btn-outline-primary btn-sm">编辑</a>
+                                <a href="javascript:;" @click.prevent="deletePromotion(promotion.id)"
+                                   class="btn btn-outline-danger btn-sm">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <nav aria-label="Page navigation">
+            <ul class="pagination" style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                <li style="list-style: none;">
+                    <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="goPage(1)">首页</a>
+                </li>
+                <li style="list-style: none;">
+                    <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="prevPage()">上一页</a>
+                </li>
+                <li style="list-style: none;">
+                    <span class="btn btn-outline-secondary btn-sm">[[ currentPage ]] / [[ totalPages ]]</span>
+                </li>
+                <li style="list-style: none;">
+                    <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="nextPage()">下一页</a>
+                </li>
+                <li style="list-style: none;">
+                    <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="goPage(totalPages)">末页</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+window.csrfToken = '{{ csrf_token }}';
+</script>
+<script type="text/javascript" src="{{ static('js/user_center_promotion.js') }}"></script>
+{% endblock %}

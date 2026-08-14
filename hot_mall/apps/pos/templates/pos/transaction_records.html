@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交易记录查询 - Hot Mall</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .header .back-btn {
+            padding: 10px 20px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .header .back-btn:hover {
+            background: #f0f0f0;
+        }
+        .main-content {
+            padding: 30px;
+        }
+        .search-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .search-form {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .search-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: transform 0.3s;
+        }
+        .search-btn:hover {
+            transform: scale(1.02);
+        }
+        .reset-btn {
+            padding: 10px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+        }
+        .reset-btn:hover {
+            background: #5a6268;
+        }
+        .records-table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .records-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .records-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .records-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .records-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .records-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .status-paid {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .status-deleted {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        .cancel-btn {
+            background: #ffc107;
+            color: #333;
+        }
+        .cancel-btn:hover {
+            background: #e0a800;
+        }
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .pagination button:hover {
+            background: #f0f0f0;
+        }
+        .pagination button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📋 交易记录查询</h1>
+            <a href="/pos/cashier/" class="back-btn">← 返回收银台</a>
+        </div>
+        
+        <div class="main-content">
+            <div class="search-container">
+                <div class="search-form">
+                    <div class="form-group">
+                        <label for="startDate">开始日期</label>
+                        <input type="date" id="startDate" placeholder="开始日期">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">结束日期</label>
+                        <input type="date" id="endDate" placeholder="结束日期">
+                    </div>
+                    <div class="form-group">
+                        <label for="orderId">订单号</label>
+                        <input type="text" id="orderId" placeholder="输入订单号">
+                    </div>
+                    <button class="search-btn" onclick="searchRecords()">🔍 搜索</button>
+                    <button class="reset-btn" onclick="resetSearch()">🔄 重置</button>
+                </div>
+            </div>
+
+            <div class="records-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>订单号</th>
+                            <th>收银员</th>
+                            <th>商品数量</th>
+                            <th>总金额</th>
+                            <th>实付金额</th>
+                            <th>支付方式</th>
+                            <th>订单状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recordsBody">
+                        <!-- 交易记录将在这里动态添加 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- 分页按钮将在这里动态添加 -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentPage = 1;
+        let totalPages = 1;
+
+        // 页面加载时获取交易记录
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTransactionRecords(1);
+        });
+
+        // 搜索交易记录
+        function searchRecords() {
+            currentPage = 1;
+            loadTransactionRecords(1);
+        }
+
+        // 重置搜索
+        function resetSearch() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('orderId').value = '';
+            currentPage = 1;
+            loadTransactionRecords(1);
+        }
+
+        // 加载交易记录
+        function loadTransactionRecords(page) {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const orderId = document.getElementById('orderId').value;
+
+            let url = `/pos/get-transaction-records/?page=${page}`;
+            if (startDate) url += `&start_date=${startDate}`;
+            if (endDate) url += `&end_date=${endDate}`;
+            if (orderId) url += `&order_id=${encodeURIComponent(orderId)}`;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayRecords(data.orders);
+                    currentPage = data.current_page;
+                    totalPages = data.total_pages;
+                    updatePagination();
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('获取交易记录失败: ' + error.message, 'error');
+            });
+        }
+
+        // 显示交易记录
+        function displayRecords(records) {
+            const tbody = document.getElementById('recordsBody');
+            tbody.innerHTML = '';
+
+            if (records.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="no-data">暂无交易记录</td></tr>';
+                return;
+            }
+
+            records.forEach(record => {
+                const statusClass = getStatusClass(record.status);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="/pos/transaction-details/?order_id=${encodeURIComponent(record.order_id)}" style="color: #667eea; text-decoration: underline; cursor: pointer;">${record.order_id}</a></td>
+                    <td>${record.cashier}</td>
+                    <td>${record.total_count}</td>
+                    <td>¥${record.total_amount}</td>
+                    <td>¥${record.paid_amount}</td>
+                    <td>${record.payment_method}</td>
+                    <td><span class="status-badge ${statusClass}">${record.status}</span></td>
+                    <td>${record.create_time}</td>
+                    <td>
+                        <div class="action-buttons">
+                            ${record.status_code !== 3 && record.status_code !== 9 ? `
+                                <button class="action-btn cancel-btn" onclick="updateOrderStatus('${record.order_id}', 3)">取消</button>
+                                <button class="action-btn delete-btn" onclick="updateOrderStatus('${record.order_id}', 9)">删除</button>
+                            ` : '-'}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // 获取状态样式类
+        function getStatusClass(status) {
+            if (status === '已支付') return 'status-paid';
+            if (status === '待支付') return 'status-pending';
+            if (status === '已取消') return 'status-cancelled';
+            if (status === '已删除') return 'status-deleted';
+            return '';
+        }
+
+        // 更新订单状态
+        function updateOrderStatus(orderId, status) {
+            if (!confirm('确定要更新订单状态吗？')) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('order_id', orderId);
+            formData.append('status', status);
+
+            fetch('/pos/update-order-status/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showMessage(data.message, 'success');
+                    loadTransactionRecords(currentPage);
+                } else {
+                    showMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('更新订单状态失败: ' + error.message, 'error');
+            });
+        }
+
+        // 更新分页
+        function updatePagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            // 上一页按钮
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = '上一页';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.onclick = () => loadTransactionRecords(currentPage - 1);
+            pagination.appendChild(prevBtn);
+
+            // 页码按钮
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                pageBtn.className = i === currentPage ? 'active' : '';
+                pageBtn.onclick = () => loadTransactionRecords(i);
+                pagination.appendChild(pageBtn);
+            }
+
+            // 下一页按钮
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = '下一页';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.onclick = () => loadTransactionRecords(currentPage + 1);
+            pagination.appendChild(nextBtn);
+        }
+
+        // 获取CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // 显示消息
+        function showMessage(message, type) {
+            alert(message);
+        }
+    </script>
+</body>
+</html>

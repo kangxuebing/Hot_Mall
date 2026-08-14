@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小票预览 - Hot Mall</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .receipt {
+            background: white;
+            width: 300px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px dashed #000;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .receipt-header h1 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .receipt-header p {
+            font-size: 12px;
+            color: #666;
+        }
+        .receipt-info {
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+        .receipt-info p {
+            margin: 5px 0;
+        }
+        .receipt-items {
+            border-top: 1px dashed #000;
+            border-bottom: 1px dashed #000;
+            padding: 10px 0;
+            margin-bottom: 15px;
+        }
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin: 8px 0;
+        }
+        .receipt-item-name {
+            flex: 1;
+        }
+        .receipt-item-details {
+            text-align: right;
+        }
+        .receipt-total {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .receipt-total p {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .receipt-footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            border-top: 2px dashed #000;
+            padding-top: 15px;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-print {
+            background: #667eea;
+            color: white;
+        }
+        .btn-print:hover {
+            background: #764ba2;
+        }
+        .btn-close {
+            background: #e74c3c;
+            color: white;
+        }
+        .btn-close:hover {
+            background: #c0392b;
+        }
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .buttons {
+                display: none;
+            }
+            .receipt {
+                box-shadow: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="receipt-header">
+            <h1>HOT MALL</h1>
+            <p>收银小票</p>
+        </div>
+        
+        <div class="receipt-info">
+            <p><strong>订单号:</strong> {{ order.order_id }}</p>
+            <p><strong>时间:</strong> {{ order.create_time|date:"Y-m-d H:i:s" }}</p>
+            <p><strong>收银员:</strong> {{ order.cashier.username }}</p>
+            {% if order.member %}
+            <p><strong>会员:</strong> {{ order.member.username }}</p>
+            <p><strong>会员等级:</strong> {{ order.member.get_member_level_display }}</p>
+            {% endif %}
+            <p><strong>支付方式:</strong> {{ order.get_payment_method_display }}</p>
+        </div>
+        
+        <div class="receipt-items">
+            <p style="font-weight: bold; margin-bottom: 10px;">商品明细:</p>
+            {% for item in order_items %}
+            <div class="receipt-item">
+                <div class="receipt-item-name">{{ item.sku.name }}</div>
+                <div class="receipt-item-details">
+                    原价: ¥{{ item.original_price }} x {{ item.quantity }}<br>
+                    {% if item.discount_rate < 1.00 %}
+                    折扣率: {{ item.discount_rate }}<br>
+                    {% endif %}
+                    应付: ¥{{ item.price }} x {{ item.quantity }} = ¥{{ item.subtotal }}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="receipt-info" style="margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;">
+            <p><strong>折扣信息:</strong></p>
+            {% if order.member and order.discount_type != 'promotion' %}
+            <p>会员折扣率: {{ order.member.discount_rate }}</p>
+            {% endif %}
+            <p>订单折扣方式: 
+                {% if order.discount_type == 'member' %}会员折扣
+                {% elif order.discount_type == 'promotion' %}商品促销
+                {% else %}无折扣
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="receipt-total">
+            <p><span>商品数量:</span> <span>{{ order.total_count }}</span></p>
+            <p><span>折扣前总金额:</span> <span>¥{{ order.original_amount }}</span></p>
+            {% if order.discount_amount > 0 %}
+            <p><span>优惠金额:</span> <span>-¥{{ order.discount_amount }}</span></p>
+            <p><span>折扣后金额:</span> <span>¥{{ order.total_amount }}</span></p>
+            {% endif %}
+            <p><span>应付金额:</span> <span>¥{{ order.total_amount }}</span></p>
+            <p><span>实付金额:</span> <span>¥{{ order.total_amount }}</span></p>
+        </div>
+        
+        <div class="receipt-footer">
+            <p>谢谢惠顾！</p>
+            <p>欢迎再次光临</p>
+        </div>
+    </div>
+    
+    <div class="buttons">
+        <button class="btn btn-print" onclick="printReceipt()">打印小票</button>
+        <button class="btn btn-close" onclick="window.close()">关闭窗口</button>
+    </div>
+    
+    <script>
+        function printReceipt() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

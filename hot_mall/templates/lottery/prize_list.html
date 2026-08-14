@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block title %}奖品管理 - 肥猫商城{% endblock %}
+
+
+{% block right_content %}
+<div data-csrf-token="{{ csrf_token }}" data-delete-url="{{ url('lottery:prize_delete_ajax') }}" data-view="prize-list">
+    <div class="main_content clearfix">
+        <style>
+            .breadcrumb {
+                padding: 15px 0;
+                border-bottom: 1px solid #eee;
+                margin-bottom: 20px;
+            }
+            .breadcrumb a {
+                color: #666;
+                text-decoration: none;
+                transition: color 0.3s;
+            }
+            .breadcrumb a:hover {
+                color: #007bff;
+            }
+            .breadcrumb span {
+                color: #999;
+                margin: 0 8px;
+                font-size: 14px;
+            }
+            .breadcrumb span:last-child {
+                color: #333;
+                font-weight: 500;
+            }
+        </style>
+        <div class="breadcrumb">
+            <a href="#">抽奖游戏管理</a> <span>&gt;</span>
+            <span>奖品管理</span>
+        </div>
+
+        <h2 class="main_title">奖品管理</h2>
+
+        <div class="common_main_list">
+            <div class="filter_box">
+                <a href="{{ url('lottery:prize_add') }}" class="btn btn-primary">添加奖品</a>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>中奖等级</th>
+                        <th>商品名称</th>
+                        <th>奖品数量</th>
+                        <th width="180">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prize in prizes %}
+                    <tr data-prize-id="{{ prize.id }}">
+                        <td>{{ prize.prize_level.name }}</td>
+                        <td>{{ prize.sku.name }}</td>
+                        <td>{{ prize.quantity }}</td>
+                        <td>
+                            <a href="{{ url('lottery:prize_edit', args=(prize.id,)) }}" class="btn btn-sm btn-info">编辑</a>
+                            <button type="button" class="btn btn-sm btn-danger del-prize-btn" v-on:click="deletePrize({{ prize.id }}, $event)">删除</button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">暂无奖品</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="{{ static('js/lottery/prize_list.js') }}"></script>
+{% endblock %}

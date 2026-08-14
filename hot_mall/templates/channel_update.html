@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-频道管理{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" id="total_pages" value="{{ page_obj.paginator.num_pages }}">
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        频道管理
+    </h3>
+
+    <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover"
+                       style="font-size:14px; border-collapse:separate; border-spacing:0;">
+                    <thead style="background:linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            ID
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            频道组
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            类别
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            URL
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            顺序
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            创建时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% if channels %}
+                        {% for channel in channels %}
+                            <tr style="height:60px; background:#fafbfc; border-bottom:1px solid #e9ecef;">
+                                <td style="text-align:center; vertical-align:middle; color:#333;">{{ channel.id }}</td>
+                                <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">{{ channel.group.name }}</td>
+                                <td style="text-align:center; vertical-align:middle; color:#333;">{{ channel.category.name }}</td>
+                                <td style="text-align:center; vertical-align:middle; color:#333;">{{ channel.url }}</td>
+                                <td style="text-align:center; vertical-align:middle; color:#333;">{{ channel.sequence }}</td>
+                                <td style="text-align:center; vertical-align:middle; color:#666; font-size:12px;">
+                                    {{ channel.create_time.strftime('%Y-%m-%d %H:%M') }}
+                                </td>
+                                <td style="text-align:center; vertical-align:middle;">
+                                    <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                        <a href="{{ url('goods:channel_edit', channel.id) }}"
+                                           class="btn btn-outline-primary btn-sm">修改</a>
+                                        <a href="javascript:;" @click.prevent="deleteChannel({{ channel.id }})"
+                                           class="btn btn-outline-danger btn-sm">删除</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="fas fa-inbox"></i> 暂无频道
+                            </td>
+                        </tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none; display: flex; align-items: center;">
+                        第 [[ currentPage ]] 页 / 共 [[ totalPages ]] 页
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="lastPage()">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="/static/js/vue-2.5.16.js"></script>
+    <script src="/static/js/axios-0.18.0.min.js"></script>
+    <script src="/static/js/channel_list.js"></script>
+{% endblock %}

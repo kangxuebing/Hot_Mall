@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-会员管理{% endblock %}
+
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        会员信息管理</h3>
+
+    <div class="card shadow-sm" style="border-radius:10px; border:none; background:#fff;">
+        <div class="card-body p-4">
+            <!-- 搜索栏 -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" id="keyword" class="form-control" placeholder="搜索用户名或手机号" v-model="keyword">
+                        <button class="btn btn-primary" @click="searchMember">搜索</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 表格 -->
+            <div class="table-responsive" style="overflow-x:auto;padding-bottom:16px;margin-bottom:16px;">
+                <table class="table"
+                       style="font-size:14px; line-height:1.6; border-collapse: separate; border-spacing:0;">
+                    <!-- 表头：背景色 + 文字样式 + 边框 -->
+                    <thead style="background: linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            ID
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            用户名
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            手机号
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            邮箱
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            会员等级
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            积分
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            折扣率
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            累计消费
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            状态
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            注册时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <!-- 表格内容：背景色 + 文字颜色 + 行高 + 边框 -->
+                    <tbody>
+                    <tr v-if="loading">
+                        <td colspan="11" class="text-center text-muted py-5">加载中...</td>
+                    </tr>
+                    <tr v-else-if="memberList.length === 0">
+                        <td colspan="11" class="text-center text-muted py-5">暂无会员数据</td>
+                    </tr>
+                    <tr
+                            v-else
+                            v-for="member in memberList"
+                            :key="member.id"
+                            style="height:72px; background:#fafbfc; border-bottom:1px solid #e9ecef;"
+                    >
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[ member.id ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[ member.username ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#555;">[[ member.mobile ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#555;">[[ member.email || '-' ]]</td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <span v-if="member.member_level === 0" class="badge bg-secondary rounded-pill px-3">普通会员</span>
+                            <span v-else-if="member.member_level === 1" class="badge bg-info rounded-pill px-3">银卡会员</span>
+                            <span v-else-if="member.member_level === 2" class="badge bg-warning rounded-pill px-3">金卡会员</span>
+                            <span v-else-if="member.member_level === 3" class="badge bg-primary rounded-pill px-3">钻石会员</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ member.points ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#e53e3e; font-weight:bold;">[[ member.discount_rate ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">¥[[ member.total_consume ]]</td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <span v-if="member.is_active" class="badge bg-success rounded-pill px-3">正常</span>
+                            <span v-else class="badge bg-danger rounded-pill px-3">禁用</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#555;">[[ formatDate(member.date_joined) ]]</td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                <a :href="'/members/edit/' + member.id + '/'" class="btn btn-outline-primary btn-sm">编辑</a>
+                                <a href="javascript:;" @click.prevent="resetPassword(member.id)" class="btn btn-outline-warning btn-sm">重置密码</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <span class="btn btn-sm" style="background:#f8f9fa; border:1px solid #dee2e6;">
+                            [[ currentPage ]] / [[ totalPages ]]
+                        </span>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="lastPage()">末页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <!-- 重置密码模态框 -->
+    <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">重置密码</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="newPassword" class="form-label">新密码</label>
+                        <input type="password" class="form-control" id="newPassword" v-model="newPassword" placeholder="请输入新密码（至少6位）">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" @click="confirmResetPassword">确认重置</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.is_superuser = {{ request.user.is_superuser|lower }};
+    </script>
+    <script type="text/javascript" src="{{ static('js/user_center_member.js') }}"></script>
+{% endblock %}

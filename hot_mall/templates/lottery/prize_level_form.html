@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}{% if prize_level %}编辑奖项{% else %}添加奖项{% endif %} - 肥猫商城{% endblock %}
+
+
+{% block right_content %}
+<style>
+    .breadcrumb {
+        padding: 15px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+    .breadcrumb a {
+        color: #666;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .breadcrumb a:hover {
+        color: #007bff;
+    }
+    .breadcrumb span {
+        color: #999;
+        margin: 0 8px;
+        font-size: 14px;
+    }
+    .breadcrumb span:last-child {
+        color: #333;
+        font-weight: 500;
+    }
+    .right_content[v-cloak] {
+        display: block !important;
+    }
+</style>
+<div class="main_content clearfix">
+        <div class="breadcrumb">
+            <a href="{{ url('lottery:prize_level_list') }}">奖项管理</a> <span>&gt;</span>
+            <span>{% if prize_level %}编辑{% else %}添加{% endif %}奖项</span>
+        </div>
+
+        <h2 class="main_title">{% if prize_level %}编辑奖项{% else %}添加奖项{% endif %}</h2>
+
+        <div class="common_main_list">
+            <form method="post" class="form-horizontal" id="levelForm" role="form">
+                <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                {% if form_errors %}
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-6 alert alert-danger">
+                            {% for err in form_errors %}
+                                <div>{{ err }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">等级名称 <span class="text-danger">*</span>：</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="name" class="form-control"
+                               value="{% if prize_level %}{{ prize_level.name|default('') }}{% endif %}"
+                               required maxlength="30">
+                        <span class="help-block">例如：一等奖、二等奖、谢谢参与</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">等级序号 <span class="text-danger">*</span>：</label>
+                    <div class="col-sm-6">
+                        <input type="number" name="level" class="form-control" min="1"
+                               value="{% if prize_level %}{{ prize_level.level|default(1) }}{% endif %}"
+                               required>
+                        <span class="help-block">用于排序，数值越小排序越靠前，序号不可重复</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">中奖概率(%) <span class="text-danger">*</span>：</label>
+                    <div class="col-sm-6">
+                        <input type="number" step="0.01" min="0" max="100" name="probability" class="form-control"
+                               value="{% if prize_level %}{{ prize_level.probability|default(0.00) }}{% endif %}"
+                               required>
+                        <span class="help-block">取值范围0~100，支持两位小数；所有等级概率合理分配</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">转盘颜色：</label>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <input type="color" name="color" class="form-control" style="width:100px;"
+                                   value="
+                                           {% if prize_level %}{{ prize_level.color|default('#FF6B6B') }}{% else %}#FF6B6B{% endif %}">
+                            <span class="input-group-addon color-show">
+                            {% if prize_level %}{{ prize_level.color|default('#FF6B6B') }}{% else %}#FF6B6B{% endif %}
+                        </span>
+                        </div>
+                        <span class="help-block">转盘区块展示背景色</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">保存</button>
+                        <a href="{{ url('lottery:prize_level_list') }}" class="btn btn-default">取消</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            const $colorInput = $('input[name="color"]');
+            const $colorText = $('.color-show');
+
+            function syncColor() {
+                const colorVal = $colorInput.val();
+                $colorText.text(colorVal);
+            }
+
+            syncColor();
+            $colorInput.on('input', syncColor);
+
+            let submitting = false;
+            $('#levelForm').on('submit', function (e) {
+                if (submitting) {
+                    e.preventDefault();
+                    return false;
+                }
+                submitting = true;
+                const $btn = $('#submitBtn');
+                $btn.prop('disabled', true).text('提交中...');
+            });
+        })
+    </script>
+{% endblock %}

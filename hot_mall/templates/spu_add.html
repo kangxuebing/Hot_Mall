@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-{{ title }}{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <div class="container-fluid p-0">
+        <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+            {{ title }}
+        </h3>
+        <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+            <div class="card-body p-4">
+                <form id="spuForm" method="post">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="table-responsive mb-4">
+                        <table class="table"
+                               style="border-collapse:separate; border-spacing:0; font-size:14px; width:100%;">
+                            <tbody>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333;">名称 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <input type="text" name="name" class="form-control"
+                                           value="{{ form.name.data|default('') }}">
+                                    <span class="text-danger" v-if="errors.name">[[ errors.name ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">品牌 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <select name="brand" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for brand in brands %}
+                                            <option value="{{ brand.id }}"
+                                                    {% if form.instance.id and form.instance.brand.id == brand.id %}selected{% endif %}>{{ brand.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.brand">[[ errors.brand ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">一级类别 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <select name="category1" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}"
+                                                    {% if form.instance.id and form.instance.category1.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.category1">[[ errors.category1 ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">二级类别</td>
+                                <td style="padding:12px;">
+                                    <select name="category2" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}"
+                                                    {% if form.instance.id and form.instance.category2.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.category2">[[ errors.category2 ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">三级类别</td>
+                                <td style="padding:12px;">
+                                    <select name="category3" class="form-control">
+                                        <option value="">请选择</option>
+                                        {% for cat in categories %}
+                                            <option value="{{ cat.id }}"
+                                                    {% if form.instance.id and form.instance.category3.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="text-danger" v-if="errors.category3">[[ errors.category3 ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">销量</td>
+                                <td style="padding:12px;">
+                                    <input type="number" name="sales" class="form-control"
+                                           value="{{ form.sales.data|default('0') }}">
+                                    <span class="text-danger" v-if="errors.sales">[[ errors.sales ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">评价数</td>
+                                <td style="padding:12px;">
+                                    <input type="number" name="comments" class="form-control"
+                                           value="{{ form.comments.data|default('0') }}">
+                                    <span class="text-danger" v-if="errors.comments">[[ errors.comments ]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">详细介绍</td>
+                                <td style="padding:12px;">
+                                    <textarea name="desc_detail" class="form-control"
+                                              rows="3">{{ form.desc_detail.data|default('') }}</textarea>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">包装信息</td>
+                                <td style="padding:12px;">
+                                    <textarea name="desc_pack" class="form-control"
+                                              rows="3">{{ form.desc_pack.data|default('') }}</textarea>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">售后服务</td>
+                                <td style="padding:12px;">
+                                    <textarea name="desc_service" class="form-control"
+                                              rows="3">{{ form.desc_service.data|default('') }}</textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 30px;">
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" onclick="location.href='{{ url('goods:spu_list') }}'"
+                                    class="btn btn-outline-secondary">取消
+                            </button>
+                            <button type="button" @click="submitForm()" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+    </style>
+
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.currentSpuId = '';
+        // 仅编辑页有ID才赋值，新增页避免访问外键报错
+        {% if form.instance.id %}
+            window.currentSpuId = '{{ form.instance.id }}';
+            window.SPU_DATA = {
+                name: "{{ form.instance.name|default('') }}",
+                brand: "{{ form.instance.brand.id }}",
+                category1: "{{ form.instance.category1.id }}",
+                category2: "{{ form.instance.category2.id|default('') }}",
+                category3: "{{ form.instance.category3.id|default('') }}",
+                sales: "{{ form.instance.sales|default(0) }}",
+                comments: "{{ form.instance.comments|default(0) }}",
+                desc_detail: "{{ form.instance.desc_detail|default('') }}",
+                desc_pack: "{{ form.instance.desc_pack|default('') }}",
+                desc_service: "{{ form.instance.desc_service|default('') }}"
+            };
+        {% else %}
+            window.SPU_DATA = null;
+        {% endif %}
+    </script>
+
+    <script src="/static/js/vue-2.5.16.js"></script>
+    <script src="/static/js/spu_add.js"></script>
+{% endblock %}

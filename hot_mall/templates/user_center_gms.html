@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-商品管理{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* 显示搜索框 - 仅在更新商品页面显示 */
+    .search_wrap {
+        display: block !important;
+    }
+    .search_suggest {
+        display: block !important;
+    }
+</style>
+{% endblock %}
+
+{% block right_content %}
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        商品信息管理</h3>
+
+    <div class="card shadow-sm" style="border-radius:10px; border:none; background:#fff;">
+        <div class="card-body p-4">
+            <!-- 表格 -->
+            <div class="table-responsive" style="overflow-x:auto;padding-bottom:16px;margin-bottom:16px;">
+                <table class="table"
+                       style="font-size:14px; line-height:1.6; border-collapse: separate; border-spacing:0;">
+                    <!-- 表头：背景色 + 文字样式 + 边框 -->
+                    <thead style="background: linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            默认图片
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            商品名称
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            分类
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            单价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            进价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            市场价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            库存
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            销量
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            评价
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            状态
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            生产日期
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            保质期
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            过期日期
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            条码
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <!-- 表格内容：背景色 + 文字颜色 + 行高 + 边框 -->
+                    <tbody>
+                    <tr v-if="loading">
+                        <td colspan="15" class="text-center text-muted py-5">加载中...</td>
+                    </tr>
+                    <tr v-else-if="skuList.length === 0">
+                        <td colspan="15" class="text-center text-muted py-5">暂无商品数据</td>
+                    </tr>
+                    <tr
+                            v-else
+                            v-for="sku in skuList"
+                            :key="sku.id"
+                            style="height:72px; background:#fafbfc; border-bottom:1px solid #e9ecef;"
+                    >
+                        <td style="text-align:center; vertical-align:middle;">
+                            <img
+                                    v-if="sku.default_image_url"
+                                    :src="sku.default_image_url"
+                                    class="rounded"
+                                    style="width:60px;height:60px;object-fit:cover; border:1px solid #eee;">
+                            <span v-else class="text-muted small">无图</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[ sku.name
+                            ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#555;">[[ sku.category__name ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#e53e3e; font-weight:bold;">¥[[
+                            sku.price ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">¥[[ sku.cost_price ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#666;">¥[[ sku.market_price ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.stock ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.sales ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.comments ]]</td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <span v-if="sku.is_launched" class="badge bg-success rounded-pill px-3">已上架</span>
+                            <span v-else class="badge bg-secondary rounded-pill px-3">已下架</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.production_date || '-'
+                            ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.shelf_life || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ sku.expiration_date || '-'
+                            ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#0d6efd; font-weight:500;">[[
+                            sku.barcode ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                <a :href="'/editsku/' + sku.id + '/'" class="btn btn-outline-primary btn-sm">修改</a>
+                                <a href="javascript:;" @click.prevent="deleteSKU(sku.id)"
+                                   class="btn btn-outline-danger btn-sm">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页：原样保留 -->
+            <nav aria-label="Page navigation">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none; display: flex; align-items: center;">
+                        第 [[ currentPage ]] 页 / 共 [[ totalPages ]] 页
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)" @click="lastPage()">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript" src="{{ static('js/user_center_gms.js') }}"></script>
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.is_superuser = {{ request.user.is_superuser }};
+    </script>
+    <script>
+        // 列表数据自动校验
+        function validateGoodsData(sku) {
+            // 1. 价格/库存非空校验
+            if (!sku.price || !sku.cost_price || !sku.market_price || !sku.stock) {
+                alert(`商品【${sku.name}】存在空值，请完善价格/库存信息！`);
+                return false;
+            }
+
+            // 2. 数字校验
+            if (isNaN(sku.price) || isNaN(sku.cost_price) || isNaN(sku.market_price) || isNaN(sku.stock)) {
+                alert(`商品【${sku.name}】价格/库存必须是数字！`);
+                return false;
+            }
+
+            // 3. 负数拦截
+            if (sku.price < 0 || sku.cost_price < 0 || sku.market_price < 0 || sku.stock < 0 || sku.sales < 0 || sku.shelf_life < 0 || sku.comments < 0) {
+                alert(`商品【${sku.name}】价格/库存/销量/保质期/评论数不能为负数！`);
+                return false;
+            }
+
+            // 4. 进价大于售价提醒
+            if (Number(sku.cost_price) > Number(sku.price)) {
+                if (!confirm(`商品【${sku.name}】进价大于售价，是否继续？`)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    </script>
+{% endblock %}

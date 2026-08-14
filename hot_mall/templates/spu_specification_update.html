@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-SPU规格管理{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" id="total_pages" value="{{ page_obj.paginator.num_pages }}">
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        SPU规格管理
+    </h3>
+
+    <!-- 搜索框 -->
+    <div class="card shadow-sm mb-4" style="border-radius:10px; border:none; background:#fff;">
+        <div class="card-body p-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="输入SPU名称搜索"
+                               v-model="searchKeyword" @keyup.enter="search">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" @click="search">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover"
+                       style="font-size:14px; border-collapse:separate; border-spacing:0;">
+                    <thead style="background:linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            ID
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            SPU
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            规格名称
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            创建时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr v-if="filteredSpecs.length === 0">
+                        <td colspan="5" class="text-center text-muted py-5">
+                            <i class="fas fa-inbox"></i> 暂无SPU规格
+                        </td>
+                    </tr>
+                    <tr v-for="spec in filteredSpecs"
+                        :key="spec.id"
+                        style="height:60px; background:#fafbfc; border-bottom:1px solid #e9ecef;">
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ spec.id ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[
+                            spec.spu_name ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ spec.name ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#666; font-size:12px;">
+                            [[ spec.create_time ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                <a :href="'/spu-spec/edit/' + spec.id + '/'"
+                                   class="btn btn-outline-primary btn-sm">修改</a>
+                                <a href="javascript:;" @click.prevent="deleteSpuSpec(spec.id)"
+                                   class="btn btn-outline-danger btn-sm">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-4" v-if="filteredSpecs.length > 0">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none; display: flex; align-items: center;">
+                        第 [[ currentPage ]] 页 / 共 [[ totalPages ]] 页
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="lastPage()">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        window.SPU_SPEC_DATA = [
+            {% for spec in specs %}
+                {% if not loop.first %},{% endif %}
+                {
+                    id: {{ spec.id }},
+                    spu_name: "{{ spec.spu.name if spec.spu else '' }}",
+                    name: "{{ spec.name|default('') }}",
+                    create_time: "{{ spec.create_time.strftime('%Y-%m-%d %H:%M') if spec.create_time else '' }}"
+                }
+            {% endfor %}
+        ];
+    </script>
+    <script src="/static/js/vue-2.5.16.js"></script>
+    <script src="/static/js/axios-0.18.0.min.js"></script>
+    <script src="/static/js/spu_specification_list.js"></script>
+{% endblock %}

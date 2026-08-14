@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-供应商管理{% endblock %}
+
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+    <input type="hidden" id="total_pages" value="{{ page_obj.paginator.num_pages }}">
+    <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+        供应商信息管理</h3>
+
+    <!-- 搜索框 -->
+    <div class="card shadow-sm mb-4" style="border-radius:10px; border:none; background:#fff;">
+        <div class="card-body p-3">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="输入供应商名称搜索" v-model="searchKeyword"
+                               @keyup.enter="search">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100" @click="search">搜索</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table table-hover"
+                       style="font-size:14px; border-collapse:separate; border-spacing:0;">
+                    <thead style="background:linear-gradient(to right, #f8f9fa, #e9ecef);">
+                    <tr>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            ID
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            供应商名称
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            联系电话
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            微信
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            地址
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            等级
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            营业执照
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            创建时间
+                        </th>
+                        <th style="padding:14px 8px; font-weight:bold; color:#333; border-bottom:2px solid #0d6efd; text-align:center;">
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <tr v-if="filteredSuppliers.length === 0">
+                        <td colspan="9" class="text-center text-muted py-5">
+                            <i class="fas fa-inbox"></i> 暂无供应商信息
+                        </td>
+                    </tr>
+                    <tr v-for="supplier in filteredSuppliers"
+                        :key="supplier.id"
+                        style="height:60px; background:#fafbfc; border-bottom:1px solid #e9ecef;">
+                        <td style="text-align:center; vertical-align:middle; color:#333;">[[ supplier.id ]]</td>
+                        <td style="text-align:center; vertical-align:middle; color:#222; font-weight:500;">[[
+                            supplier.supl_name ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ supplier.supl_phone || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ supplier.wechat || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ supplier.supl_addr || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            <span v-if="supplier.level" class="badge bg-secondary">[[ supplier.level ]]</span>
+                            <span v-else>-</span>
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#333;">
+                            [[ supplier.business_license || '-' ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle; color:#666; font-size:12px;">
+                            [[ supplier.create_time ]]
+                        </td>
+                        <td style="text-align:center; vertical-align:middle;">
+                            <div style="display:flex; flex-direction:column; gap:4px; width:70px; margin:0 auto;">
+                                <a :href="'/suplupd/' + supplier.id + '/'"
+                                   class="btn btn-outline-primary btn-sm">修改</a>
+                                <a href="javascript:;" @click.prevent="deleteSupplier(supplier.id)"
+                                   class="btn btn-outline-danger btn-sm">删除</a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <nav aria-label="Page navigation" class="mt-4" v-if="filteredSuppliers.length > 0">
+                <ul class="pagination"
+                    style="display: flex; justify-content: center; gap: 12px; padding: 0; margin: 0;">
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="goPage(1)">首页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="prevPage()">上一页</a>
+                    </li>
+                    <li style="list-style: none; display: flex; align-items: center;">
+                        第 [[ currentPage ]] 页 / 共 [[ totalPages ]] 页
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="nextPage()">下一页</a>
+                    </li>
+                    <li style="list-style: none;">
+                        <a class="btn btn-outline-primary btn-sm" href="javascript:void(0)"
+                           @click="lastPage()">尾页</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script>
+        window.SUPPLIER_DATA = {{ supplier_json|safe }};
+    </script>
+    <script src="/static/js/supplier_list.js"></script>
+{% endblock %}

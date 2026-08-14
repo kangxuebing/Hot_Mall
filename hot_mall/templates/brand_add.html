@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-{{ title }}{% endblock %}
+<!-- 新增：隐藏base里的顶部全局搜索栏 -->
+{% block extra_css %}
+    {{ super() }}
+{% endblock %}
+
+{% block right_content %}
+    <div class="container-fluid p-0">
+        <h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+            {{ title }}
+        </h3>
+        <div class="card shadow-sm border-0" style="border-radius:10px; background:#fff;">
+            <div class="card-body p-4">
+                <form id="brandForm" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+                    <div class="table-responsive mb-4">
+                        <table class="table"
+                               style="border-collapse:separate; border-spacing:0; font-size:14px; width:100%;">
+                            <tbody>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="width:120px; padding:12px; font-weight:500; color:#333;">品牌名称 <span
+                                        class="text-danger">*</span></td>
+                                <td style="padding:12px;">
+                                    <!-- 绑定Vue双向绑定，移除原生value回填 -->
+                                    <input type="text" name="name" class="form-control" v-model="form.name">
+                                    <!-- Django后端校验错误 -->
+                                    {% if form.name.errors %}
+                                        <span class="text-danger">{{ form.name.errors[0] }}</span>
+                                    {% endif %}
+                                    <!-- Vue前端校验错误 -->
+                                    <span class="text-danger" v-if="errors.name">[[errors.name]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">首字母</td>
+                                <td style="padding:12px;">
+                                    <!-- 绑定Vue双向绑定 -->
+                                    <input type="text" name="first_letter" class="form-control"
+                                           v-model="form.first_letter">
+                                    <span class="text-danger" v-if="errors.first_letter">[[errors.first_letter]]</span>
+                                </td>
+                            </tr>
+                            <tr style="background-color:#fafbfc;">
+                                <td style="padding:12px; font-weight:500; color:#333;">Logo</td>
+                                <td style="padding:12px;">
+                                    <!-- 绑定图片选择监听事件 -->
+                                    <input type="file" name="logo" class="form-control" @change="handleLogoChange">
+                                    {% if form.instance.logo %}
+                                        <div style="margin-top:10px;">
+                                            <img src="{{ form.instance.logo.url }}" alt="品牌logo"
+                                                 style="max-width:100px; max-height:100px;">
+                                        </div>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 30px;">
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <button type="button" onclick="location.href='{{ url('goods:brand_list') }}'"
+                                    class="btn btn-outline-secondary">取消
+                            </button>
+                            <!-- 改为调用Vue提交方法，禁用原生submit -->
+                            <button type="button" @click="submitForm" class="btn btn-primary">保存</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --danger-color: #dc3545;
+            --light-bg: #f8f9fa;
+            --border-color: #e9ecef;
+        }
+    </style>
+
+    <!-- 全局暴露变量，供外部JS调用 -->
+    <script>
+        window.csrfToken = '{{ csrf_token }}';
+        window.currentBrandId = '';
+        {% if form.instance %}
+            window.currentBrandId = '{{ form.instance.id }}';
+            window.BRAND_DATA = {
+                name: "{{ form.instance.name }}",
+                first_letter: "{{ form.instance.first_letter|default('') }}"
+            };
+        {% else %}
+            window.BRAND_DATA = null;
+        {% endif %}
+    </script>
+    <!-- 所有JS业务逻辑 全部抽离到独立文件 -->
+    <script src="/static/js/brand_add.js"></script>
+{% endblock %}

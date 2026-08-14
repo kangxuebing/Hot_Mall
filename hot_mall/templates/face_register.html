@@ -1,0 +1,375 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-人脸注册{% endblock %}
+
+
+{% block extra_css %}
+    <style>
+        .video-container {
+            width: 320px;
+            height: 240px;
+            margin: 0 auto;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #000;
+        }
+
+        #video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #canvas {
+            display: none;
+        }
+
+        .capture-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0;
+            background: #ff6700;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .capture-btn:hover {
+            background: #e55600;
+        }
+
+        .capture-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .face-status {
+            text-align: center;
+            padding: 15px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .face-status.registered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .face-status.not-registered {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .upload-option {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .upload-option label {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .upload-option label:hover {
+            background: #0056b3;
+        }
+
+        .upload-option input[type="file"] {
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 320px;
+            max-height: 240px;
+            margin: 10px auto;
+            display: none;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+        }
+
+        .toggle-method {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .toggle-method button {
+            padding: 8px 16px;
+            margin: 0 5px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .toggle-method button.active {
+            background: #ff6700;
+        }
+    </style>
+{% endblock %}
+
+{% block right_content %}
+    <div class="info_con clearfix">
+        <h3 class="common_title2">人脸注册</h3>
+        <div class="toggle-method">
+            <button @click="useCamera = true" :class="{ active: useCamera }">摄像头拍照</button>
+            <button @click="useCamera = false" :class="{ active: !useCamera }">上传图片</button>
+        </div>
+
+        <div v-show="useCamera">
+            <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+        <div v-show="!useCamera">
+            <div class="upload-option">
+                <label for="file-input">选择人脸图片</label>
+                <input type="file" id="file-input" accept="image/*" @change="handleFileChange">
+            </div>
+            <img id="preview-image" class="preview-image" :src="previewImage" v-show="previewImage">
+        </div>
+
+        <div class="face-status" :class="faceRegistered ? 'registered' : 'not-registered'">
+            {% if user.face_encoding %}
+                <strong>状态：</strong>已注册人脸
+            {% else %}
+                <strong>状态：</strong>未注册人脸
+            {% endif %}
+        </div>
+        <div v-if="message" :class="['message', messageType]">[[ message ]]</div>
+        <button @click="registerFace" :disabled="capturing" class="capture-btn">
+            [[ capturing ? '注册中...' : '注册人脸' ]]
+        </button>
+        <div style="text-align: center; margin-top: 15px; color: #666; font-size: 14px;">
+            <p v-if="useCamera">请正对摄像头，保持光线充足</p>
+            <p v-else>请上传清晰的正脸照片</p>
+            <p>注册后可使用人脸识别快速登录</p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var vm = new Vue({
+                el: '#app',  // 改为base中定义的全局容器
+                delimiters: ['[[', ']]'],
+                data: {
+                    message: '',
+                    messageType: 'info',
+                    capturing: false,
+                    stream: null,
+                    faceRegistered: {% if user.face_encoding %}true{% else %}false{% endif %},
+                    useCamera: true,
+                    previewImage: null
+                },
+                mounted: function () {
+                    // 修复4：增加摄像头初始化容错，确保DOM加载完成
+                    if (this.useCamera) {
+                        this.startCamera();
+                    }
+                },
+                beforeDestroy: function () {
+                    this.stopCamera();
+                },
+                methods: {
+                    startCamera: function () {
+                        var self = this;
+                        // 修复5：兼容旧浏览器的getUserMedia API
+                        navigator.mediaDevices = navigator.mediaDevices || ((navigator.mozGetUserMedia || navigator.webkitGetUserMedia) ? {
+                            getUserMedia: function (constraints) {
+                                return new Promise(function (resolve, reject) {
+                                    (navigator.mozGetUserMedia ||
+                                        navigator.webkitGetUserMedia).call(navigator, constraints, resolve, reject);
+                                });
+                            }
+                        } : null);
+
+                        if (!navigator.mediaDevices) {
+                            self.message = '浏览器不支持摄像头功能，请使用上传图片方式';
+                            self.messageType = 'error';
+                            self.useCamera = false;
+                            return;
+                        }
+
+                        navigator.mediaDevices.getUserMedia({
+                            video: {
+                                facingMode: 'user',
+                                width: {ideal: 320},
+                                height: {ideal: 240}
+                            }
+                        })
+                            .then(function (stream) {
+                                self.stream = stream;
+                                var videoEl = document.getElementById('video');
+                                if (videoEl) {
+                                    videoEl.srcObject = stream;
+                                    // 修复6：确保视频播放
+                                    videoEl.play().catch(err => console.error('视频播放失败:', err));
+                                }
+                            })
+                            .catch(function (err) {
+                                self.message = '无法访问摄像头（权限被拒绝/无摄像头），请使用上传图片方式';
+                                self.messageType = 'error';
+                                self.useCamera = false;
+                                console.error('Camera error:', err);
+                            });
+                    },
+                    stopCamera: function () {
+                        if (this.stream) {
+                            this.stream.getTracks().forEach(function (track) {
+                                track.stop();
+                            });
+                            this.stream = null;
+                        }
+                    },
+                    handleFileChange: function (event) {
+                        var self = this;
+                        var file = event.target.files[0];
+                        if (!file) return;
+
+                        // 修复7：校验图片类型
+                        if (!file.type.startsWith('image/')) {
+                            self.message = '请选择有效的图片文件';
+                            self.messageType = 'error';
+                            return;
+                        }
+
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            self.previewImage = e.target.result;
+                        };
+                        reader.onerror = function () {
+                            self.message = '图片读取失败，请重试';
+                            self.messageType = 'error';
+                        };
+                        reader.readAsDataURL(file);
+                    },
+                    registerFace: function () {
+                        var self = this;
+                        if (this.capturing) return;
+
+                        this.capturing = true;
+                        this.message = '正在注册...';
+                        this.messageType = 'info';
+
+                        var image_data;
+
+                        if (this.useCamera) {
+                            var video = document.getElementById('video');
+                            var canvas = document.getElementById('canvas');
+                            if (!video || !canvas) {
+                                self.message = '摄像头初始化失败';
+                                self.messageType = 'error';
+                                self.capturing = false;
+                                return;
+                            }
+
+                            var context = canvas.getContext('2d');
+                            canvas.width = 320;  // 修复8：固定尺寸，避免视频尺寸异常
+                            canvas.height = 240;
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                            image_data = canvas.toDataURL('image/jpeg', 0.8);
+                        } else {
+                            if (!this.previewImage) {
+                                this.message = '请先选择图片';
+                                this.messageType = 'error';
+                                this.capturing = false;
+                                return;
+                            }
+                            image_data = this.previewImage;
+                        }
+
+                        // 修复9：正确调用getCookie方法（this.getCookie而非全局getCookie）
+                        var formData = new FormData();
+                        formData.append('image_data', image_data);
+                        formData.append('csrfmiddlewaretoken', this.getCookie('csrftoken'));
+
+                        axios.post('{{ url("users:face_register") }}', formData, {
+                            headers: {
+                                'X-CSRFToken': this.getCookie('csrftoken'),
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        })
+                            .then(function (response) {
+                                if (response.data && response.data.code === '0') {
+                                    self.message = '人脸注册成功！';
+                                    self.messageType = 'success';
+                                    self.faceRegistered = true;
+                                    setTimeout(function () {
+                                        self.message = '';
+                                    }, 3000);
+                                } else {
+                                    self.message = response.data?.errmsg || '注册失败';
+                                    self.messageType = 'error';
+                                }
+                                self.capturing = false;
+                            })
+                            .catch(function (error) {
+                                self.message = '网络错误，请重试';
+                                self.messageType = 'error';
+                                self.capturing = false;
+                                console.error('Register error:', error);
+                            });
+                    },
+                    getCookie: function (name) {
+                        var cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            var cookies = document.cookie.split(';');
+                            for (var i = 0; i < cookies.length; i++) {
+                                var cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+                },
+                watch: {
+                    // 修复10：监听useCamera变化，自动启停摄像头
+                    useCamera: function (newVal) {
+                        if (newVal) {
+                            this.startCamera();
+                        } else {
+                            this.stopCamera();
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

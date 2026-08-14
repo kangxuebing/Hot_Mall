@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}肥猫商城-{{ title }}{% endblock %}
+{% block left_menu_active %}{{ left_menu_active }}{% endblock %}
+{% block right_content %}
+<h3 class="common_title2" style="text-align:center; margin-bottom:20px; color:#222; font-weight:bold;">
+    {{ title }}
+</h3>
+
+<div class="card shadow-sm" style="border-radius:10px; border:none; background:#fff;">
+    <div class="card-body p-4">
+        {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+        
+        <form id="promotionForm" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            
+            <div class="table-responsive mb-4">
+                <table class="table" style="border-collapse:separate; border-spacing:0; font-size:14px; width:100%;">
+                    <tbody>
+                        <tr>
+                            <td colspan="2" style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd; border-radius:6px 6px 0 0;">
+                                基本信息
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="width:150px; padding:12px; font-weight:500; color:#333;">选择商品</td>
+                            <td style="padding:12px;">
+                                <select name="sku_id" class="form-control" required>
+                                    <option value="">请选择商品</option>
+                                    {% for sku in skus %}
+                                    <option value="{{ sku.id }}" {% if promotion and promotion.sku_id == sku.id %}selected{% endif %}>
+                                        {{ sku.name }} - ¥{{ sku.price }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <small class="text-muted">选择要参与促销的商品</small>
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="padding:12px; font-weight:500; color:#333;">折扣类型</td>
+                            <td style="padding:12px;">
+                                <select name="discount_type" id="discountTypeSelect" class="form-control" required>
+                                    <option value="1" {% if promotion and promotion.discount_type == 1 %}selected{% endif %}>固定折扣率</option>
+                                    <option value="2" {% if promotion and promotion.discount_type == 2 %}selected{% endif %}>固定金额优惠</option>
+                                </select>
+                                <small class="text-muted">选择折扣类型</small>
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;" v-show="showDiscountRate">
+                            <td style="padding:12px; font-weight:500; color:#333;">折扣率</td>
+                            <td style="padding:12px;">
+                                <input type="number" name="discount_rate" class="form-control"
+                                       value="{% if promotion %}{{ promotion.discount_rate }}{% else %}0.90{% endif %}" step="0.01" min="0.01" max="1.00"
+                                       placeholder="例如：0.90表示9折">
+                                <small class="text-muted">输入0.01-1.00之间的数字，0.90表示9折</small>
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;" v-show="showDiscountAmount">
+                            <td style="padding:12px; font-weight:500; color:#333;">优惠金额</td>
+                            <td style="padding:12px;">
+                                <input type="number" name="discount_amount" class="form-control"
+                                       value="{% if promotion %}{{ promotion.discount_amount }}{% else %}0{% endif %}" step="0.01" min="0"
+                                       placeholder="例如：10表示优惠10元">
+                                <small class="text-muted">输入优惠的金额</small>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2" style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd;">
+                                促销时间
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="padding:12px; font-weight:500; color:#333;">促销开始时间</td>
+                            <td style="padding:12px;">
+                                <input type="datetime-local" name="start_time" class="form-control"
+                                       value="{% if promotion %}{{ promotion.start_time.strftime('%Y-%m-%dT%H:%M') if promotion.start_time else '' }}{% endif %}" required>
+                                <small class="text-muted">促销活动开始时间</small>
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="padding:12px; font-weight:500; color:#333;">促销结束时间</td>
+                            <td style="padding:12px;">
+                                <input type="datetime-local" name="end_time" class="form-control"
+                                       value="{% if promotion %}{{ promotion.end_time.strftime('%Y-%m-%dT%H:%M') if promotion.end_time else '' }}{% endif %}" required>
+                                <small class="text-muted">促销活动结束时间</small>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2" style="padding: 8px 12px; background-color:#f8f9fa; font-weight:600; color:#0d6efd;">
+                                其他设置
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="padding:12px; font-weight:500; color:#333;">状态</td>
+                            <td style="padding:12px;">
+                                <select name="is_active" class="form-control">
+                                    <option value="True" {% if not promotion or promotion.is_active %}selected{% endif %}>启用</option>
+                                    <option value="False" {% if promotion and not promotion.is_active %}selected{% endif %}>禁用</option>
+                                </select>
+                                <small class="text-muted">是否启用此促销活动</small>
+                            </td>
+                        </tr>
+                        <tr style="background-color:#fafbfc;">
+                            <td style="padding:12px; font-weight:500; color:#333;">促销说明</td>
+                            <td style="padding:12px;">
+                                <textarea name="description" class="form-control" rows="3">{% if promotion %}{{ promotion.description }}{% endif %}</textarea>
+                                <small class="text-muted">促销活动的说明信息</small>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary px-4">保存</button>
+                <a href="{{ url('pos:promotion_list') }}" class="btn btn-secondary px-4">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript" src="{{ static('js/user_center_promotion_manage.js') }}"></script>
+{% endblock %}
