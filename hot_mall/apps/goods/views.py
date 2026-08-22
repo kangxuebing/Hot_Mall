@@ -679,9 +679,13 @@ class SPUCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, f'SPU "{self.object.name}" 创建成功！')
-        return response
+        try:
+            response = super().form_valid(form)
+            messages.success(self.request, f'SPU "{self.object.name}" 创建成功！')
+            return response
+        except Exception as e:
+            messages.error(self.request, f'SPU创建失败: {str(e)}')
+            return self.form_invalid(form)
 
 
 class SPUUpdateView(LoginRequiredMixin, UpdateView):

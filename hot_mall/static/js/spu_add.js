@@ -35,8 +35,12 @@ new Vue({
             const name = document.querySelector('input[name="name"]').value.trim();
             const brand = document.querySelector('select[name="brand"]').value.trim();
             const c1 = document.querySelector('select[name="category1"]').value.trim();
+            const c2 = document.querySelector('select[name="category2"]').value.trim();
+            const c3 = document.querySelector('select[name="category3"]').value.trim();
             const sales = document.querySelector('input[name="sales"]').value.trim();
             const comments = document.querySelector('input[name="comments"]').value.trim();
+
+            console.log('表单数据:', { name, brand, c1, c2, c3, sales, comments });
 
             // 1. 商品名称非空校验
             if (!name) {
@@ -64,11 +68,31 @@ new Vue({
                 return;
             }
 
+            // 处理空值 - 如果二级或三级类别未选择，设置为空字符串而不是'请选择'
+            if (c2 === '' || c2 === '请选择') {
+                document.querySelector('select[name="category2"]').value = '';
+            }
+            if (c3 === '' || c3 === '请选择') {
+                document.querySelector('select[name="category3"]').value = '';
+            }
+
             // 二次确认保存
             if (!confirm('确定保存SPU商品信息？')) return;
 
+            console.log('准备提交表单...');
+            const form = document.getElementById("spuForm");
+            console.log('表单元素:', form);
+            console.log('表单action:', form.action);
+            console.log('表单method:', form.method);
+
             // 提交原生表单
-            document.getElementById("spuForm").submit();
+            try {
+                form.submit();
+                console.log('表单提交成功');
+            } catch (e) {
+                console.error('表单提交失败:', e);
+                alert('表单提交失败: ' + e.message);
+            }
         }
     }
 });

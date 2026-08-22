@@ -58,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'hot_mall.license_middleware.LicenseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -65,6 +66,14 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# 商业授权配置：公钥由部署环境注入，私钥只保存在许可方签发环境。
+LOCAL_LICENSE_DIR = os.path.join('/tmp', 'hot_mall_dev_license')
+LICENSE_FILE = os.getenv('LICENSE_FILE', os.path.join(LOCAL_LICENSE_DIR, 'license.json'))
+LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
+LICENSE_PUBLIC_KEY_FILE = os.getenv(
+    'LICENSE_PUBLIC_KEY_FILE', os.path.join(LOCAL_LICENSE_DIR, 'public.pem')
+)
 
 ROOT_URLCONF = 'hot_mall.urls'
 
