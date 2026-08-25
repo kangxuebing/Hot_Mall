@@ -33,6 +33,7 @@ class SuspendOrderMemberPersistenceTests(TestCase):
                 'cart_data': json.dumps([{'id': 1, 'name': '商品A', 'price': '10.00', 'quantity': 1}]),
                 'remark': '测试挂单',
                 'member_id': self.member.id,
+                'terminal_id': 'terminal-a',
             },
         )
 
@@ -45,7 +46,7 @@ class SuspendOrderMemberPersistenceTests(TestCase):
 
         resume_response = self.client.post(
             reverse('pos:resume_order'),
-            {'suspended_order_id': suspended_order.id},
+            {'suspended_order_id': suspended_order.id, 'terminal_id': 'terminal-a'},
         )
 
         self.assertEqual(resume_response.status_code, 200)
@@ -53,3 +54,26 @@ class SuspendOrderMemberPersistenceTests(TestCase):
         self.assertTrue(resume_payload['success'])
         self.assertEqual(resume_payload['member']['id'], self.member.id)
         self.assertEqual(resume_payload['member']['username'], self.member.username)
+
+    def test_suspended_orders_are_isolated_by_cashier_and_terminal(self):
+        other_cashier = self.User.objects.create_user(
+            username='other_cashier', password='123456', mobile='13800000003'
+        )
+        self.client.force_login(self.cashier)
+        response = self.client.post(
+            reverse('pos:suspend_order'),
+            {'cart_data': json.dumps([{'id': 1, 'price': '10.00', 'quantity': 1}]), 'terminal_id': 'terminal-a'},
+        )
+        suspended_order_id = response.json()['suspended_order_id']
+
+        other_terminal_response = self.client.get(
+            reverse('pos:get_suspended_orders'), {'terminal_id': 'terminal-b'}
+        )
+        self.assertEqual(other_terminal_response.json()['orders'], [])
+
+        self.client.force_login(other_cashier)
+        other_cashier_response = self.client.post(
+            reverse('pos:resume_order'),
+            {'suspended_order_id': suspended_order_id, 'terminal_id': 'terminal-a'},
+        )
+        self.assertFalse(other_cashier_response.json()['success'])

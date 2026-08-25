@@ -54,6 +54,7 @@ MIDDLEWARE = [
 LICENSE_FILE = os.getenv('LICENSE_FILE', os.path.join(BASE_DIR, 'license.json'))
 LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
 LICENSE_PUBLIC_KEY_FILE = os.getenv('LICENSE_PUBLIC_KEY_FILE', '')
+POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', '')
 
 ROOT_URLCONF = 'hot_mall.urls'
 

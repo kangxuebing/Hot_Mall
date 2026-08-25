@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -18,6 +19,19 @@ from goods.models import SKU
 from .models import POSOrder, POSOrderItem, BarcodeScanner, SuspendedOrder, PromotionProduct
 from users.models import User
 from datetime import datetime, date, timedelta
+
+
+def get_terminal_id(request):
+    """Return the configured logical terminal code, rejecting mismatched clients."""
+    configured_terminal = getattr(settings, 'POS_TERMINAL_CODE', '').strip()
+    requested_terminal = (
+        request.META.get('HTTP_X_POS_TERMINAL_CODE') or
+        request.POST.get('terminal_id') or
+        request.GET.get('terminal_id') or ''
+    ).strip()
+    if configured_terminal:
+        return configured_terminal if requested_terminal == configured_terminal else None
+    return requested_terminal
 
 
 def check_product_expiration(sku):
@@ -66,6 +80,7 @@ class CashierInterfaceView(BasePosView):
     def get(self, request):
         context = self.get_context_data()
         context['is_superuser'] = request.user.is_superuser
+        context['pos_terminal_code'] = getattr(settings, 'POS_TERMINAL_CODE', '')
         return render(request, 'pos/cashier.html', context)
 
 
@@ -159,6 +174,8 @@ class CreateOrderView(LoginRequiredMixin, View):
 
     def post(self, request):
         items_json = request.POST.get('items', '[]')
+        terminal_id = get_terminal_id(request)
+        client_request_id = request.POST.get('client_request_id', '').strip()
         payment_method = request.POST.get('payment_method', 1)
         paid_amount = request.POST.get('paid_amount', 0)
         remark = request.POST.get('remark', '')
@@ -171,21 +188,35 @@ class CreateOrderView(LoginRequiredMixin, View):
 
         if not items:
             return JsonResponse({'success': False, 'message': '购物车为空'})
+        if not terminal_id or not client_request_id:
+            return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
         try:
             with transaction.atomic():
+                existing_order = POSOrder.objects.filter(client_request_id=client_request_id).first()
+                if existing_order:
+                    if (existing_order.cashier_id != request.user.id or
+                            existing_order.terminal_id != terminal_id):
+                        return JsonResponse({'success': False, 'message': '请求标识已被其他收银终端使用'})
+                    return JsonResponse({
+                        'success': True, 'order_id': existing_order.order_id,
+                        'total_amount': str(existing_order.total_amount),
+                        'discount_amount': str(existing_order.discount_amount),
+                        'paid_amount': str(existing_order.paid_amount),
+                        'change_amount': str(existing_order.change_amount),
+                        'member': None, 'idempotent': True,
+                    })
                 # 生成订单号
                 order_id = f"POS{timezone.now().strftime('%Y%m%d%H%M%S')}{uuid.uuid4().hex[:6].upper()}"
 
-                # 获取收银员（暂时使用第一个用户）
-                cashier = User.objects.first()
+                cashier = request.user
 
                 # 获取会员信息
                 member = None
                 member_discount_rate = Decimal('1.00')
                 if member_id:
                     try:
-                        member = User.objects.get(id=member_id)
+                        member = User.objects.select_for_update().get(id=member_id)
                         member_discount_rate = member.discount_rate
                     except User.DoesNotExist:
                         return JsonResponse({'success': False, 'message': '会员不存在'})
@@ -199,7 +230,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                     sku_id = item_data.get('sku_id')
                     quantity = item_data.get('quantity', 1)
 
-                    sku = SKU.objects.get(id=sku_id)
+                    sku = SKU.objects.select_for_update().get(id=sku_id)
                     original_price = sku.price
                     
                     # 检查库存是否充足（考虑过期和临保质期商品）
@@ -277,6 +308,8 @@ class CreateOrderView(LoginRequiredMixin, View):
                 order = POSOrder.objects.create(
                     order_id=order_id,
                     cashier=cashier,
+                    terminal_id=terminal_id,
+                    client_request_id=client_request_id,
                     member=member,
                     total_count=total_count,
                     total_amount=total_amount,
@@ -468,6 +501,7 @@ class PrintReceiptView(LoginRequiredMixin, View):
            HOT MALL 收银小票
 ================================
 订单号: {order.order_id}
+终端编号: {order.terminal_id}
 时间: {order.create_time.strftime('%Y-%m-%d %H:%M:%S')}
 收银员: {order.cashier.username}
 """
@@ -537,6 +571,7 @@ class SuspendOrderView(LoginRequiredMixin, View):
         cart_data = request.POST.get('cart_data', '[]')
         remark = request.POST.get('remark', '')
         member_id = request.POST.get('member_id', '')
+        terminal_id = get_terminal_id(request)
 
         try:
             cart = json.loads(cart_data)
@@ -545,10 +580,11 @@ class SuspendOrderView(LoginRequiredMixin, View):
 
         if not cart:
             return JsonResponse({'success': False, 'message': '购物车为空'})
+        if not terminal_id:
+            return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
         try:
-            # 获取收银员（暂时使用第一个用户）
-            cashier = User.objects.first()
+            cashier = request.user
 
             # 计算总金额和商品数量
             total_amount = Decimal('0')
@@ -567,6 +603,7 @@ class SuspendOrderView(LoginRequiredMixin, View):
             # 创建挂单
             suspended_order = SuspendedOrder.objects.create(
                 cashier=cashier,
+                terminal_id=terminal_id,
                 member=member,
                 total_count=total_count,
                 total_amount=total_amount,
@@ -594,11 +631,12 @@ class GetSuspendedOrdersView(LoginRequiredMixin, View):
 
     def get(self, request):
         try:
-            # 获取收银员（暂时使用第一个用户）
-            cashier = User.objects.first()
-
-            # 获取该收银员的挂单列表
-            suspended_orders = SuspendedOrder.objects.filter(cashier=cashier).order_by('-create_time')
+            terminal_id = get_terminal_id(request)
+            if not terminal_id:
+                return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
+            suspended_orders = SuspendedOrder.objects.filter(
+                cashier=request.user, terminal_id=terminal_id
+            ).order_by('-create_time')
 
             order_list = []
             for order in suspended_orders:
@@ -634,9 +672,14 @@ class ResumeOrderView(LoginRequiredMixin, View):
 
     def post(self, request):
         suspended_order_id = request.POST.get('suspended_order_id')
+        terminal_id = get_terminal_id(request)
+        if not terminal_id:
+            return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
         try:
-            suspended_order = SuspendedOrder.objects.get(id=suspended_order_id)
+            suspended_order = SuspendedOrder.objects.get(
+                id=suspended_order_id, cashier=request.user, terminal_id=terminal_id
+            )
 
             # 获取购物车数据
             cart_data = json.loads(suspended_order.cart_data)
@@ -678,10 +721,16 @@ class DeleteSuspendedOrderView(LoginRequiredMixin, View):
 
     def post(self, request):
         suspended_order_id = request.POST.get('suspended_order_id')
+        terminal_id = get_terminal_id(request)
+        if not terminal_id:
+            return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
         try:
-            suspended_order = SuspendedOrder.objects.get(id=suspended_order_id)
-            suspended_order.delete()
+            with transaction.atomic():
+                suspended_order = SuspendedOrder.objects.select_for_update().get(
+                    id=suspended_order_id, cashier=request.user, terminal_id=terminal_id
+                )
+                suspended_order.delete()
 
             return JsonResponse({'success': True, 'message': '删除挂单成功'})
 
@@ -859,7 +908,7 @@ class GetTransactionRecordsView(LoginRequiredMixin, View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class UpdateOrderStatusView(View):
+class UpdateOrderStatusView(LoginRequiredMixin, View):
     """更新订单状态"""
 
     @method_decorator(require_http_methods(["POST"]))

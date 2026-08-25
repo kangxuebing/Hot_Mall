@@ -53,6 +53,8 @@ class POSOrder(BaseModel):
     
     order_id = models.CharField(max_length=64, primary_key=True, verbose_name="订单号")
     cashier = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="收银员", related_name="cashier_orders")
+    terminal_id = models.CharField(max_length=100, default='', db_index=True, verbose_name="收银终端")
+    client_request_id = models.CharField(max_length=64, unique=True, null=True, blank=True, verbose_name="客户端请求号")
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="会员", related_name="member_orders")
     total_count = models.IntegerField(default=0, verbose_name="商品总数")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="总金额")
@@ -122,6 +124,7 @@ class BarcodeScanner(BaseModel):
 class SuspendedOrder(BaseModel):
     """挂单"""
     cashier = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="收银员")
+    terminal_id = models.CharField(max_length=100, default='', db_index=True, verbose_name="收银终端")
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="会员", related_name="suspended_orders")
     total_count = models.IntegerField(default=0, verbose_name="商品总数")
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="总金额")

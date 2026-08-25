@@ -74,6 +74,8 @@ LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
 LICENSE_PUBLIC_KEY_FILE = os.getenv(
     'LICENSE_PUBLIC_KEY_FILE', os.path.join(LOCAL_LICENSE_DIR, 'public.pem')
 )
+# 每台收银机部署一个唯一的逻辑终端编号，例如 STORE01-POS03。
+POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', 'STORE001-POS001')
 
 ROOT_URLCONF = 'hot_mall.urls'
 

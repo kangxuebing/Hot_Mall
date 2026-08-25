@@ -625,6 +625,11 @@
         let selectedPaymentMethod = 1;
         let currentSuspendedOrderId = null; // 当前取出的挂单ID
         let currentMember = null; // 当前选择的会员
+        const createId = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+        const terminalId = '{{ pos_terminal_code }}';
+        if (!terminalId) {
+            showMessage('当前收银机未配置终端编号，请联系管理员', 'error');
+        }
         
         // 条码输入处理
         document.getElementById('barcodeInput').addEventListener('keypress', function(e) {
@@ -907,7 +912,8 @@
                 totalAmount += discountedPrice * item.quantity;
             });
             
-            let body = `items=${encodeURIComponent(JSON.stringify(items))}&payment_method=${selectedPaymentMethod}&remark=${encodeURIComponent(remark)}&paid_amount=${totalAmount.toFixed(2)}`;
+            const clientRequestId = createId();
+            let body = `items=${encodeURIComponent(JSON.stringify(items))}&payment_method=${selectedPaymentMethod}&remark=${encodeURIComponent(remark)}&paid_amount=${totalAmount.toFixed(2)}&terminal_id=${encodeURIComponent(terminalId)}&client_request_id=${clientRequestId}`;
             if (member_id) {
                 body += `&member_id=${member_id}`;
             }
@@ -1007,7 +1013,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: `cart_data=${encodeURIComponent(JSON.stringify(cart))}&remark=${encodeURIComponent(remark)}${memberId ? `&member_id=${memberId}` : ''}`
+                body: `cart_data=${encodeURIComponent(JSON.stringify(cart))}&remark=${encodeURIComponent(remark)}&terminal_id=${encodeURIComponent(terminalId)}${memberId ? `&member_id=${memberId}` : ''}`
             })
             .then(response => response.json())
             .then(data => {
@@ -1035,7 +1041,7 @@
         
         // 加载挂单列表
         function loadSuspendedOrders() {
-            fetch('/pos/suspended-orders/', {
+            fetch(`/pos/suspended-orders/?terminal_id=${encodeURIComponent(terminalId)}`, {
                 method: 'GET',
                 headers: {
                     'X-CSRFToken': getCookie('csrftoken')
@@ -1093,7 +1099,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: `suspended_order_id=${orderId}`
+                body: `suspended_order_id=${orderId}&terminal_id=${encodeURIComponent(terminalId)}`
             })
             .then(response => response.json())
             .then(data => {
@@ -1131,7 +1137,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: `suspended_order_id=${orderId}`
+                body: `suspended_order_id=${orderId}&terminal_id=${encodeURIComponent(terminalId)}`
             })
             .then(response => response.json())
             .then(data => {
@@ -1159,7 +1165,7 @@
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'X-CSRFToken': getCookie('csrftoken')
                 },
-                body: `suspended_order_id=${currentSuspendedOrderId}`
+                body: `suspended_order_id=${currentSuspendedOrderId}&terminal_id=${encodeURIComponent(terminalId)}`
             })
             .then(response => response.json())
             .then(data => {
