@@ -68,7 +68,7 @@ MIDDLEWARE = [
 ]
 
 # 商业授权配置：公钥由部署环境注入，私钥只保存在许可方签发环境。
-LOCAL_LICENSE_DIR = os.path.join('/tmp', 'hot_mall_dev_license')
+LOCAL_LICENSE_DIR = os.path.join(BASE_DIR, 'license')
 LICENSE_FILE = os.getenv('LICENSE_FILE', os.path.join(LOCAL_LICENSE_DIR, 'license.json'))
 LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
 LICENSE_PUBLIC_KEY_FILE = os.getenv(
