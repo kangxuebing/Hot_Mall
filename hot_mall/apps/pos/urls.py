@@ -26,4 +26,8 @@ urlpatterns = [
     path('promotion/edit/<int:pk>/', views.PromotionEditView.as_view(), name='promotion_edit'),
     path('promotion/delete/<int:pk>/', views.PromotionDeleteView.as_view(), name='promotion_delete'),
     path('promotion/api/list/', views.PromotionListAPIView.as_view(), name='promotion_api_list'),
+    path('payment-config/', views.PaymentConfigView.as_view(), name='payment_config'),
+    path('payment-account/add/', views.PaymentAccountAddView.as_view(), name='payment_account_add'),
+    path('payment-account/edit/<int:pk>/', views.PaymentAccountEditView.as_view(), name='payment_account_edit'),
+    path('payment-account/delete/<int:pk>/', views.PaymentAccountDeleteView.as_view(), name='payment_account_delete'),
 ]

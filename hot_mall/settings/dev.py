@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os, sys
 
+# 尝试加载 .env 文件（如果存在）
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv 未安装，忽略
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 追加导包路径，简化添加子应用名
@@ -75,7 +82,21 @@ LICENSE_PUBLIC_KEY_FILE = os.getenv(
     'LICENSE_PUBLIC_KEY_FILE', os.path.join(LOCAL_LICENSE_DIR, 'public.pem')
 )
 # 每台收银机部署一个唯一的逻辑终端编号，例如 STORE01-POS03。
-POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', 'STORE001-POS001')
+# 方式1：单个终端编号（只接受该终端的请求）
+# 方式2：多个终端编号白名单（逗号分隔，支持多台收银机）
+# 方式3：空字符串（接受任意终端编号的请求，仅用于开发环境）
+# 通过环境变量配置，与生产环境保持一致
+POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', '')
+
+# 收银机IP白名单（可选，用于生产环境增强安全性）
+# 格式：终端编号:IP地址,终端编号:IP地址
+# 例如：'STORE01-POS01:192.168.1.101,STORE01-POS02:192.168.1.102'
+# 如果启用，会同时验证终端编号和IP地址
+POS_TERMINAL_IP_MAP = os.getenv('POS_TERMINAL_IP_MAP', '')
+
+# 是否启用IP白名单验证（True/False）
+# 生产环境强烈建议启用此选项
+POS_ENABLE_IP_WHITELIST = os.getenv('POS_ENABLE_IP_WHITELIST', 'False').lower() == 'true'
 
 ROOT_URLCONF = 'hot_mall.urls'
 
@@ -126,7 +147,7 @@ DATABASES = {
         'PORT': 3306,  # 数据库端口
         'USER': 'remote',  # 数据库用户名
         'PASSWORD': '9A55w0_d',  # 数据库用户密码
-        'NAME': 'hotmall',  # 数据库名字
+        'NAME': 'hotmall_prd',  # 数据库名字
     }
 }
 

@@ -10,10 +10,19 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
+import os, sys
+
+# 尝试加载 .env 文件（如果存在）
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass  # python-dotenv 未安装，忽略
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 追加导包路径，简化添加子应用名
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
 
 # Quick-start development settings - unsuitable for production
@@ -37,6 +46,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'multiupload',
+    'widget_tweaks',
+    'users',
+    'verifications',
+    'areas',
+    'haystack',
+    'contents',
+    'goods',
+    'orders',
+    'payment',
+    'gms',
+    'suppliers',
+    'pos',
+    'lottery',
 ]
 
 MIDDLEWARE = [
@@ -51,18 +74,37 @@ MIDDLEWARE = [
 ]
 
 # 商业授权配置：公钥由部署环境注入，私钥只保存在许可方签发环境。
-LICENSE_FILE = os.getenv('LICENSE_FILE', os.path.join(BASE_DIR, 'license.json'))
+LOCAL_LICENSE_DIR = os.path.join(BASE_DIR, 'license')
+LICENSE_FILE = os.getenv('LICENSE_FILE', os.path.join(LOCAL_LICENSE_DIR, 'license.json'))
 LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
-LICENSE_PUBLIC_KEY_FILE = os.getenv('LICENSE_PUBLIC_KEY_FILE', '')
+LICENSE_PUBLIC_KEY_FILE = os.getenv(
+    'LICENSE_PUBLIC_KEY_FILE', os.path.join(LOCAL_LICENSE_DIR, 'public.pem')
+)
+
+# 每台收银机部署一个唯一的逻辑终端编号，例如 STORE01-POS03。
+# 方式1：单个终端编号（只接受该终端的请求）
+# POS_TERMINAL_CODE = 'STORE01-POS01'
+# 方式2：多个终端编号白名单（逗号分隔，支持多台收银机）
 POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', '')
+# 方式3：空字符串（接受任意终端编号的请求，仅用于开发环境）
+# 注意：生产环境必须配置终端白名单或IP绑定
+
+# 收银机IP白名单（可选，用于生产环境增强安全性）
+# 格式：终端编号:IP地址,终端编号:IP地址
+# 例如：'STORE01-POS01:192.168.1.101,STORE01-POS02:192.168.1.102'
+# 如果启用，会同时验证终端编号和IP地址
+POS_TERMINAL_IP_MAP = os.getenv('POS_TERMINAL_IP_MAP', '')
+
+# 是否启用IP白名单验证（True/False）
+# 生产环境强烈建议启用此选项
+POS_ENABLE_IP_WHITELIST = os.getenv('POS_ENABLE_IP_WHITELIST', 'False').lower() == 'true'
 
 ROOT_URLCONF = 'hot_mall.urls'
 
 TEMPLATES = [
-    # Django模板引擎 - 仅用于admin应用，不加载项目templates目录
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],  # 不指定目录，仅使用APP_DIRS查找
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,10 +115,9 @@ TEMPLATES = [
             ],
         },
     },
-    # Jinja2模板引擎配置信息 - 用于项目模板
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],  # 模板文件加载路径
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,7 +126,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
-            # 补充Jinja2模板引擎环境
             'environment': 'hot_mall.utils.jinja2_env.jinja2_environment',
         },
     },
@@ -97,23 +137,129 @@ WSGI_APPLICATION = 'hot_mall.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'ENGINE': 'django.db.backends.mysql',  # 数据库引擎
         'HOST': '192.168.1.29',  # 数据库主机
         'PORT': 3306,  # 数据库端口
         'USER': 'remote',  # 数据库用户名
         'PASSWORD': '9a55w0_d',  # 数据库用户密码
-        'NAME': 'HotMall',  # 数据库名字
-        # 'CHARSET':'utf8',
+        'NAME': 'hotmall_prd',  # 数据库名字
+    }
+}
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 媒体文件配置（用户上传的图片存储路径）
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')  # 本地存储根目录
+MEDIA_URL = '/media/'  # 浏览器访问图片的URL前缀
+
+# Haystack search configuration
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshCNEngine',
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5
+
+# User model
+AUTH_USER_MODEL = 'users.User'
+AUTHENTICATION_BACKENDS = ['users.utils.UsernameModelBackend']
+LOGIN_URL = '/login/'
+
+# Redis cache configuration
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "session": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "verify_code": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "history": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "carts": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/4",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "session"
+
+# Static files
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+# Internationalization
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_L10N = True
+USE_TZ = True
+
+# Logging
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(os.path.dirname(BASE_DIR), 'logs/fatcat.log'),
+            'maxBytes': 300 * 1024 * 1024,
+            'backupCount': 10,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console', 'file'],
+            'propagate': True,
+            'level': 'INFO',
+        },
     }
 }
 

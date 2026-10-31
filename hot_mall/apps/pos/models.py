@@ -4,6 +4,74 @@ from goods.models import SKU
 from users.models import User
 
 
+class Store(BaseModel):
+    """门店表"""
+    store_code = models.CharField(max_length=20, unique=True, verbose_name="门店编号")
+    store_name = models.CharField(max_length=50, verbose_name="门店名称")
+    address = models.CharField(max_length=200, verbose_name="门店地址")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="联系电话")
+    manager = models.CharField(max_length=50, blank=True, verbose_name="店长")
+    STATUS_CHOICES = (
+        (1, "启用"),
+        (0, "停用"),
+    )
+    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="状态")
+    business_hours = models.CharField(max_length=100, blank=True, verbose_name="营业时间")
+
+    class Meta:
+        db_table = "tb_store"
+        verbose_name = '门店'
+        verbose_name_plural = verbose_name
+        ordering = ['store_code']
+
+    def __str__(self):
+        return f"{self.store_code} - {self.store_name}"
+
+
+class UserStore(BaseModel):
+    """用户-门店关联表"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, verbose_name="门店")
+    ROLE_CHOICES = (
+        (1, "店长"),
+        (2, "收银员"),
+        (3, "库管"),
+    )
+    role = models.SmallIntegerField(choices=ROLE_CHOICES, verbose_name="角色")
+
+    class Meta:
+        db_table = "tb_user_store"
+        verbose_name = '用户门店关联'
+        verbose_name_plural = verbose_name
+        unique_together = [['user', 'store']]  # 一个用户在同一门店只能有一个角色
+        ordering = ['user', 'store']
+
+    def __str__(self):
+        return f"{self.user.username} - {self.store.store_name} ({self.get_role_display()})"
+
+
+class StoreStock(BaseModel):
+    """门店库存表"""
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, verbose_name="门店")
+    sku = models.ForeignKey(SKU, on_delete=models.CASCADE, verbose_name="商品")
+    stock = models.IntegerField(default=0, verbose_name="库存")
+    near_expiry_num = models.IntegerField(default=0, verbose_name="临保质期数量")
+    expired_num = models.IntegerField(default=0, verbose_name="过期商品数量")
+
+    class Meta:
+        db_table = "tb_store_stock"
+        verbose_name = '门店库存'
+        verbose_name_plural = verbose_name
+        unique_together = [['store', 'sku']]  # 每个门店的每个商品只能有一条库存记录
+        ordering = ['store', 'sku']
+        indexes = [
+            models.Index(fields=['store', 'sku'], name='idx_store_sku'),
+        ]
+
+    def __str__(self):
+        return f"{self.store.store_name} - {self.sku.name} (库存: {self.stock})"
+
+
 class PromotionProduct(BaseModel):
     """促销商品"""
     DISCOUNT_TYPE_CHOICES = (
@@ -139,3 +207,29 @@ class SuspendedOrder(BaseModel):
     
     def __str__(self):
         return f"挂单 {self.id} - {self.cashier.username}"
+
+
+class PaymentAccount(BaseModel):
+    """收款账户配置"""
+    PAYMENT_TYPE_CHOICES = (
+        (2, "支付宝"),
+        (3, "微信支付"),
+        (4, "银行卡"),
+    )
+    
+    payment_type = models.SmallIntegerField(choices=PAYMENT_TYPE_CHOICES, unique=True, verbose_name="支付方式")
+    account_name = models.CharField(max_length=100, verbose_name="账户名称")
+    account_number = models.CharField(max_length=200, verbose_name="账号/商户号")
+    merchant_id = models.CharField(max_length=200, blank=True, default='', verbose_name="商户ID")
+    api_key = models.CharField(max_length=500, blank=True, default='', verbose_name="API密钥")
+    app_id = models.CharField(max_length=200, blank=True, default='', verbose_name="应用ID")
+    is_active = models.BooleanField(default=True, verbose_name="是否启用")
+    remark = models.TextField(blank=True, default='', verbose_name="备注")
+    
+    class Meta:
+        db_table = "tb_payment_account"
+        verbose_name = '收款账户配置'
+        verbose_name_plural = verbose_name
+    
+    def __str__(self):
+        return f"{self.get_payment_type_display()} - {self.account_name}"

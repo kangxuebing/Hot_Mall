@@ -3,6 +3,9 @@ Django==3.2.25
 asgiref==3.7.2
 sqlparse==0.4.4
 
+# Environment Variables
+python-dotenv==1.0.0
+
 # Database
 mysqlclient==2.1.1
 PyMySQL==1.1.1

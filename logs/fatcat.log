@@ -93841,3 +93841,1684 @@ INFO 2026-08-28 05:50:23,421 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200
 INFO 2026-08-28 05:50:24,639 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 219
 INFO 2026-08-28 05:50:24,671 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
 INFO 2026-08-28 05:50:24,741 basehttp 161 "GET /pos/receipt/POS20260828055024C6CDB9/ HTTP/1.1" 200 5584
+INFO 2026-08-28 06:29:20,956 basehttp 161 "GET /info/ HTTP/1.1" 200 22394
+INFO 2026-08-28 06:29:21,075 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 06:29:40,679 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-08-28 06:29:46,719 basehttp 161 "GET /info/ HTTP/1.1" 200 22394
+INFO 2026-08-28 06:29:46,760 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 06:33:11,607 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/models.py changed, reloading.
+INFO 2026-08-28 06:33:12,033 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:33:39,295 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:33:39,657 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:33:50,559 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:33:50,888 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:34:04,792 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:34:05,106 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:38:45,392 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:38:45,668 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:38:50,834 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:38:51,047 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 06:38:56,945 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 06:38:57,183 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 07:46:47,047 basehttp 161 "GET /info/ HTTP/1.1" 200 22575
+INFO 2026-08-28 07:46:47,103 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+ERROR 2026-08-28 07:46:49,682 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 47, in template
+    <td>{{ account.merchant_id|default:"-" }}</td>
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of print statement', got ':'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("expected token 'end of print statement', got ':'",)
+ERROR 2026-08-28 07:46:49,683 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 161039
+ERROR 2026-08-28 07:52:52,505 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 47, in template
+    <td>{{ account.merchant_id|default:"-" }}</td>
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of print statement', got ':'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("expected token 'end of print statement', got ':'",)
+ERROR 2026-08-28 07:52:52,506 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 160012
+ERROR 2026-08-28 07:52:53,677 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 47, in template
+    <td>{{ account.merchant_id|default:"-" }}</td>
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of print statement', got ':'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("expected token 'end of print statement', got ':'",)
+ERROR 2026-08-28 07:52:53,678 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 160012
+ERROR 2026-08-28 07:53:01,810 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 47, in template
+    <td>{{ account.merchant_id|default:"-" }}</td>
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of print statement', got ':'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("expected token 'end of print statement', got ':'",)
+ERROR 2026-08-28 07:53:01,812 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 160012
+ERROR 2026-08-28 07:53:02,481 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 47, in template
+    <td>{{ account.merchant_id|default:"-" }}</td>
+jinja2.exceptions.TemplateSyntaxError: expected token 'end of print statement', got ':'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("expected token 'end of print statement', got ':'",)
+ERROR 2026-08-28 07:53:02,482 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 160012
+ERROR 2026-08-28 07:54:55,681 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 69, in template
+    {% empty %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'empty'. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("Encountered unknown tag 'empty'. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.",)
+ERROR 2026-08-28 07:54:55,682 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 161650
+ERROR 2026-08-28 07:54:56,830 log 230 Internal Server Error: /pos/payment-settings/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 41, in get_template
+    return Template(self.env.get_template(template_name), self)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1016, in get_template
+    return self._load_template(name, globals)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 975, in _load_template
+    template = self.loader.load(self, name, self.make_globals(globals))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/loaders.py", line 138, in load
+    code = environment.compile(source, name, filename)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/templates/pos/payment_settings.html", line 69, in template
+    {% empty %}
+jinja2.exceptions.TemplateSyntaxError: Encountered unknown tag 'empty'. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py", line 1192, in get
+    return render(request, 'pos/payment_settings.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 47, in get_template
+    raise new from exc
+django.template.exceptions.TemplateSyntaxError: ("Encountered unknown tag 'empty'. Jinja was looking for the following tags: 'endfor' or 'else'. The innermost block that needs to be closed is 'for'.",)
+ERROR 2026-08-28 07:54:56,831 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 500 161650
+INFO 2026-08-28 07:55:49,403 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 200 21706
+INFO 2026-08-28 07:55:49,430 basehttp 161 "GET /static/js/pos/payment_settings.js HTTP/1.1" 200 1050
+INFO 2026-08-28 07:55:52,297 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 200 21706
+INFO 2026-08-28 07:58:11,587 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 07:58:11,985 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:03:14,594 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:03:14,924 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:03:24,160 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:03:24,366 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:03:32,590 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:03:32,782 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:03:44,069 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:03:44,345 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:03:56,631 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/urls.py changed, reloading.
+INFO 2026-08-28 08:03:56,907 autoreload 637 Watching for file changes with StatReloader
+WARNING 2026-08-28 08:07:08,810 log 230 Not Found: /pos/payment-settings/
+WARNING 2026-08-28 08:07:08,811 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 404 27855
+WARNING 2026-08-28 08:07:13,669 log 230 Not Found: /pos/payment-settings/
+WARNING 2026-08-28 08:07:13,669 basehttp 161 "GET /pos/payment-settings/ HTTP/1.1" 404 27855
+INFO 2026-08-28 08:09:22,243 basehttp 161 "GET /info/ HTTP/1.1" 200 22573
+INFO 2026-08-28 08:09:22,321 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 08:09:23,773 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21702
+INFO 2026-08-28 08:09:23,797 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 200 1048
+INFO 2026-08-28 08:13:00,518 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21921
+INFO 2026-08-28 08:13:00,520 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:13:00,543 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:13:11,829 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21921
+INFO 2026-08-28 08:13:13,977 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-08-28 08:13:15,744 basehttp 161 "GET /info/ HTTP/1.1" 200 22792
+INFO 2026-08-28 08:13:15,803 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 08:13:18,192 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21921
+INFO 2026-08-28 08:13:51,655 basehttp 161 "GET /info/ HTTP/1.1" 200 22792
+INFO 2026-08-28 08:13:51,713 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 08:13:52,658 basehttp 161 "GET /addresses/ HTTP/1.1" 200 26116
+INFO 2026-08-28 08:13:52,680 basehttp 161 "GET /static/js/user_center_site.js HTTP/1.1" 200 12044
+INFO 2026-08-28 08:13:52,694 basehttp 161 "GET /static/images/edit.png HTTP/1.1" 200 1244
+INFO 2026-08-28 08:13:52,710 basehttp 161 "GET /areas/ HTTP/1.1" 200 1774
+INFO 2026-08-28 08:13:53,386 basehttp 161 "GET /orders/info/1/ HTTP/1.1" 200 23650
+INFO 2026-08-28 08:13:53,417 basehttp 161 "GET /static/js/user_center_order.js HTTP/1.1" 200 1697
+INFO 2026-08-28 08:13:53,418 basehttp 161 "GET /static/js/jquery.pagination.min.js HTTP/1.1" 200 2935
+INFO 2026-08-28 08:13:53,420 basehttp 161 "GET /media/CtM3BVrRdOiAUBFXAAYJrpessGQ2842711.jpg HTTP/1.1" 200 351513
+INFO 2026-08-28 08:13:54,552 basehttp 161 "GET /addresses/ HTTP/1.1" 200 26116
+INFO 2026-08-28 08:13:54,580 basehttp 161 "GET /areas/ HTTP/1.1" 200 1774
+INFO 2026-08-28 08:13:57,910 basehttp 161 "GET /addsku/ HTTP/1.1" 200 82094
+INFO 2026-08-28 08:13:57,914 basehttp 161 "GET /static/js/user_center_sku.js HTTP/1.1" 200 4565
+INFO 2026-08-28 08:18:06,759 basehttp 161 "GET /addsku/ HTTP/1.1" 200 81880
+INFO 2026-08-28 08:18:07,640 basehttp 161 "GET /addsku/ HTTP/1.1" 200 81880
+INFO 2026-08-28 08:18:08,659 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21911
+INFO 2026-08-28 08:18:08,686 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:30:08,966 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:30:09,360 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:30:24,349 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:30:24,631 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:31:13,994 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21911
+INFO 2026-08-28 08:31:14,033 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:31:16,441 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21911
+INFO 2026-08-28 08:43:21,392 autoreload 251 /Users/kingkong/PyProject/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-08-28 08:43:21,828 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-28 08:43:45,713 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21911
+INFO 2026-08-28 08:43:45,744 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:43:47,245 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 21911
+ERROR 2026-08-28 08:45:53,893 exception 101 Invalid HTTP_HOST header: 'testserver'. You may need to add 'testserver' to ALLOWED_HOSTS.
+WARNING 2026-08-28 08:45:53,906 log 230 Bad Request: /pos/payment-config/
+INFO 2026-08-28 08:48:37,921 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22041
+INFO 2026-08-28 08:48:37,944 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 200 1062
+INFO 2026-08-28 08:48:39,503 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22041
+INFO 2026-08-28 08:48:39,526 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:48:43,269 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22041
+INFO 2026-08-28 08:48:43,297 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:48:45,287 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-08-28 08:48:46,856 basehttp 161 "GET /info/ HTTP/1.1" 200 22578
+INFO 2026-08-28 08:48:46,919 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 08:49:01,704 basehttp 161 "GET /info/ HTTP/1.1" 302 0
+INFO 2026-08-28 08:49:01,721 basehttp 161 "GET /login/?next=/info/ HTTP/1.1" 200 2689
+INFO 2026-08-28 08:49:01,729 basehttp 161 "GET /static/css/reset.css HTTP/1.1" 200 638
+INFO 2026-08-28 08:49:01,763 basehttp 161 "GET /static/js/axios-0.18.0.min.js HTTP/1.1" 200 12941
+INFO 2026-08-28 08:49:01,764 basehttp 161 "GET /static/js/common.js HTTP/1.1" 200 893
+INFO 2026-08-28 08:49:01,764 basehttp 161 "GET /static/js/login.js HTTP/1.1" 200 1757
+INFO 2026-08-28 08:49:01,765 basehttp 161 "GET /static/css/main.css HTTP/1.1" 200 41010
+INFO 2026-08-28 08:49:01,766 basehttp 161 "GET /static/js/vue-2.5.16.js HTTP/1.1" 200 289306
+INFO 2026-08-28 08:49:01,766 basehttp 161 "GET /static/images/logo.png HTTP/1.1" 200 18083
+INFO 2026-08-28 08:49:01,772 basehttp 161 "GET /static/images/icons02.png HTTP/1.1" 200 3935
+INFO 2026-08-28 08:49:01,774 basehttp 161 "GET /static/images/login_banner.png HTTP/1.1" 200 319312
+INFO 2026-08-28 08:49:14,256 basehttp 161 "POST /login/?next=/info/ HTTP/1.1" 200 2689
+INFO 2026-08-28 08:49:25,480 basehttp 161 "POST /login/?next=/info/ HTTP/1.1" 302 0
+INFO 2026-08-28 08:49:25,503 basehttp 161 "GET /info/ HTTP/1.1" 200 22578
+INFO 2026-08-28 08:49:25,513 basehttp 161 "GET /static/css/jquery.pagination.css HTTP/1.1" 200 523
+INFO 2026-08-28 08:49:25,514 basehttp 161 "GET /static/js/user_center_info.js HTTP/1.1" 200 2894
+INFO 2026-08-28 08:49:25,514 basehttp 161 "GET /static/js/jquery-1.12.4.min.js HTTP/1.1" 200 97163
+INFO 2026-08-28 08:49:28,475 basehttp 161 "GET /static/images/left_bg.jpg HTTP/1.1" 200 1367
+INFO 2026-08-28 08:49:28,493 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 08:49:28,501 basehttp 161 "GET /static/images/shop_cart.png HTTP/1.1" 200 1317
+INFO 2026-08-28 08:49:28,506 basehttp 161 "GET /media/CtM3BVrRbjSAazeSAAFvJD02RWs2636429.jpg HTTP/1.1" 200 85492
+INFO 2026-08-28 08:49:28,506 basehttp 161 "GET /media/CtM3BVrRZa6ANO_sAAFti6upbx40753757.jpg HTTP/1.1" 200 120736
+INFO 2026-08-28 08:49:28,507 basehttp 161 "GET /media/CtM3BVrRa8iAZdz1AAFZsBqChgk2188464.jpg HTTP/1.1" 200 64626
+INFO 2026-08-28 08:49:28,507 basehttp 161 "GET /media/CtM3BVrRbI2ARekNAAFZsBqChgk3141998.jpg HTTP/1.1" 200 64626
+INFO 2026-08-28 08:49:28,507 basehttp 161 "GET /media/CtM3BVrRbh2AX3JVAAFvJD02RWs4638828.jpg HTTP/1.1" 200 85492
+INFO 2026-08-28 08:49:31,605 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22041
+INFO 2026-08-28 08:49:31,628 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 200 1062
+WARNING 2026-08-28 08:50:14,583 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-08-28 08:50:14,587 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-08-28 08:50:14,591 log 230 Not Found: /favicon.ico
+WARNING 2026-08-28 08:50:14,591 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-08-28 08:50:14,592 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+WARNING 2026-08-28 08:50:14,592 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+INFO 2026-08-28 08:50:39,723 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 302 0
+INFO 2026-08-28 08:50:39,882 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-28 08:50:40,119 basehttp 161 "GET /static/js/common.js HTTP/1.1" 304 0
+WARNING 2026-08-28 08:50:40,557 log 230 Not Found: /favicon.ico
+WARNING 2026-08-28 08:50:40,558 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+INFO 2026-08-28 08:50:42,125 basehttp 161 "GET /info/ HTTP/1.1" 302 0
+INFO 2026-08-28 08:50:42,134 basehttp 161 "GET /login/?next=/info/ HTTP/1.1" 200 2689
+INFO 2026-08-28 08:50:43,958 basehttp 161 "POST /login/?next=/info/ HTTP/1.1" 302 0
+INFO 2026-08-28 08:50:43,976 basehttp 161 "GET /info/ HTTP/1.1" 200 22564
+INFO 2026-08-28 08:50:44,058 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-08-28 08:50:46,247 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22035
+INFO 2026-08-28 08:50:46,260 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 200 1062
+INFO 2026-08-28 08:52:12,194 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22027
+INFO 2026-08-28 08:52:12,276 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:19,486 basehttp 161 "GET /content-category/add/ HTTP/1.1" 200 23525
+INFO 2026-08-28 08:52:23,099 basehttp 161 "GET /addsku/ HTTP/1.1" 200 81866
+INFO 2026-08-28 08:52:23,118 basehttp 161 "GET /static/js/user_center_sku.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:25,782 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30919
+INFO 2026-08-28 08:52:25,793 basehttp 161 "GET /static/js/user_center_gms.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:25,850 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5024
+INFO 2026-08-28 08:52:27,567 basehttp 161 "GET /expirysku/ HTTP/1.1" 200 37356
+INFO 2026-08-28 08:52:27,584 basehttp 161 "GET /static/js/user_center_expiry.js HTTP/1.1" 304 0
+WARNING 2026-08-28 08:52:27,640 log 230 Not Found: /expirysku/None
+WARNING 2026-08-28 08:52:27,640 basehttp 161 "GET /expirysku/None HTTP/1.1" 404 22864
+INFO 2026-08-28 08:52:29,847 basehttp 161 "GET /pos/promotion/add/ HTTP/1.1" 200 141218
+INFO 2026-08-28 08:52:29,862 basehttp 161 "GET /static/js/user_center_promotion_manage.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:32,128 basehttp 161 "GET /pos/promotion/ HTTP/1.1" 200 26577
+INFO 2026-08-28 08:52:32,144 basehttp 161 "GET /static/js/user_center_promotion.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:32,203 basehttp 161 "GET /pos/promotion/api/list/?page=1&keyword= HTTP/1.1" 200 4018
+INFO 2026-08-28 08:52:33,900 basehttp 161 "GET /members/ HTTP/1.1" 200 29804
+INFO 2026-08-28 08:52:33,909 basehttp 161 "GET /static/js/user_center_member.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:33,970 basehttp 161 "GET /members/api/?page=1&keyword= HTTP/1.1" 200 3286
+INFO 2026-08-28 08:52:36,917 basehttp 161 "GET /brand/add/ HTTP/1.1" 200 24521
+INFO 2026-08-28 08:52:36,934 basehttp 161 "GET /static/js/brand_add.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:38,627 basehttp 161 "GET /category/list/ HTTP/1.1" 200 28599
+INFO 2026-08-28 08:52:38,644 basehttp 161 "GET /static/js/goods_category_list.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:47,008 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22027
+INFO 2026-08-28 08:52:47,026 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 08:52:48,921 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27292
+INFO 2026-08-28 08:52:48,936 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 200 481
+INFO 2026-08-28 10:39:28,263 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-08-28 10:39:28,310 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 10:39:29,984 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27298
+INFO 2026-08-28 10:39:30,012 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 200 481
+INFO 2026-08-28 12:34:54,324 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-28 12:34:54,395 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-28 12:34:56,306 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-08-28 12:34:56,328 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-08-28 12:34:58,221 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27298
+INFO 2026-08-28 12:34:58,225 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 304 0
+INFO 2026-08-28 12:35:06,942 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+WARNING 2026-08-28 12:35:53,443 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-08-28 12:35:53,447 log 230 Not Found: /favicon.ico
+WARNING 2026-08-28 12:35:53,452 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-08-28 12:35:53,452 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-08-28 12:35:53,452 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+WARNING 2026-08-28 12:35:53,453 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+INFO 2026-08-28 12:36:03,089 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-08-31 06:31:58,140 autoreload 637 Watching for file changes with StatReloader
+WARNING 2026-08-31 06:32:00,479 log 230 Forbidden: /
+WARNING 2026-08-31 06:32:00,479 basehttp 161 "GET / HTTP/1.1" 403 178
+WARNING 2026-08-31 06:32:00,501 log 230 Forbidden: /favicon.ico
+WARNING 2026-08-31 06:32:00,501 basehttp 161 "GET /favicon.ico HTTP/1.1" 403 178
+INFO 2026-08-31 06:46:17,743 autoreload 637 Watching for file changes with StatReloader
+WARNING 2026-08-31 06:46:19,890 log 230 Forbidden: /
+WARNING 2026-08-31 06:46:19,890 basehttp 161 "GET / HTTP/1.1" 403 178
+WARNING 2026-08-31 06:46:21,826 log 230 Forbidden: /
+WARNING 2026-08-31 06:46:21,827 basehttp 161 "GET / HTTP/1.1" 403 178
+WARNING 2026-08-31 06:47:10,411 log 230 Forbidden: /
+WARNING 2026-08-31 06:47:10,411 basehttp 161 "GET / HTTP/1.1" 403 178
+INFO 2026-08-31 06:52:18,801 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-31 06:52:21,682 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 06:52:21,689 basehttp 161 "GET /static/css/reset.css HTTP/1.1" 200 638
+INFO 2026-08-31 06:52:21,695 basehttp 161 "GET /static/css/main.css HTTP/1.1" 200 41010
+INFO 2026-08-31 06:52:21,695 basehttp 161 "GET /static/js/axios-0.18.0.min.js HTTP/1.1" 200 12941
+INFO 2026-08-31 06:52:21,696 basehttp 161 "GET /static/js/jquery-1.12.4.min.js HTTP/1.1" 200 97163
+INFO 2026-08-31 06:52:21,696 basehttp 161 "GET /static/js/vue-2.5.16.js HTTP/1.1" 200 289306
+INFO 2026-08-31 06:52:21,701 basehttp 161 "GET /static/js/index.js HTTP/1.1" 200 1143
+INFO 2026-08-31 06:52:21,701 basehttp 161 "GET /static/js/slide.js HTTP/1.1" 200 1822
+INFO 2026-08-31 06:52:21,701 basehttp 161 "GET /static/js/common.js HTTP/1.1" 200 893
+INFO 2026-08-31 06:52:21,702 basehttp 161 "GET /static/images/logo.png HTTP/1.1" 200 18083
+INFO 2026-08-31 06:52:21,705 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+INFO 2026-08-31 06:52:21,706 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-08-31 06:52:21,709 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+INFO 2026-08-31 06:52:21,709 basehttp 161 "GET /media/CtM3BVrLmnaADtSKAAGlxZuk7uk4998927.jpg HTTP/1.1" 200 124318
+INFO 2026-08-31 06:52:21,712 basehttp 161 "GET /media/CtM3BVrLnHaATJWfAABcalxfbWk5995788.jpg HTTP/1.1" 200 23658
+INFO 2026-08-31 06:52:21,713 basehttp 161 "GET /media/CtM3BVrLm_iAILnwAACbl1lbG3U8255973.jpg HTTP/1.1" 200 39831
+INFO 2026-08-31 06:52:21,715 basehttp 161 "GET /media/CtM3BVrMexWAfodJAAAhg8MeEWU8364862.jpg HTTP/1.1" 200 8579
+INFO 2026-08-31 06:52:21,715 basehttp 161 "GET /media/CtM3BVrMe2KAGXDKAAAVASh8SzY6938726.jpg HTTP/1.1" 200 5377
+INFO 2026-08-31 06:52:21,718 basehttp 161 "GET /media/CtM3BVrMgWyAH_f1AAAQuFJkR2o1196559.jpg HTTP/1.1" 200 4280
+INFO 2026-08-31 06:52:21,718 basehttp 161 "GET /media/CtM3BVrMgQuAM4-sAABPvjDmrZE7647305.jpg HTTP/1.1" 200 20414
+INFO 2026-08-31 06:52:21,723 basehttp 161 "GET /media/CtM3BVrMgX2AeXiGAABuWTn7Wr09762364.jpg HTTP/1.1" 200 28249
+INFO 2026-08-31 06:52:21,723 basehttp 161 "GET /media/CtM3BVrMgbiARBnzAABbhp78Lqs6191821.jpg HTTP/1.1" 200 23430
+INFO 2026-08-31 06:52:21,727 basehttp 161 "GET /media/CtM3BVrMgkaAWyHAAABbrVH9a7o5762009.jpg HTTP/1.1" 200 23469
+INFO 2026-08-31 06:52:21,728 basehttp 161 "GET /media/CtM3BVrMgeuAYEocAABd3TzhhGw1571126.jpg HTTP/1.1" 200 24029
+INFO 2026-08-31 06:52:21,731 basehttp 161 "GET /media/CtM3BVrMgo6Aa3OTAAA82h3PXzw9976088.jpg HTTP/1.1" 200 15578
+INFO 2026-08-31 06:52:21,731 basehttp 161 "GET /media/CtM3BVrMgmyAB_1AAABoaAzPPW86045138.jpg HTTP/1.1" 200 26728
+INFO 2026-08-31 06:52:21,736 basehttp 161 "GET /media/CtM3BVrMg_qACjBsAAActVXQUoc6433633.jpg HTTP/1.1" 200 7349
+INFO 2026-08-31 06:52:21,737 basehttp 161 "GET /media/CtM3BVrMhBeAaZ9OAABuZHjPsV88472096.jpg HTTP/1.1" 200 28260
+INFO 2026-08-31 06:52:21,740 basehttp 161 "GET /media/CtM3BVrMhDWAEwgEAABPce7je4w1228836.jpg HTTP/1.1" 200 20337
+INFO 2026-08-31 06:52:21,742 basehttp 161 "GET /media/CtM3BVrMhFuAB5eZAAAaQIF-UNs3707070.jpg HTTP/1.1" 200 6720
+INFO 2026-08-31 06:52:21,744 basehttp 161 "GET /media/CtM3BVrMhH6AAjD4AABS1vBu6x01229529.jpg HTTP/1.1" 200 21206
+INFO 2026-08-31 06:52:21,745 basehttp 161 "GET /media/CtM3BVrMhRCAB5hsAAAQZye4aIM5257140.jpg HTTP/1.1" 200 4199
+INFO 2026-08-31 06:52:21,748 basehttp 161 "GET /media/CtM3BVrMhVCAFC8tAABonSNLGHA3584281.jpg HTTP/1.1" 200 26781
+INFO 2026-08-31 06:52:21,748 basehttp 161 "GET /media/CtM3BVrMhW6Ac7QMAABd3TzhhGw0583536.jpg HTTP/1.1" 200 24029
+INFO 2026-08-31 06:52:21,751 basehttp 161 "GET /media/CtM3BVrMhYyAOjMVAABU1kCuf_48013827.jpg HTTP/1.1" 200 21718
+INFO 2026-08-31 06:52:21,751 basehttp 161 "GET /media/CtM3BVrMhaSAK3QLAAA7LKRGwzQ0348867.jpg HTTP/1.1" 200 15148
+INFO 2026-08-31 06:52:21,756 basehttp 161 "GET /media/CtM3BVrMhlSAP_27AAAW_YBdNEk8530912.jpg HTTP/1.1" 200 5885
+INFO 2026-08-31 06:52:21,757 basehttp 161 "GET /media/CtM3BVrMhjOAdMNbAAAR1JGA_cA5064317.jpg HTTP/1.1" 200 4564
+INFO 2026-08-31 06:52:21,762 basehttp 161 "GET /media/CtM3BVrMhpiAV3lJAABiLlkgy2Y9166507.jpg HTTP/1.1" 200 25134
+INFO 2026-08-31 06:52:21,762 basehttp 161 "GET /media/CtM3BVrMhniADXZpAAALTWT-dfQ6160056.jpg HTTP/1.1" 200 2893
+INFO 2026-08-31 06:52:21,767 basehttp 161 "GET /media/CtM3BVrMhveAOh8EAAA1ykQ-kAU6900992.jpg HTTP/1.1" 200 13770
+INFO 2026-08-31 06:52:21,768 basehttp 161 "GET /media/CtM3BVrMhyuAEf95AABFDj_owsg4241256.jpg HTTP/1.1" 200 17678
+INFO 2026-08-31 06:52:21,768 basehttp 161 "GET /static/images/icons.png HTTP/1.1" 200 7740
+INFO 2026-08-31 06:52:21,774 basehttp 161 "GET /media/CtM3BVrMh4eAWdF2AAA-Fkkc5rM1921911.jpg HTTP/1.1" 200 15894
+INFO 2026-08-31 06:52:21,776 basehttp 161 "GET /media/CtM3BVrMh0qAavITAABOVXYg3SI5232882.jpg HTTP/1.1" 200 20053
+INFO 2026-08-31 06:52:21,778 basehttp 161 "GET /media/CtM3BVrMh62AUlDTAAA-SfqPszY5890026.jpg HTTP/1.1" 200 15945
+INFO 2026-08-31 06:52:21,780 basehttp 161 "GET /media/CtM3BVrNsOuAQbJYAABoachTxTo8223966.jpg HTTP/1.1" 200 26729
+INFO 2026-08-31 06:52:21,783 basehttp 161 "GET /media/CtM3BVrNr0iAAbCEAABZEWPGxc48830214.jpg HTTP/1.1" 200 22801
+INFO 2026-08-31 06:52:21,784 basehttp 161 "GET /media/CtM3BVrNr2-AbNUxAABwpN-gR8E7784256.jpg HTTP/1.1" 200 28836
+INFO 2026-08-31 06:52:21,791 basehttp 161 "GET /media/CtM3BVrNr6iAWKHsAAAcWfJ6OD00441704.jpg HTTP/1.1" 200 7257
+INFO 2026-08-31 06:52:21,793 basehttp 161 "GET /media/CtM3BVrNr8KAD6b2AAByGLpNQV01684706.jpg HTTP/1.1" 200 29208
+INFO 2026-08-31 06:52:21,799 basehttp 161 "GET /media/CtM3BVrNsA2AQUMbAAAbb_vBV6I1599925.jpg HTTP/1.1" 200 7023
+INFO 2026-08-31 06:52:21,800 basehttp 161 "GET /media/CtM3BVrNsCuAUvllAAAOkY17G984349519.jpg HTTP/1.1" 200 3729
+INFO 2026-08-31 06:52:21,802 basehttp 161 "GET /media/CtM3BVrNsEGAZTfyAAAasplERbc8856337.jpg HTTP/1.1" 200 6834
+INFO 2026-08-31 06:52:21,802 basehttp 161 "GET /media/CtM3BVrhyhmAehqbAAA3XtuXCto1322736.jpg HTTP/1.1" 200 14174
+INFO 2026-08-31 06:52:21,803 basehttp 161 "GET /media/CtM3BVrNsGCAeDZeAABtIYY5-s41601603.jpg HTTP/1.1" 200 27937
+INFO 2026-08-31 06:52:21,805 basehttp 161 "GET /media/CtM3BVrMisuAJnyWAABYJxXfN8w9822011.jpg HTTP/1.1" 200 22567
+INFO 2026-08-31 06:52:21,805 basehttp 161 "GET /media/CtM3BVrNsHyANXdyAABeDo_Qzeg1095047.jpg HTTP/1.1" 200 24078
+INFO 2026-08-31 06:52:21,806 basehttp 161 "GET /media/CtM3BVrNrY-AdBacAAA7DYB8sjU0120233.jpg HTTP/1.1" 200 15117
+INFO 2026-08-31 06:52:21,808 basehttp 161 "GET /media/CtM3BVrMivSAUTWcAAANpJ-t9xg5938130.jpg HTTP/1.1" 200 3492
+INFO 2026-08-31 06:52:21,809 basehttp 161 "GET /media/CtM3BVrNrd2AbRH-AAALOATUqqM8030242.jpg HTTP/1.1" 200 2872
+INFO 2026-08-31 06:52:21,811 basehttp 161 "GET /media/CtM3BVrNrf-AJ1ZjAAB_vAApFkw8201014.jpg HTTP/1.1" 200 32700
+INFO 2026-08-31 06:52:21,811 basehttp 161 "GET /media/CtM3BVrNrmeAPQkiAAAKCg08y3w4028142.jpg HTTP/1.1" 200 2570
+INFO 2026-08-31 06:52:21,812 basehttp 161 "GET /media/CtM3BVrNroeAUxHkAAAKhSBwnSk3723835.jpg HTTP/1.1" 200 2693
+INFO 2026-08-31 06:52:21,812 basehttp 161 "GET /media/CtM3BVrNrkOAYXcbAABQocGJtes4517631.jpg HTTP/1.1" 200 20641
+INFO 2026-08-31 06:52:21,817 basehttp 161 "GET /media/CtM3BVrNrq-AbFajAABb8Hp05302964728.jpg HTTP/1.1" 200 23536
+INFO 2026-08-31 06:52:21,817 basehttp 161 "GET /media/CtM3BVrNsbqAbi4CAABYmW4pmPA1782942.jpg HTTP/1.1" 200 22681
+INFO 2026-08-31 06:52:21,817 basehttp 161 "GET /media/CtM3BVrNsuuAQo25AAAmP_AGNMA9808303.jpg HTTP/1.1" 200 9791
+INFO 2026-08-31 06:52:21,820 basehttp 161 "GET /media/CtM3BVrNrs2AMHPbAABMxVYJeMo0602527.jpg HTTP/1.1" 200 19653
+INFO 2026-08-31 06:52:21,821 basehttp 161 "GET /media/CtM3BVrNsxaAeU4HAAAkQDJCGSY6809195.jpg HTTP/1.1" 200 9280
+INFO 2026-08-31 06:52:21,822 basehttp 161 "GET /media/CtM3BVrNszaAMu2PAACwnbap8zI9797082.jpg HTTP/1.1" 200 45213
+INFO 2026-08-31 06:52:21,823 basehttp 161 "GET /media/CtM3BVrNs2SAf2DEAAAGl2-3v5k2172012.jpg HTTP/1.1" 200 1687
+INFO 2026-08-31 06:52:21,825 basehttp 161 "GET /media/CtM3BVrNs4KAIlJKAAAQmKypd2c1901811.jpg HTTP/1.1" 200 4248
+INFO 2026-08-31 06:52:21,826 basehttp 161 "GET /media/CtM3BVrNs-SAaLqBAAAPB44z-fw7327519.jpg HTTP/1.1" 200 3847
+INFO 2026-08-31 06:52:21,827 basehttp 161 "GET /media/CtM3BVrNs6aAea7bAAAIoddXpoA5854653.jpg HTTP/1.1" 200 2209
+INFO 2026-08-31 06:52:21,828 basehttp 161 "GET /media/CtM3BVrNtDGAdlzlAAAZZRjOIrQ5323041.jpg HTTP/1.1" 200 6501
+INFO 2026-08-31 06:52:21,828 basehttp 161 "GET /media/CtM3BVrNtA6AFtbDAAAVJIjSdl43078544.jpg HTTP/1.1" 200 5412
+INFO 2026-08-31 06:52:21,828 basehttp 161 "GET /media/CtM3BVrNs8WAZsplAAB-c4wo3kI9077289.jpg HTTP/1.1" 200 32371
+INFO 2026-08-31 06:52:21,831 basehttp 161 "GET /media/CtM3BVrNtOiAKex1AAAOZc14LLQ2319263.jpg HTTP/1.1" 200 3685
+INFO 2026-08-31 06:52:21,831 basehttp 161 "GET /media/CtM3BVrNtMWANuqTAACac0TCaxU2674435.jpg HTTP/1.1" 200 39539
+INFO 2026-08-31 06:52:21,833 basehttp 161 "GET /media/CtM3BVrNtY2ABEOfAAAWaWuGKss3304555.jpg HTTP/1.1" 200 5737
+INFO 2026-08-31 06:52:21,834 basehttp 161 "GET /media/CtM3BVrNtRGAGUbMAACY-WS_oQg9101415.jpg HTTP/1.1" 200 39161
+INFO 2026-08-31 06:52:21,834 basehttp 161 "GET /media/CtM3BVrNtUGACPW-AAAWNwYc_Yg9317761.jpg HTTP/1.1" 200 5687
+INFO 2026-08-31 06:52:21,836 basehttp 161 "GET /media/CtM3BVrNtamAdrqPAAAYsg3AvQ86108884.jpg HTTP/1.1" 200 6322
+INFO 2026-08-31 06:52:21,836 basehttp 161 "GET /media/CtM3BVrNtcOAYTH1AABVIz70wKU1556174.jpg HTTP/1.1" 200 21795
+INFO 2026-08-31 06:52:21,837 basehttp 161 "GET /media/CtM3BVrNtf-AY0FGAAAZwGscZq42512400.jpg HTTP/1.1" 200 6592
+INFO 2026-08-31 06:52:21,838 basehttp 161 "GET /media/CtM3BVrNtWKAUKPkAADhQEAcAgQ4155172.jpg HTTP/1.1" 200 57664
+INFO 2026-08-31 06:52:21,838 basehttp 161 "GET /media/CtM3BVrNteKAZhHCAAAMrIL-ugE2533088.jpg HTTP/1.1" 200 3244
+INFO 2026-08-31 06:52:25,036 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-08-31 06:52:25,048 basehttp 161 "GET /static/js/login.js HTTP/1.1" 200 1757
+INFO 2026-08-31 06:52:25,052 basehttp 161 "GET /static/images/icons02.png HTTP/1.1" 200 3935
+INFO 2026-08-31 06:52:25,055 basehttp 161 "GET /static/images/login_banner.png HTTP/1.1" 200 319312
+INFO 2026-08-31 07:00:18,733 basehttp 161 "POST /login/ HTTP/1.1" 200 2689
+INFO 2026-08-31 07:00:25,911 basehttp 161 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-08-31 07:00:26,014 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 07:00:28,384 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:00:28,396 basehttp 161 "GET /static/css/jquery.pagination.css HTTP/1.1" 200 523
+INFO 2026-08-31 07:00:28,396 basehttp 161 "GET /static/js/user_center_info.js HTTP/1.1" 200 2894
+INFO 2026-08-31 07:00:31,910 basehttp 161 "GET /static/images/left_bg.jpg HTTP/1.1" 200 1367
+INFO 2026-08-31 07:00:31,938 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-31 07:00:31,950 basehttp 161 "GET /static/images/shop_cart.png HTTP/1.1" 200 1317
+INFO 2026-08-31 07:00:31,953 basehttp 161 "GET /media/CtM3BVrRZa6ANO_sAAFti6upbx40753757.jpg HTTP/1.1" 200 120736
+INFO 2026-08-31 07:00:31,953 basehttp 161 "GET /media/CtM3BVrRa8iAZdz1AAFZsBqChgk2188464.jpg HTTP/1.1" 200 64626
+INFO 2026-08-31 07:00:31,954 basehttp 161 "GET /media/CtM3BVrRbjSAazeSAAFvJD02RWs2636429.jpg HTTP/1.1" 200 85492
+INFO 2026-08-31 07:00:31,954 basehttp 161 "GET /media/CtM3BVrRbh2AX3JVAAFvJD02RWs4638828.jpg HTTP/1.1" 200 85492
+INFO 2026-08-31 07:00:31,954 basehttp 161 "GET /media/CtM3BVrRbI2ARekNAAFZsBqChgk3141998.jpg HTTP/1.1" 200 64626
+INFO 2026-08-31 07:02:41,337 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-08-31 07:02:41,691 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-31 07:02:54,083 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 07:02:56,055 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:02:56,109 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-31 07:03:12,000 basehttp 161 "GET /info/ HTTP/1.1" 302 0
+INFO 2026-08-31 07:03:12,017 basehttp 161 "GET /login/?next=/info/ HTTP/1.1" 200 2689
+INFO 2026-08-31 07:03:12,030 basehttp 161 "GET /static/css/reset.css HTTP/1.1" 200 638
+INFO 2026-08-31 07:03:12,039 basehttp 161 "GET /static/js/login.js HTTP/1.1" 200 1757
+INFO 2026-08-31 07:03:12,040 basehttp 161 "GET /static/js/common.js HTTP/1.1" 200 893
+INFO 2026-08-31 07:03:12,040 basehttp 161 "GET /static/js/axios-0.18.0.min.js HTTP/1.1" 200 12941
+INFO 2026-08-31 07:03:12,041 basehttp 161 "GET /static/css/main.css HTTP/1.1" 200 41010
+INFO 2026-08-31 07:03:12,043 basehttp 161 "GET /static/images/logo.png HTTP/1.1" 200 18083
+INFO 2026-08-31 07:03:12,044 basehttp 161 "GET /static/js/vue-2.5.16.js HTTP/1.1" 200 289306
+INFO 2026-08-31 07:03:12,052 basehttp 161 "GET /static/images/icons02.png HTTP/1.1" 200 3935
+INFO 2026-08-31 07:03:12,054 basehttp 161 "GET /static/images/login_banner.png HTTP/1.1" 200 319312
+INFO 2026-08-31 07:03:35,758 basehttp 161 "POST /login/?next=/info/ HTTP/1.1" 302 0
+INFO 2026-08-31 07:03:35,780 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:03:35,789 basehttp 161 "GET /static/css/jquery.pagination.css HTTP/1.1" 200 523
+INFO 2026-08-31 07:03:35,790 basehttp 161 "GET /static/js/user_center_info.js HTTP/1.1" 200 2894
+INFO 2026-08-31 07:03:35,791 basehttp 161 "GET /static/js/jquery-1.12.4.min.js HTTP/1.1" 200 97163
+INFO 2026-08-31 07:03:36,414 basehttp 161 "GET /static/images/left_bg.jpg HTTP/1.1" 200 1367
+INFO 2026-08-31 07:03:36,439 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-31 07:03:36,444 basehttp 161 "GET /static/images/shop_cart.png HTTP/1.1" 200 1317
+INFO 2026-08-31 07:03:36,452 basehttp 161 "GET /media/CtM3BVrRbjSAazeSAAFvJD02RWs2636429.jpg HTTP/1.1" 200 85492
+INFO 2026-08-31 07:03:36,452 basehttp 161 "GET /media/CtM3BVrRa8iAZdz1AAFZsBqChgk2188464.jpg HTTP/1.1" 200 64626
+INFO 2026-08-31 07:03:36,453 basehttp 161 "GET /media/CtM3BVrRbI2ARekNAAFZsBqChgk3141998.jpg HTTP/1.1" 200 64626
+INFO 2026-08-31 07:03:36,453 basehttp 161 "GET /media/CtM3BVrRZa6ANO_sAAFti6upbx40753757.jpg HTTP/1.1" 200 120736
+INFO 2026-08-31 07:03:36,453 basehttp 161 "GET /media/CtM3BVrRbh2AX3JVAAFvJD02RWs4638828.jpg HTTP/1.1" 200 85492
+INFO 2026-08-31 07:05:28,723 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-31 07:05:31,794 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 07:05:31,802 basehttp 161 "GET /static/js/slide.js HTTP/1.1" 200 1822
+INFO 2026-08-31 07:05:31,802 basehttp 161 "GET /static/js/index.js HTTP/1.1" 200 1143
+INFO 2026-08-31 07:05:31,805 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+INFO 2026-08-31 07:05:31,805 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-08-31 07:05:31,808 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+INFO 2026-08-31 07:05:31,809 basehttp 161 "GET /media/CtM3BVrLmnaADtSKAAGlxZuk7uk4998927.jpg HTTP/1.1" 200 124318
+INFO 2026-08-31 07:05:31,811 basehttp 161 "GET /media/CtM3BVrLnHaATJWfAABcalxfbWk5995788.jpg HTTP/1.1" 200 23658
+INFO 2026-08-31 07:05:31,811 basehttp 161 "GET /media/CtM3BVrLm_iAILnwAACbl1lbG3U8255973.jpg HTTP/1.1" 200 39831
+INFO 2026-08-31 07:05:31,813 basehttp 161 "GET /media/CtM3BVrMexWAfodJAAAhg8MeEWU8364862.jpg HTTP/1.1" 200 8579
+INFO 2026-08-31 07:05:31,813 basehttp 161 "GET /media/CtM3BVrMe2KAGXDKAAAVASh8SzY6938726.jpg HTTP/1.1" 200 5377
+INFO 2026-08-31 07:05:31,817 basehttp 161 "GET /media/CtM3BVrMgWyAH_f1AAAQuFJkR2o1196559.jpg HTTP/1.1" 200 4280
+INFO 2026-08-31 07:05:31,818 basehttp 161 "GET /media/CtM3BVrMgQuAM4-sAABPvjDmrZE7647305.jpg HTTP/1.1" 200 20414
+INFO 2026-08-31 07:05:31,823 basehttp 161 "GET /media/CtM3BVrMgbiARBnzAABbhp78Lqs6191821.jpg HTTP/1.1" 200 23430
+INFO 2026-08-31 07:05:31,823 basehttp 161 "GET /media/CtM3BVrMgX2AeXiGAABuWTn7Wr09762364.jpg HTTP/1.1" 200 28249
+INFO 2026-08-31 07:05:31,826 basehttp 161 "GET /media/CtM3BVrMgkaAWyHAAABbrVH9a7o5762009.jpg HTTP/1.1" 200 23469
+INFO 2026-08-31 07:05:31,826 basehttp 161 "GET /media/CtM3BVrMgeuAYEocAABd3TzhhGw1571126.jpg HTTP/1.1" 200 24029
+INFO 2026-08-31 07:05:31,830 basehttp 161 "GET /media/CtM3BVrMgmyAB_1AAABoaAzPPW86045138.jpg HTTP/1.1" 200 26728
+INFO 2026-08-31 07:05:31,830 basehttp 161 "GET /media/CtM3BVrMgo6Aa3OTAAA82h3PXzw9976088.jpg HTTP/1.1" 200 15578
+INFO 2026-08-31 07:05:31,834 basehttp 161 "GET /media/CtM3BVrMg_qACjBsAAActVXQUoc6433633.jpg HTTP/1.1" 200 7349
+INFO 2026-08-31 07:05:31,834 basehttp 161 "GET /media/CtM3BVrMhBeAaZ9OAABuZHjPsV88472096.jpg HTTP/1.1" 200 28260
+INFO 2026-08-31 07:05:31,836 basehttp 161 "GET /media/CtM3BVrMhFuAB5eZAAAaQIF-UNs3707070.jpg HTTP/1.1" 200 6720
+INFO 2026-08-31 07:05:31,837 basehttp 161 "GET /media/CtM3BVrMhDWAEwgEAABPce7je4w1228836.jpg HTTP/1.1" 200 20337
+INFO 2026-08-31 07:05:31,838 basehttp 161 "GET /media/CtM3BVrMhH6AAjD4AABS1vBu6x01229529.jpg HTTP/1.1" 200 21206
+INFO 2026-08-31 07:05:31,839 basehttp 161 "GET /media/CtM3BVrMhRCAB5hsAAAQZye4aIM5257140.jpg HTTP/1.1" 200 4199
+INFO 2026-08-31 07:05:31,840 basehttp 161 "GET /media/CtM3BVrMhW6Ac7QMAABd3TzhhGw0583536.jpg HTTP/1.1" 200 24029
+INFO 2026-08-31 07:05:31,841 basehttp 161 "GET /media/CtM3BVrMhVCAFC8tAABonSNLGHA3584281.jpg HTTP/1.1" 200 26781
+INFO 2026-08-31 07:05:31,842 basehttp 161 "GET /media/CtM3BVrMhYyAOjMVAABU1kCuf_48013827.jpg HTTP/1.1" 200 21718
+INFO 2026-08-31 07:05:31,843 basehttp 161 "GET /media/CtM3BVrMhaSAK3QLAAA7LKRGwzQ0348867.jpg HTTP/1.1" 200 15148
+INFO 2026-08-31 07:05:31,844 basehttp 161 "GET /media/CtM3BVrMhjOAdMNbAAAR1JGA_cA5064317.jpg HTTP/1.1" 200 4564
+INFO 2026-08-31 07:05:31,845 basehttp 161 "GET /media/CtM3BVrMhlSAP_27AAAW_YBdNEk8530912.jpg HTTP/1.1" 200 5885
+INFO 2026-08-31 07:05:31,846 basehttp 161 "GET /media/CtM3BVrMhniADXZpAAALTWT-dfQ6160056.jpg HTTP/1.1" 200 2893
+INFO 2026-08-31 07:05:31,847 basehttp 161 "GET /media/CtM3BVrMhpiAV3lJAABiLlkgy2Y9166507.jpg HTTP/1.1" 200 25134
+INFO 2026-08-31 07:05:31,848 basehttp 161 "GET /media/CtM3BVrMhveAOh8EAAA1ykQ-kAU6900992.jpg HTTP/1.1" 200 13770
+INFO 2026-08-31 07:05:31,849 basehttp 161 "GET /media/CtM3BVrMhyuAEf95AABFDj_owsg4241256.jpg HTTP/1.1" 200 17678
+INFO 2026-08-31 07:05:31,850 basehttp 161 "GET /media/CtM3BVrMh0qAavITAABOVXYg3SI5232882.jpg HTTP/1.1" 200 20053
+INFO 2026-08-31 07:05:31,851 basehttp 161 "GET /media/CtM3BVrMh4eAWdF2AAA-Fkkc5rM1921911.jpg HTTP/1.1" 200 15894
+INFO 2026-08-31 07:05:31,852 basehttp 161 "GET /media/CtM3BVrMh62AUlDTAAA-SfqPszY5890026.jpg HTTP/1.1" 200 15945
+INFO 2026-08-31 07:05:31,854 basehttp 161 "GET /media/CtM3BVrNsOuAQbJYAABoachTxTo8223966.jpg HTTP/1.1" 200 26729
+INFO 2026-08-31 07:05:31,855 basehttp 161 "GET /media/CtM3BVrNr0iAAbCEAABZEWPGxc48830214.jpg HTTP/1.1" 200 22801
+INFO 2026-08-31 07:05:31,856 basehttp 161 "GET /media/CtM3BVrNr2-AbNUxAABwpN-gR8E7784256.jpg HTTP/1.1" 200 28836
+INFO 2026-08-31 07:05:31,857 basehttp 161 "GET /media/CtM3BVrNr6iAWKHsAAAcWfJ6OD00441704.jpg HTTP/1.1" 200 7257
+INFO 2026-08-31 07:05:31,858 basehttp 161 "GET /media/CtM3BVrNr8KAD6b2AAByGLpNQV01684706.jpg HTTP/1.1" 200 29208
+INFO 2026-08-31 07:05:31,859 basehttp 161 "GET /media/CtM3BVrhyhmAehqbAAA3XtuXCto1322736.jpg HTTP/1.1" 200 14174
+INFO 2026-08-31 07:05:31,860 basehttp 161 "GET /media/CtM3BVrNsA2AQUMbAAAbb_vBV6I1599925.jpg HTTP/1.1" 200 7023
+INFO 2026-08-31 07:05:31,861 basehttp 161 "GET /media/CtM3BVrNsCuAUvllAAAOkY17G984349519.jpg HTTP/1.1" 200 3729
+INFO 2026-08-31 07:05:31,861 basehttp 161 "GET /media/CtM3BVrNsEGAZTfyAAAasplERbc8856337.jpg HTTP/1.1" 200 6834
+INFO 2026-08-31 07:05:31,862 basehttp 161 "GET /media/CtM3BVrNsGCAeDZeAABtIYY5-s41601603.jpg HTTP/1.1" 200 27937
+INFO 2026-08-31 07:05:31,863 basehttp 161 "GET /media/CtM3BVrNsHyANXdyAABeDo_Qzeg1095047.jpg HTTP/1.1" 200 24078
+INFO 2026-08-31 07:05:31,865 basehttp 161 "GET /static/images/icons.png HTTP/1.1" 200 7740
+INFO 2026-08-31 07:05:31,865 basehttp 161 "GET /media/CtM3BVrMisuAJnyWAABYJxXfN8w9822011.jpg HTTP/1.1" 200 22567
+INFO 2026-08-31 07:05:31,867 basehttp 161 "GET /media/CtM3BVrNrY-AdBacAAA7DYB8sjU0120233.jpg HTTP/1.1" 200 15117
+INFO 2026-08-31 07:05:31,868 basehttp 161 "GET /media/CtM3BVrMivSAUTWcAAANpJ-t9xg5938130.jpg HTTP/1.1" 200 3492
+INFO 2026-08-31 07:05:31,871 basehttp 161 "GET /media/CtM3BVrNrd2AbRH-AAALOATUqqM8030242.jpg HTTP/1.1" 200 2872
+INFO 2026-08-31 07:05:31,871 basehttp 161 "GET /media/CtM3BVrNrkOAYXcbAABQocGJtes4517631.jpg HTTP/1.1" 200 20641
+INFO 2026-08-31 07:05:31,875 basehttp 161 "GET /media/CtM3BVrNrmeAPQkiAAAKCg08y3w4028142.jpg HTTP/1.1" 200 2570
+INFO 2026-08-31 07:05:31,875 basehttp 161 "GET /media/CtM3BVrNrf-AJ1ZjAAB_vAApFkw8201014.jpg HTTP/1.1" 200 32700
+INFO 2026-08-31 07:05:31,877 basehttp 161 "GET /media/CtM3BVrNroeAUxHkAAAKhSBwnSk3723835.jpg HTTP/1.1" 200 2693
+INFO 2026-08-31 07:05:31,878 basehttp 161 "GET /media/CtM3BVrNrq-AbFajAABb8Hp05302964728.jpg HTTP/1.1" 200 23536
+INFO 2026-08-31 07:05:31,884 basehttp 161 "GET /media/CtM3BVrNsuuAQo25AAAmP_AGNMA9808303.jpg HTTP/1.1" 200 9791
+INFO 2026-08-31 07:05:31,891 basehttp 161 "GET /media/CtM3BVrNs2SAf2DEAAAGl2-3v5k2172012.jpg HTTP/1.1" 200 1687
+INFO 2026-08-31 07:05:31,895 basehttp 161 "GET /media/CtM3BVrNrs2AMHPbAABMxVYJeMo0602527.jpg HTTP/1.1" 200 19653
+INFO 2026-08-31 07:05:31,914 basehttp 161 "GET /media/CtM3BVrNsxaAeU4HAAAkQDJCGSY6809195.jpg HTTP/1.1" 200 9280
+INFO 2026-08-31 07:05:31,914 basehttp 161 "GET /media/CtM3BVrNszaAMu2PAACwnbap8zI9797082.jpg HTTP/1.1" 200 45213
+INFO 2026-08-31 07:05:31,914 basehttp 161 "GET /media/CtM3BVrNsbqAbi4CAABYmW4pmPA1782942.jpg HTTP/1.1" 200 22681
+INFO 2026-08-31 07:05:31,917 basehttp 161 "GET /media/CtM3BVrNs4KAIlJKAAAQmKypd2c1901811.jpg HTTP/1.1" 200 4248
+INFO 2026-08-31 07:05:31,918 basehttp 161 "GET /media/CtM3BVrNs6aAea7bAAAIoddXpoA5854653.jpg HTTP/1.1" 200 2209
+INFO 2026-08-31 07:05:31,919 basehttp 161 "GET /media/CtM3BVrNs8WAZsplAAB-c4wo3kI9077289.jpg HTTP/1.1" 200 32371
+INFO 2026-08-31 07:05:31,922 basehttp 161 "GET /media/CtM3BVrNs-SAaLqBAAAPB44z-fw7327519.jpg HTTP/1.1" 200 3847
+INFO 2026-08-31 07:05:31,923 basehttp 161 "GET /media/CtM3BVrNtOiAKex1AAAOZc14LLQ2319263.jpg HTTP/1.1" 200 3685
+INFO 2026-08-31 07:05:31,923 basehttp 161 "GET /media/CtM3BVrNtDGAdlzlAAAZZRjOIrQ5323041.jpg HTTP/1.1" 200 6501
+INFO 2026-08-31 07:05:31,924 basehttp 161 "GET /media/CtM3BVrNtA6AFtbDAAAVJIjSdl43078544.jpg HTTP/1.1" 200 5412
+INFO 2026-08-31 07:05:31,925 basehttp 161 "GET /media/CtM3BVrNtMWANuqTAACac0TCaxU2674435.jpg HTTP/1.1" 200 39539
+INFO 2026-08-31 07:05:31,927 basehttp 161 "GET /media/CtM3BVrNtRGAGUbMAACY-WS_oQg9101415.jpg HTTP/1.1" 200 39161
+INFO 2026-08-31 07:05:31,929 basehttp 161 "GET /media/CtM3BVrNtUGACPW-AAAWNwYc_Yg9317761.jpg HTTP/1.1" 200 5687
+INFO 2026-08-31 07:05:31,932 basehttp 161 "GET /media/CtM3BVrNtamAdrqPAAAYsg3AvQ86108884.jpg HTTP/1.1" 200 6322
+INFO 2026-08-31 07:05:31,933 basehttp 161 "GET /media/CtM3BVrNtY2ABEOfAAAWaWuGKss3304555.jpg HTTP/1.1" 200 5737
+INFO 2026-08-31 07:05:31,933 basehttp 161 "GET /media/CtM3BVrNteKAZhHCAAAMrIL-ugE2533088.jpg HTTP/1.1" 200 3244
+INFO 2026-08-31 07:05:31,935 basehttp 161 "GET /media/CtM3BVrNtf-AY0FGAAAZwGscZq42512400.jpg HTTP/1.1" 200 6592
+INFO 2026-08-31 07:05:31,935 basehttp 161 "GET /media/CtM3BVrNtcOAYTH1AABVIz70wKU1556174.jpg HTTP/1.1" 200 21795
+INFO 2026-08-31 07:05:31,935 basehttp 161 "GET /media/CtM3BVrNtWKAUKPkAADhQEAcAgQ4155172.jpg HTTP/1.1" 200 57664
+INFO 2026-08-31 07:05:34,653 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 07:05:38,164 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:05:38,214 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+ERROR 2026-08-31 07:05:42,084 log 230 Internal Server Error: /pos/payment-config/
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/mysql/base.py", line 73, in execute
+    return self.cursor.execute(query, args)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/cursors.py", line 206, in execute
+    res = self._query(query)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/cursors.py", line 319, in _query
+    db.query(q)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/connections.py", line 254, in query
+    _mysql.connection.query(self, query)
+MySQLdb.ProgrammingError: (1146, "Table 'hotmall_prd.tb_payment_account' doesn't exist")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/exception.py", line 47, in inner
+    response = get_response(request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/core/handlers/base.py", line 181, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 70, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/Hot_Mall/hot_mall/apps/pos/views.py", line 1189, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/contrib/auth/mixins.py", line 71, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/views/generic/base.py", line 98, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/kingkong/Hot_Mall/hot_mall/apps/pos/views.py", line 1197, in get
+    return render(request, 'pos/payment_config.html', context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/shortcuts.py", line 19, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/template/backends/jinja2.py", line 74, in render
+    return self.template.render(context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 1295, in render
+    self.environment.handle_exception()
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "/Users/kingkong/Hot_Mall/hot_mall/templates/pos/payment_config.html", line 1, in top-level template code
+    {% extends 'base.html' %}
+  File "/Users/kingkong/Hot_Mall/hot_mall/templates/base.html", line 505, in top-level template code
+    {% block right_content %}{% endblock %}
+  File "/Users/kingkong/Hot_Mall/hot_mall/templates/pos/payment_config.html", line 45, in block 'right_content'
+    {% for account in payment_accounts %}
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/models/query.py", line 280, in __iter__
+    self._fetch_all()
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/models/query.py", line 1324, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/models/query.py", line 51, in __iter__
+    results = compiler.execute_sql(chunked_fetch=self.chunked_fetch, chunk_size=self.chunk_size)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/models/sql/compiler.py", line 1175, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 98, in execute
+    return super().execute(sql, params)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 66, in execute
+    return self._execute_with_wrappers(sql, params, many=False, executor=self._execute)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 75, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/utils.py", line 90, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/utils.py", line 84, in _execute
+    return self.cursor.execute(sql, params)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/django/db/backends/mysql/base.py", line 73, in execute
+    return self.cursor.execute(query, args)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/cursors.py", line 206, in execute
+    res = self._query(query)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/cursors.py", line 319, in _query
+    db.query(q)
+  File "/Users/kingkong/.pyenv/versions/3.7.17/lib/python3.7/site-packages/MySQLdb/connections.py", line 254, in query
+    _mysql.connection.query(self, query)
+django.db.utils.ProgrammingError: (1146, "Table 'hotmall_prd.tb_payment_account' doesn't exist")
+ERROR 2026-08-31 07:05:42,086 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 500 217980
+INFO 2026-08-31 07:06:58,052 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-08-31 07:07:00,149 basehttp 161 "GET / HTTP/1.1" 200 139713
+INFO 2026-08-31 07:07:02,010 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:07:02,061 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-31 07:07:04,165 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:07:04,210 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-08-31 07:07:04,891 basehttp 161 "GET /addresses/ HTTP/1.1" 200 25894
+INFO 2026-08-31 07:07:04,896 basehttp 161 "GET /static/images/edit.png HTTP/1.1" 200 1244
+INFO 2026-08-31 07:07:04,896 basehttp 161 "GET /static/js/user_center_site.js HTTP/1.1" 200 12044
+INFO 2026-08-31 07:07:04,944 basehttp 161 "GET /areas/ HTTP/1.1" 200 1774
+INFO 2026-08-31 07:07:05,627 basehttp 161 "GET /orders/info/1/ HTTP/1.1" 200 23428
+INFO 2026-08-31 07:07:05,631 basehttp 161 "GET /static/js/user_center_order.js HTTP/1.1" 200 1697
+INFO 2026-08-31 07:07:05,631 basehttp 161 "GET /static/js/jquery.pagination.min.js HTTP/1.1" 200 2935
+INFO 2026-08-31 07:07:05,636 basehttp 161 "GET /media/CtM3BVrRdOiAUBFXAAYJrpessGQ2842711.jpg HTTP/1.1" 200 351513
+INFO 2026-08-31 07:07:12,943 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-08-31 07:07:12,959 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 200 1062
+INFO 2026-08-31 07:07:16,362 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27298
+INFO 2026-08-31 07:07:16,385 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 200 481
+INFO 2026-08-31 07:07:19,310 basehttp 161 "GET /lottery/prize-level/ HTTP/1.1" 200 30338
+INFO 2026-08-31 07:07:19,337 basehttp 161 "GET /static/js/lottery/prize_level_list.js HTTP/1.1" 200 1782
+INFO 2026-08-31 07:07:21,415 basehttp 161 "GET /lottery/records/ HTTP/1.1" 200 28329
+INFO 2026-08-31 07:07:21,441 basehttp 161 "GET /static/js/lottery/lottery_record_list.js HTTP/1.1" 200 3763
+INFO 2026-08-31 07:07:21,510 basehttp 161 "GET /lottery/api/records/?page=1 HTTP/1.1" 200 2584
+INFO 2026-08-31 07:07:23,643 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-08-31 07:07:26,024 basehttp 161 "GET /info HTTP/1.1" 301 0
+INFO 2026-08-31 07:07:26,056 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-08-31 07:07:26,102 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-09-02 02:44:55,611 autoreload 637 Watching for file changes with StatReloader
+WARNING 2026-09-02 02:44:58,506 log 230 Forbidden: /
+WARNING 2026-09-02 02:44:58,506 basehttp 161 "GET / HTTP/1.1" 403 178
+WARNING 2026-09-02 02:44:58,538 log 230 Forbidden: /apple-touch-icon-precomposed.png
+WARNING 2026-09-02 02:44:58,538 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 403 178
+WARNING 2026-09-02 02:44:58,600 log 230 Forbidden: /apple-touch-icon.png
+WARNING 2026-09-02 02:44:58,601 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 403 178
+INFO 2026-10-16 05:24:58,838 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-16 05:25:02,413 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 05:25:02,419 basehttp 161 "GET /static/js/vue-2.5.16.js HTTP/1.1" 304 0
+INFO 2026-10-16 05:25:02,419 basehttp 161 "GET /static/images/logo.png HTTP/1.1" 304 0
+INFO 2026-10-16 05:25:02,420 basehttp 161 "GET /static/js/common.js HTTP/1.1" 304 0
+INFO 2026-10-16 05:25:02,420 basehttp 161 "GET /static/css/main.css HTTP/1.1" 304 0
+WARNING 2026-10-16 05:25:02,587 log 230 Not Found: /favicon.ico
+WARNING 2026-10-16 05:25:02,590 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-10-16 05:25:02,590 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+WARNING 2026-10-16 05:25:02,591 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-10-16 05:25:02,606 log 230 Not Found: /favicon.ico
+WARNING 2026-10-16 05:25:02,608 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-10-16 05:25:02,612 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-10-16 05:25:02,614 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-10-16 05:25:02,614 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+WARNING 2026-10-16 05:25:02,615 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+INFO 2026-10-16 05:25:02,617 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+INFO 2026-10-16 05:25:02,617 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-10-16 05:25:02,618 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+WARNING 2026-10-16 05:25:02,665 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-10-16 05:25:02,665 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+INFO 2026-10-16 05:25:07,022 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 05:25:07,026 basehttp 161 "GET /static/js/login.js HTTP/1.1" 304 0
+INFO 2026-10-16 05:25:16,197 basehttp 161 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-10-16 05:25:16,293 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 05:25:18,872 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:25:18,923 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 05:25:23,744 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-10-16 05:25:23,747 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-10-16 05:25:28,026 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 05:26:13,251 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 263
+INFO 2026-10-16 05:26:32,314 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 286
+INFO 2026-10-16 05:26:53,227 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 300
+INFO 2026-10-16 05:27:01,572 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-16 05:27:13,671 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:27:19,884 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:27:28,149 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 05:27:30,411 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 236
+INFO 2026-10-16 05:27:32,023 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 573
+INFO 2026-10-16 05:27:34,222 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:27:36,137 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:27:38,218 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:27:39,767 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 269
+INFO 2026-10-16 05:30:31,176 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 225
+INFO 2026-10-16 05:30:31,193 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 05:30:31,284 basehttp 161 "GET /pos/receipt/POS20261016053031909FFD/ HTTP/1.1" 200 6223
+INFO 2026-10-16 05:31:38,836 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:31:38,874 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 05:31:45,439 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-10-16 05:31:47,147 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27298
+INFO 2026-10-16 05:31:47,151 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 304 0
+INFO 2026-10-16 05:31:54,502 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-16 05:31:54,539 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2784
+INFO 2026-10-16 05:31:59,794 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 05:32:01,846 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:32:01,887 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 05:35:55,102 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 05:35:55,122 basehttp 161 "GET /static/js/user_center_gms.js HTTP/1.1" 200 2633
+INFO 2026-10-16 05:35:55,151 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 05:35:55,158 basehttp 161 "GET /media/CtM3BVrPCAOAIKRBAAGvaeRBMfc0463515.jpg HTTP/1.1" 200 311088
+INFO 2026-10-16 05:35:55,162 basehttp 161 "GET /media/CtM3BVrRdG6AYdapAAcPaeOqMpA1594598.jpg HTTP/1.1" 200 81355
+INFO 2026-10-16 05:35:55,163 basehttp 161 "GET /media/CtM3BVrRcUeAHp9pAARfIK95am88523545.jpg HTTP/1.1" 200 258419
+INFO 2026-10-16 05:35:55,163 basehttp 161 "GET /media/CtM3BVrRchWAMc8rAARfIK95am88158618.jpg HTTP/1.1" 200 258419
+INFO 2026-10-16 05:35:58,259 basehttp 161 "GET /api/skus/?page=2&keyword= HTTP/1.1" 200 4617
+INFO 2026-10-16 05:35:58,281 basehttp 161 "GET /media/CtM3BVrRdLGARgBAAAVslh9vkK00474545.jpg HTTP/1.1" 200 58852
+WARNING 2026-10-16 05:35:58,285 log 230 Not Found: /media/九节鞭.jpg
+INFO 2026-10-16 05:35:58,286 basehttp 161 "GET /media/CtM3BVrRdICAO_CRAAcPaeOqMpA2024091.jpg HTTP/1.1" 200 81355
+INFO 2026-10-16 05:35:58,286 basehttp 161 "GET /media/CtM3BVrRdMSAaDUtAAVslh9vkK04466364.jpg HTTP/1.1" 200 58852
+WARNING 2026-10-16 05:35:58,288 basehttp 161 "GET /media/%E4%B9%9D%E8%8A%82%E9%9E%AD.jpg HTTP/1.1" 404 23100
+INFO 2026-10-16 05:35:58,290 basehttp 161 "GET /media/1576dadf9f6d84b63c09dacc5ac3bf9d_SHUusXa.jpg HTTP/1.1" 200 185968
+WARNING 2026-10-16 05:35:58,299 log 230 Not Found: /media/丁不四.jpeg
+WARNING 2026-10-16 05:35:58,302 log 230 Not Found: /media/李明.jpg
+WARNING 2026-10-16 05:35:58,305 log 230 Not Found: /media/丑蓝猫.jpeg
+WARNING 2026-10-16 05:35:58,305 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E5%9B%9B.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-16 05:35:58,306 basehttp 161 "GET /media/%E6%9D%8E%E6%98%8E.jpg HTTP/1.1" 404 23082
+INFO 2026-10-16 05:35:58,307 basehttp 161 "GET /media/CtM3BVrRdPeAXNDMAAYJrpessGQ9777651.jpg HTTP/1.1" 200 351513
+WARNING 2026-10-16 05:35:58,307 basehttp 161 "GET /media/%E4%B8%91%E8%93%9D%E7%8C%AB.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:36:00,802 basehttp 161 "GET /api/skus/?page=3&keyword= HTTP/1.1" 200 4612
+WARNING 2026-10-16 05:36:00,823 log 230 Not Found: /media/黄渤和秋田.jpg
+WARNING 2026-10-16 05:36:00,827 log 230 Not Found: /media/孙红雷.jpeg
+WARNING 2026-10-16 05:36:00,831 log 230 Not Found: /media/丁不三.jpeg
+WARNING 2026-10-16 05:36:00,832 basehttp 161 "GET /media/%E9%BB%84%E6%B8%A4%E5%92%8C%E7%A7%8B%E7%94%B0.jpg HTTP/1.1" 404 23136
+WARNING 2026-10-16 05:36:00,832 basehttp 161 "GET /media/%E5%AD%99%E7%BA%A2%E9%9B%B7.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:36:00,833 basehttp 161 "GET /media/goods/%E4%B8%81%E4%B8%8D%E5%9B%9B_SYfM7P1.jpeg HTTP/1.1" 200 33339
+WARNING 2026-10-16 05:36:00,834 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E4%B8%89.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:36:00,836 basehttp 161 "GET /media/goods/%E5%8A%A0%E5%A4%9A%E5%AE%9D550%E6%AF%AB%E5%8D%87.jpg HTTP/1.1" 200 79065
+INFO 2026-10-16 05:36:00,842 basehttp 161 "GET /media/goods/%E8%87%AA%E7%94%B1%E7%88%B1_LOVE_BEGAN_IN_1995__%E5%AE%9D%E4%B8%B0500ml.jpg HTTP/1.1" 200 74058
+INFO 2026-10-16 05:36:00,843 basehttp 161 "GET /media/goods/%E5%86%9C%E5%A4%AB%E5%B1%B1%E6%B3%89%E5%BC%95%E7%94%A8%E7%BA%AF%E5%87%80%E6%98%AF550%E6%AF%AB%E5%8D%87.jpg HTTP/1.1" 200 77244
+INFO 2026-10-16 05:36:00,843 basehttp 161 "GET /media/goods/%E7%99%BE%E5%A8%81%E5%95%A4%E9%85%92_460ml.jpg HTTP/1.1" 200 83821
+INFO 2026-10-16 05:36:00,843 basehttp 161 "GET /media/goods/%E7%99%BE%E9%87%8C%E6%8C%91%E4%B8%80%E4%BA%94%E9%A6%99%E5%91%B3%E7%93%9C%E5%AD%90_208%E5%85%8B.jpg HTTP/1.1" 200 90883
+INFO 2026-10-16 05:36:00,847 basehttp 161 "GET /media/goods/%E5%9B%BE%E7%89%87%E8%BF%9E%E7%BA%BF%E5%8C%B9%E9%85%8D%E6%B8%B8%E6%88%8F.png HTTP/1.1" 200 3776656
+INFO 2026-10-16 05:36:07,729 basehttp 161 "GET /api/skus/?page=4&keyword= HTTP/1.1" 200 4761
+INFO 2026-10-16 05:36:07,744 basehttp 161 "GET /media/goods/%E4%B8%9C%E6%9D%A5%E7%B2%BE%E9%85%BF%E5%B0%8F%E9%BA%A6%E5%95%A4%E9%85%92330ml.jpg HTTP/1.1" 200 60068
+INFO 2026-10-16 05:36:07,745 basehttp 161 "GET /media/goods/%E5%8E%A8%E9%82%A6%E9%87%91%E6%A0%87%E7%94%9F%E6%8A%BD1.25L_dONea48.jpg HTTP/1.1" 200 95122
+INFO 2026-10-16 05:36:07,746 basehttp 161 "GET /media/goods/%E9%99%88%E7%9A%AE%E7%99%BD%E8%8C%B6%E8%B0%83%E5%91%B3%E8%8C%B675g.jpg HTTP/1.1" 200 34502
+INFO 2026-10-16 05:36:07,746 basehttp 161 "GET /media/goods/%E7%B4%AB%E6%9E%97%E7%99%BD%E7%B1%B3%E9%86%8B820ml.jpg HTTP/1.1" 200 68966
+INFO 2026-10-16 05:36:07,747 basehttp 161 "GET /media/goods/%E7%99%BE%E5%B2%81%E5%B1%B1%E5%BC%95%E7%94%A8%E5%A4%A9%E7%84%B6%E7%9F%BF%E6%B3%89%E6%B0%B4_570ml.jpg HTTP/1.1" 200 83491
+INFO 2026-10-16 05:36:07,747 basehttp 161 "GET /media/goods/%E9%93%B6%E9%B9%AD%E6%A1%82%E5%9C%86%E8%8E%B2%E5%AD%90%E5%85%AB%E5%AE%9D%E7%B2%A5360g.jpg HTTP/1.1" 200 65869
+INFO 2026-10-16 05:36:07,751 basehttp 161 "GET /media/goods/%E9%87%91%E5%85%B8%E7%BA%AF%E7%89%9B%E5%A5%B6200ml.jpg HTTP/1.1" 200 67502
+INFO 2026-10-16 05:36:13,819 basehttp 161 "GET /api/skus/?page=5&keyword= HTTP/1.1" 200 3831
+INFO 2026-10-16 05:36:16,930 basehttp 161 "GET /api/skus/?page=6&keyword= HTTP/1.1" 200 3836
+INFO 2026-10-16 05:36:25,423 basehttp 161 "GET /api/skus/?page=7&keyword= HTTP/1.1" 200 3865
+INFO 2026-10-16 05:36:26,192 basehttp 161 "GET /api/skus/?page=8&keyword= HTTP/1.1" 200 4234
+INFO 2026-10-16 05:36:27,532 basehttp 161 "GET /api/skus/?page=9&keyword= HTTP/1.1" 200 4083
+INFO 2026-10-16 05:36:28,659 basehttp 161 "GET /api/skus/?page=10&keyword= HTTP/1.1" 200 4107
+INFO 2026-10-16 05:36:29,665 basehttp 161 "GET /api/skus/?page=11&keyword= HTTP/1.1" 200 3877
+INFO 2026-10-16 05:36:30,770 basehttp 161 "GET /api/skus/?page=12&keyword= HTTP/1.1" 200 3905
+INFO 2026-10-16 05:36:31,585 basehttp 161 "GET /api/skus/?page=13&keyword= HTTP/1.1" 200 3867
+INFO 2026-10-16 05:36:32,948 basehttp 161 "GET /api/skus/?page=14&keyword= HTTP/1.1" 200 3936
+INFO 2026-10-16 05:36:33,163 basehttp 161 "GET /api/skus/?page=15&keyword= HTTP/1.1" 200 3870
+INFO 2026-10-16 05:36:33,387 basehttp 161 "GET /api/skus/?page=16&keyword= HTTP/1.1" 200 3990
+INFO 2026-10-16 05:36:33,616 basehttp 161 "GET /api/skus/?page=17&keyword= HTTP/1.1" 200 4003
+INFO 2026-10-16 05:36:35,100 basehttp 161 "GET /api/skus/?page=18&keyword= HTTP/1.1" 200 3871
+INFO 2026-10-16 05:36:36,498 basehttp 161 "GET /api/skus/?page=19&keyword= HTTP/1.1" 200 3821
+INFO 2026-10-16 05:36:47,550 basehttp 161 "GET /editpassword/ HTTP/1.1" 200 22323
+INFO 2026-10-16 05:36:47,572 basehttp 161 "GET /static/js/user_center_pass.js?v=2 HTTP/1.1" 200 3484
+INFO 2026-10-16 05:36:48,442 basehttp 161 "GET /face/register/ HTTP/1.1" 200 33964
+INFO 2026-10-16 05:36:49,901 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 05:36:49,945 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 05:36:51,271 basehttp 161 "GET /addsku/ HTTP/1.1" 200 193997
+INFO 2026-10-16 05:36:51,343 basehttp 161 "GET /static/js/user_center_sku.js HTTP/1.1" 200 4565
+INFO 2026-10-16 05:36:52,212 basehttp 161 "GET /expirysku/ HTTP/1.1" 200 31645
+INFO 2026-10-16 05:36:52,236 basehttp 161 "GET /static/js/user_center_expiry.js HTTP/1.1" 200 3606
+WARNING 2026-10-16 05:36:52,276 log 230 Not Found: /media/丁不三.jpeg
+WARNING 2026-10-16 05:36:52,277 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E4%B8%89.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:36:54,164 basehttp 161 "GET /expirysku/ HTTP/1.1" 200 31645
+WARNING 2026-10-16 05:36:54,198 log 230 Not Found: /media/丁不三.jpeg
+WARNING 2026-10-16 05:36:54,198 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E4%B8%89.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:36:55,131 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 05:36:55,169 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 05:36:58,850 basehttp 161 "GET /members/ HTTP/1.1" 200 29810
+INFO 2026-10-16 05:36:58,871 basehttp 161 "GET /static/js/user_center_member.js HTTP/1.1" 200 3506
+INFO 2026-10-16 05:36:58,897 basehttp 161 "GET /members/api/?page=1&keyword= HTTP/1.1" 200 3286
+INFO 2026-10-16 05:37:24,799 basehttp 161 "GET /suplcrt/ HTTP/1.1" 200 30808
+INFO 2026-10-16 05:37:24,825 basehttp 161 "GET /static/js/supplier_add.js HTTP/1.1" 200 5847
+INFO 2026-10-16 05:37:26,725 basehttp 161 "GET /listsupplier/ HTTP/1.1" 200 29632
+INFO 2026-10-16 05:37:26,749 basehttp 161 "GET /static/js/supplier_list.js HTTP/1.1" 200 3201
+INFO 2026-10-16 05:37:35,865 basehttp 161 "GET /purchadd/ HTTP/1.1" 200 38154
+INFO 2026-10-16 05:37:35,887 basehttp 161 "GET /static/js/purchase_add.js HTTP/1.1" 200 9969
+INFO 2026-10-16 05:37:49,489 basehttp 161 "GET /listpurchase/ HTTP/1.1" 200 37286
+INFO 2026-10-16 05:37:49,513 basehttp 161 "GET /static/js/purchase_list.js HTTP/1.1" 200 2988
+INFO 2026-10-16 05:38:07,917 basehttp 161 "GET /brand/add/ HTTP/1.1" 200 24527
+INFO 2026-10-16 05:38:07,945 basehttp 161 "GET /static/js/brand_add.js HTTP/1.1" 200 3168
+INFO 2026-10-16 05:38:09,479 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 05:38:09,542 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 05:38:17,910 basehttp 161 "GET /expirysku/ HTTP/1.1" 200 31645
+WARNING 2026-10-16 05:38:17,938 log 230 Not Found: /media/丁不三.jpeg
+WARNING 2026-10-16 05:38:17,939 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E4%B8%89.jpeg HTTP/1.1" 404 23104
+INFO 2026-10-16 05:38:21,174 basehttp 161 "GET /brand/add/ HTTP/1.1" 200 24527
+INFO 2026-10-16 05:38:22,711 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 05:38:22,769 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 05:38:29,317 basehttp 161 "GET /brand/list/ HTTP/1.1" 200 29286
+INFO 2026-10-16 05:38:29,340 basehttp 161 "GET /static/js/brand_list.js HTTP/1.1" 200 2638
+INFO 2026-10-16 05:38:38,824 basehttp 161 "GET /brand/list/?page=2 HTTP/1.1" 200 29298
+INFO 2026-10-16 05:38:42,564 basehttp 161 "GET /brand/list/?page=3 HTTP/1.1" 200 29277
+INFO 2026-10-16 05:38:44,790 basehttp 161 "GET /brand/list/?page=4 HTTP/1.1" 200 29268
+INFO 2026-10-16 05:38:47,549 basehttp 161 "GET /brand/list/?page=5 HTTP/1.1" 200 29289
+INFO 2026-10-16 05:38:49,442 basehttp 161 "GET /brand/list/?page=6 HTTP/1.1" 200 29287
+INFO 2026-10-16 05:38:50,819 basehttp 161 "GET /brand/list/?page=7 HTTP/1.1" 200 29286
+INFO 2026-10-16 05:38:52,152 basehttp 161 "GET /brand/list/?page=8 HTTP/1.1" 200 29292
+INFO 2026-10-16 05:38:54,497 basehttp 161 "GET /brand/list/?page=9 HTTP/1.1" 200 29283
+INFO 2026-10-16 05:38:56,771 basehttp 161 "GET /brand/list/?page=10 HTTP/1.1" 200 29286
+INFO 2026-10-16 05:38:58,592 basehttp 161 "GET /brand/list/?page=11 HTTP/1.1" 200 29292
+INFO 2026-10-16 05:39:01,655 basehttp 161 "GET /brand/list/?page=12 HTTP/1.1" 200 29289
+INFO 2026-10-16 05:39:05,428 basehttp 161 "GET /channel-group/list/ HTTP/1.1" 200 36938
+INFO 2026-10-16 05:39:05,448 basehttp 161 "GET /static/js/channel_group_list.js HTTP/1.1" 200 1904
+INFO 2026-10-16 05:39:15,775 basehttp 161 "GET /spu-spec/list/ HTTP/1.1" 200 28508
+INFO 2026-10-16 05:39:15,795 basehttp 161 "GET /static/js/spu_specification_list.js HTTP/1.1" 200 2544
+INFO 2026-10-16 05:39:22,497 basehttp 161 "GET /sku-spec/add/ HTTP/1.1" 200 1282727
+INFO 2026-10-16 05:39:22,543 basehttp 161 "GET /static/js/sku_specification_add.js HTTP/1.1" 200 1706
+INFO 2026-10-16 05:39:28,228 basehttp 161 "GET /spu/list/ HTTP/1.1" 200 29966
+INFO 2026-10-16 05:39:28,250 basehttp 161 "GET /static/js/spu_list.js HTTP/1.1" 200 2503
+INFO 2026-10-16 05:39:41,566 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-16 05:39:41,599 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3494
+INFO 2026-10-16 05:39:43,859 basehttp 161 "GET /pos/get-transaction-details/?page=2 HTTP/1.1" 200 4229
+INFO 2026-10-16 05:39:47,829 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 05:39:49,895 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:39:49,934 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 05:39:52,820 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 05:40:32,389 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:40:32,451 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 05:43:19,384 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 05:58:27,669 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 05:58:27,736 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 06:05:51,927 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 06:07:40,937 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 06:07:41,050 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 06:07:43,279 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 06:07:44,814 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-16 06:07:49,872 basehttp 161 "POST /face/login/ HTTP/1.1" 200 78
+INFO 2026-10-16 06:07:51,101 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 06:07:55,956 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 06:07:56,004 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 06:08:05,015 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22033
+INFO 2026-10-16 06:08:07,337 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 06:08:22,476 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-16 06:08:52,453 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 301
+INFO 2026-10-16 06:09:04,518 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 274
+INFO 2026-10-16 06:09:08,762 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 06:09:10,713 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 235
+INFO 2026-10-16 06:09:12,152 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 479
+INFO 2026-10-16 06:09:20,799 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 222
+INFO 2026-10-16 06:09:20,833 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 06:09:20,922 basehttp 161 "GET /pos/receipt/POS202610160609201A9154/ HTTP/1.1" 200 5894
+INFO 2026-10-16 06:09:39,379 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 274
+INFO 2026-10-16 06:09:50,312 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 306
+INFO 2026-10-16 06:09:52,441 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 06:10:01,886 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 320
+INFO 2026-10-16 06:10:09,893 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 268
+INFO 2026-10-16 06:10:19,463 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 277
+INFO 2026-10-16 06:10:25,961 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 224
+INFO 2026-10-16 06:10:27,883 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 06:10:32,069 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 359
+INFO 2026-10-16 06:10:36,553 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 329
+INFO 2026-10-16 06:10:42,568 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-16 06:10:50,720 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 221
+INFO 2026-10-16 06:10:50,748 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 06:10:51,383 basehttp 161 "GET /pos/receipt/POS20261016061050ACA1F8/ HTTP/1.1" 200 5898
+INFO 2026-10-16 06:11:00,992 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 236
+INFO 2026-10-16 06:11:02,260 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 573
+INFO 2026-10-16 06:11:07,843 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 222
+INFO 2026-10-16 06:11:07,863 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 06:11:07,970 basehttp 161 "GET /pos/receipt/POS20261016061107A20B33/ HTTP/1.1" 200 6237
+INFO 2026-10-16 06:33:37,344 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:33:47,772 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:33:47,803 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:38:54,651 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 06:41:10,606 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 06:43:34,558 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:45:01,307 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:52:32,675 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 06:53:01,168 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 06:53:01,251 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 06:53:03,603 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 06:53:03,675 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 06:53:07,916 basehttp 161 "GET /listsku/?q=+6902902013246 HTTP/1.1" 200 30925
+INFO 2026-10-16 06:53:07,962 basehttp 161 "GET /api/skus/?page=1&keyword=%206902902013246 HTTP/1.1" 200 575
+INFO 2026-10-16 06:53:10,355 basehttp 161 "GET /editsku/2639/ HTTP/1.1" 200 195115
+INFO 2026-10-16 06:53:10,462 basehttp 161 "GET /media/goods/%E5%8E%A8%E9%82%A6%E9%87%91%E6%A0%87%E7%94%9F%E6%8A%BD1.25L_IVZCiWR.jpg HTTP/1.1" 200 95122
+INFO 2026-10-16 06:53:25,923 basehttp 161 "POST /editsku/2639/ HTTP/1.1" 302 0
+INFO 2026-10-16 06:53:25,939 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-16 06:53:25,979 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-16 06:53:30,535 basehttp 161 "GET /spu/list/ HTTP/1.1" 200 29966
+INFO 2026-10-16 06:55:01,573 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 06:55:12,157 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:55:17,139 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:55:17,169 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:58:20,391 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 06:58:40,867 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:18:45,569 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:22:03,077 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:32:03,563 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 07:32:03,639 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 07:32:06,757 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 07:32:15,582 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 07:32:22,220 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 07:32:22,257 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 07:35:09,803 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 07:35:09,838 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 07:36:25,341 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 07:36:25,480 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:36:30,826 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:36:56,529 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 07:36:56,677 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:37:21,085 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 07:37:25,020 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-16 07:37:31,919 basehttp 161 "POST /face/login/ HTTP/1.1" 200 78
+INFO 2026-10-16 07:37:33,093 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:37:39,106 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 07:37:39,174 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 07:37:59,326 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 07:37:59,477 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:38:23,573 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 07:38:36,999 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 07:38:46,337 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 07:38:47,990 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-16 07:38:53,308 basehttp 161 "POST /face/login/ HTTP/1.1" 200 78
+INFO 2026-10-16 07:38:54,544 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 07:39:15,075 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 07:39:15,127 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 07:39:30,978 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 07:39:43,761 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:39:49,352 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 07:39:49,387 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 07:39:57,647 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 363
+INFO 2026-10-16 07:40:03,540 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 07:40:10,123 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 07:40:14,459 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 07:40:24,110 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:40:24,132 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 99
+INFO 2026-10-16 07:40:27,621 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 07:40:46,442 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 228
+INFO 2026-10-16 07:40:48,893 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 07:41:02,194 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 07:41:09,580 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 07:41:18,147 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 07:41:23,938 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 07:41:25,843 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 07:41:36,812 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 07:41:36,849 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 346
+INFO 2026-10-16 07:41:48,035 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 333
+INFO 2026-10-16 07:41:59,074 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 07:42:18,516 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-16 07:42:21,322 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 07:42:23,648 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 443
+INFO 2026-10-16 07:42:25,888 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 1099
+INFO 2026-10-16 07:42:32,112 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 224
+INFO 2026-10-16 07:42:32,137 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 07:42:32,198 basehttp 161 "GET /pos/receipt/POS202610160742321D83FD/ HTTP/1.1" 200 7604
+INFO 2026-10-16 07:42:45,877 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 236
+INFO 2026-10-16 07:42:47,854 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 926
+INFO 2026-10-16 07:42:58,221 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 220
+INFO 2026-10-16 07:42:58,246 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 07:42:58,321 basehttp 161 "GET /pos/receipt/POS202610160742585785A1/ HTTP/1.1" 200 6956
+INFO 2026-10-16 07:54:22,929 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 07:54:22,974 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 07:54:28,569 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 07:54:28,705 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:09:20,468 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-16 08:09:25,296 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 08:09:28,192 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:09:59,126 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 08:10:00,312 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-16 08:10:04,933 basehttp 161 "POST /face/login/ HTTP/1.1" 200 78
+INFO 2026-10-16 08:10:06,116 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:10:10,075 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:10:10,130 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:10:21,116 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:10:32,436 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:10:38,587 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:10:40,505 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:10:40,530 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:10:46,224 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:11:03,917 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-16 08:11:07,351 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 222
+INFO 2026-10-16 08:11:07,450 basehttp 161 "GET /pos/receipt/POS20261016081107226192/ HTTP/1.1" 200 6227
+INFO 2026-10-16 08:11:24,224 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:11:31,938 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:11:36,404 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:11:40,741 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 08:11:43,869 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 363
+INFO 2026-10-16 08:11:48,777 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:11:52,156 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:12:02,760 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 228
+INFO 2026-10-16 08:12:06,804 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 08:12:13,240 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:12:13,594 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:12:19,148 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:12:23,541 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 357
+INFO 2026-10-16 08:12:29,912 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 357
+INFO 2026-10-16 08:12:36,192 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 346
+INFO 2026-10-16 08:12:39,406 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 333
+INFO 2026-10-16 08:12:44,429 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:12:45,153 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:12:51,121 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 484
+INFO 2026-10-16 08:13:04,359 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-16 08:13:09,025 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 08:13:13,790 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 444
+INFO 2026-10-16 08:13:18,386 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 1140
+INFO 2026-10-16 08:13:27,878 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 220
+INFO 2026-10-16 08:13:27,906 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 08:13:28,010 basehttp 161 "GET /pos/receipt/POS2026101608132754270D/ HTTP/1.1" 200 7620
+INFO 2026-10-16 08:13:39,741 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 237
+INFO 2026-10-16 08:13:42,280 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 1292
+INFO 2026-10-16 08:14:10,548 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 224
+INFO 2026-10-16 08:14:10,575 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 08:14:10,658 basehttp 161 "GET /pos/receipt/POS20261016081410C804D3/ HTTP/1.1" 200 7638
+INFO 2026-10-16 08:14:35,899 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:14:43,885 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:14:46,050 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:14:46,625 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:14:52,096 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 08:14:55,985 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:14:56,311 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:14:56,637 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:15:01,550 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:15:01,867 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:15:02,190 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:15:02,438 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:15:06,555 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:15:06,859 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:15:07,122 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:15:07,399 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:15:10,391 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:15:10,610 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:15:10,905 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:15:11,137 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:15:23,295 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-16 08:15:32,772 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 223
+INFO 2026-10-16 08:15:32,908 basehttp 161 "GET /pos/receipt/POS2026101608153220A111/ HTTP/1.1" 200 7261
+INFO 2026-10-16 08:15:41,172 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:15:41,220 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:15:45,803 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-16 08:15:45,842 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2846
+INFO 2026-10-16 08:15:49,728 basehttp 161 "GET /pos/transaction-details/?order_id=POS2026101608153220A111 HTTP/1.1" 200 13256
+INFO 2026-10-16 08:15:49,770 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS2026101608153220A111 HTTP/1.1" 200 2193
+INFO 2026-10-16 08:15:54,785 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:15:56,278 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:15:56,324 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:15:59,308 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-16 08:15:59,348 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3714
+INFO 2026-10-16 08:16:01,771 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:16:03,517 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:16:03,563 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:16:07,578 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-16 08:16:07,617 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2846
+INFO 2026-10-16 08:16:09,991 basehttp 161 "GET /pos/transaction-details/?order_id=POS2026101608132754270D HTTP/1.1" 200 13256
+INFO 2026-10-16 08:16:10,029 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS2026101608132754270D HTTP/1.1" 200 2687
+INFO 2026-10-16 08:16:12,547 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:18:55,652 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:18:57,673 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-16 08:18:57,762 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:20:11,194 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-16 08:20:13,613 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-16 08:20:19,583 basehttp 161 "POST /face/login/ HTTP/1.1" 200 78
+INFO 2026-10-16 08:20:20,757 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-16 08:20:24,829 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:20:24,879 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:20:41,342 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:20:48,827 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:20:51,931 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:20:55,446 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:21:02,848 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 173
+INFO 2026-10-16 08:21:02,979 basehttp 161 "GET /pos/receipt/POS20261016082102DA38AB/ HTTP/1.1" 200 6042
+INFO 2026-10-16 08:21:18,053 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:21:22,864 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:21:26,882 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:21:31,611 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:21:34,061 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 363
+INFO 2026-10-16 08:21:34,379 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 363
+INFO 2026-10-16 08:21:34,668 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 363
+INFO 2026-10-16 08:21:37,242 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 08:21:37,576 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 08:21:37,810 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 351
+INFO 2026-10-16 08:21:41,469 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:21:41,931 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 343
+INFO 2026-10-16 08:21:54,750 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 228
+INFO 2026-10-16 08:21:57,380 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 08:22:03,085 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:22:03,809 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 308
+INFO 2026-10-16 08:22:09,536 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 357
+INFO 2026-10-16 08:22:16,829 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 357
+INFO 2026-10-16 08:22:21,811 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 333
+INFO 2026-10-16 08:22:22,267 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 333
+INFO 2026-10-16 08:22:25,589 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 346
+INFO 2026-10-16 08:22:25,830 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 346
+INFO 2026-10-16 08:22:29,651 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 484
+INFO 2026-10-16 08:22:30,667 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 484
+INFO 2026-10-16 08:22:37,468 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:22:37,795 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:22:55,743 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-16 08:22:58,796 basehttp 161 "POST /pos/suspend-order/ HTTP/1.1" 200 82
+INFO 2026-10-16 08:23:00,712 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 445
+INFO 2026-10-16 08:23:03,865 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 1140
+INFO 2026-10-16 08:23:18,221 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 220
+INFO 2026-10-16 08:23:18,249 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 08:23:18,314 basehttp 161 "GET /pos/receipt/POS2026101608231822B78D/ HTTP/1.1" 200 7282
+INFO 2026-10-16 08:23:34,082 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE001-POS001 HTTP/1.1" 200 237
+INFO 2026-10-16 08:23:35,479 basehttp 161 "POST /pos/resume-order/ HTTP/1.1" 200 1188
+INFO 2026-10-16 08:23:47,958 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 224
+INFO 2026-10-16 08:23:47,988 basehttp 161 "POST /pos/delete-suspended-order/ HTTP/1.1" 200 68
+INFO 2026-10-16 08:23:48,067 basehttp 161 "GET /pos/receipt/POS2026101608234759251A/ HTTP/1.1" 200 7646
+INFO 2026-10-16 08:23:54,960 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 371
+INFO 2026-10-16 08:23:59,219 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 412
+INFO 2026-10-16 08:24:03,890 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 342
+INFO 2026-10-16 08:24:06,706 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:24:07,716 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:24:09,234 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:24:09,529 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 296
+INFO 2026-10-16 08:24:11,450 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:24:11,720 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-16 08:24:22,702 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 69
+INFO 2026-10-16 08:24:28,072 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 69
+INFO 2026-10-16 08:24:33,270 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-16 08:24:41,578 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 222
+INFO 2026-10-16 08:24:41,712 basehttp 161 "GET /pos/receipt/POS20261016082441154552/ HTTP/1.1" 200 7258
+INFO 2026-10-16 08:24:51,322 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:24:51,373 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:24:54,032 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-16 08:24:54,072 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2828
+INFO 2026-10-16 08:24:56,465 basehttp 161 "GET /pos/transaction-details/?order_id=POS2026101608234759251A HTTP/1.1" 200 13256
+INFO 2026-10-16 08:24:56,502 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS2026101608234759251A HTTP/1.1" 200 2776
+INFO 2026-10-16 08:25:00,897 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:25:02,809 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:25:02,853 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:25:06,418 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-16 08:25:06,459 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3779
+INFO 2026-10-16 08:25:09,748 basehttp 161 "GET /pos/get-transaction-details/?page=2 HTTP/1.1" 200 3818
+INFO 2026-10-16 08:25:10,747 basehttp 161 "GET /pos/get-transaction-details/?page=3 HTTP/1.1" 200 3639
+INFO 2026-10-16 08:25:11,161 basehttp 161 "GET /pos/get-transaction-details/?page=4 HTTP/1.1" 200 3846
+INFO 2026-10-16 08:25:12,895 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:25:14,543 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:25:14,608 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-16 08:25:19,071 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-16 08:25:19,115 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3779
+INFO 2026-10-16 08:25:22,407 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-16 08:25:22,445 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2828
+INFO 2026-10-16 08:25:23,910 basehttp 161 "GET /pos/transaction-details/?order_id=POS2026101608234759251A HTTP/1.1" 200 13256
+INFO 2026-10-16 08:25:23,951 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS2026101608234759251A HTTP/1.1" 200 2776
+INFO 2026-10-16 08:25:26,575 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44515
+INFO 2026-10-16 08:25:29,081 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-16 08:25:29,126 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-29 05:08:37,669 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-29 05:08:40,598 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-29 05:08:40,625 basehttp 161 "GET /static/css/main.css HTTP/1.1" 304 0
+WARNING 2026-10-29 05:08:40,800 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-10-29 05:08:40,801 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-10-29 05:08:40,819 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-10-29 05:08:40,823 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-10-29 05:08:40,826 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-10-29 05:08:40,830 log 230 Not Found: /favicon.ico
+WARNING 2026-10-29 05:08:40,833 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+WARNING 2026-10-29 05:08:40,833 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+WARNING 2026-10-29 05:08:40,838 log 230 Not Found: /favicon.ico
+WARNING 2026-10-29 05:08:40,839 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+INFO 2026-10-29 05:08:40,839 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-10-29 05:08:40,840 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+INFO 2026-10-29 05:08:40,841 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+WARNING 2026-10-29 05:08:40,857 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-10-29 05:08:40,857 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+INFO 2026-10-29 05:08:43,296 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-29 05:08:43,348 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-29 05:08:48,254 basehttp 161 "GET /addsku/ HTTP/1.1" 200 195026
+INFO 2026-10-29 05:08:48,258 basehttp 161 "GET /static/js/user_center_sku.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:09:12,523 basehttp 161 "GET /listsku/ HTTP/1.1" 200 30925
+INFO 2026-10-29 05:09:12,579 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-29 05:09:31,081 basehttp 161 "GET /api/skus/?page=2&keyword= HTTP/1.1" 200 4617
+WARNING 2026-10-29 05:09:31,102 log 230 Not Found: /media/九节鞭.jpg
+WARNING 2026-10-29 05:09:31,106 log 230 Not Found: /media/丁不四.jpeg
+WARNING 2026-10-29 05:09:31,110 log 230 Not Found: /media/丑蓝猫.jpeg
+WARNING 2026-10-29 05:09:31,111 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E5%9B%9B.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:31,111 basehttp 161 "GET /media/%E4%B8%91%E8%93%9D%E7%8C%AB.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:31,114 log 230 Not Found: /media/李明.jpg
+WARNING 2026-10-29 05:09:31,114 basehttp 161 "GET /media/%E4%B9%9D%E8%8A%82%E9%9E%AD.jpg HTTP/1.1" 404 23100
+WARNING 2026-10-29 05:09:31,115 basehttp 161 "GET /media/%E6%9D%8E%E6%98%8E.jpg HTTP/1.1" 404 23082
+INFO 2026-10-29 05:09:39,533 basehttp 161 "GET /api/skus/?page=1&keyword= HTTP/1.1" 200 5026
+INFO 2026-10-29 05:09:48,452 basehttp 161 "GET /api/skus/?page=2&keyword= HTTP/1.1" 200 4617
+WARNING 2026-10-29 05:09:48,474 log 230 Not Found: /media/九节鞭.jpg
+WARNING 2026-10-29 05:09:48,478 log 230 Not Found: /media/丑蓝猫.jpeg
+WARNING 2026-10-29 05:09:48,482 log 230 Not Found: /media/丁不四.jpeg
+WARNING 2026-10-29 05:09:48,485 log 230 Not Found: /media/李明.jpg
+WARNING 2026-10-29 05:09:48,485 basehttp 161 "GET /media/%E4%B9%9D%E8%8A%82%E9%9E%AD.jpg HTTP/1.1" 404 23100
+WARNING 2026-10-29 05:09:48,485 basehttp 161 "GET /media/%E4%B8%91%E8%93%9D%E7%8C%AB.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:48,486 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E5%9B%9B.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:48,486 basehttp 161 "GET /media/%E6%9D%8E%E6%98%8E.jpg HTTP/1.1" 404 23082
+INFO 2026-10-29 05:09:50,490 basehttp 161 "GET /api/skus/?page=3&keyword= HTTP/1.1" 200 4612
+INFO 2026-10-29 05:09:50,511 basehttp 161 "GET /media/goods/%E5%8A%A0%E5%A4%9A%E5%AE%9D550%E6%AF%AB%E5%8D%87.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:09:50,511 basehttp 161 "GET /media/goods/%E8%87%AA%E7%94%B1%E7%88%B1_LOVE_BEGAN_IN_1995__%E5%AE%9D%E4%B8%B0500ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:09:50,514 basehttp 161 "GET /media/goods/%E5%86%9C%E5%A4%AB%E5%B1%B1%E6%B3%89%E5%BC%95%E7%94%A8%E7%BA%AF%E5%87%80%E6%98%AF550%E6%AF%AB%E5%8D%87.jpg HTTP/1.1" 304 0
+WARNING 2026-10-29 05:09:50,518 log 230 Not Found: /media/孙红雷.jpeg
+WARNING 2026-10-29 05:09:50,521 log 230 Not Found: /media/丁不三.jpeg
+WARNING 2026-10-29 05:09:50,522 basehttp 161 "GET /media/%E5%AD%99%E7%BA%A2%E9%9B%B7.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:50,525 log 230 Not Found: /media/黄渤和秋田.jpg
+WARNING 2026-10-29 05:09:50,526 basehttp 161 "GET /media/%E4%B8%81%E4%B8%8D%E4%B8%89.jpeg HTTP/1.1" 404 23104
+WARNING 2026-10-29 05:09:50,526 basehttp 161 "GET /media/%E9%BB%84%E6%B8%A4%E5%92%8C%E7%A7%8B%E7%94%B0.jpg HTTP/1.1" 404 23136
+INFO 2026-10-29 05:09:50,527 basehttp 161 "GET /media/goods/%E7%99%BE%E5%A8%81%E5%95%A4%E9%85%92_460ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:09:50,527 basehttp 161 "GET /media/goods/%E7%99%BE%E9%87%8C%E6%8C%91%E4%B8%80%E4%BA%94%E9%A6%99%E5%91%B3%E7%93%9C%E5%AD%90_208%E5%85%8B.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,138 basehttp 161 "GET /api/skus/?page=4&keyword= HTTP/1.1" 200 4762
+INFO 2026-10-29 05:10:02,147 basehttp 161 "GET /media/goods/%E7%B4%AB%E6%9E%97%E7%99%BD%E7%B1%B3%E9%86%8B820ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,155 basehttp 161 "GET /media/goods/%E9%99%88%E7%9A%AE%E7%99%BD%E8%8C%B6%E8%B0%83%E5%91%B3%E8%8C%B675g.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,156 basehttp 161 "GET /media/goods/%E5%8E%A8%E9%82%A6%E9%87%91%E6%A0%87%E7%94%9F%E6%8A%BD1.25L_dONea48.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,157 basehttp 161 "GET /media/goods/%E9%87%91%E5%85%B8%E7%BA%AF%E7%89%9B%E5%A5%B6200ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,158 basehttp 161 "GET /media/goods/%E7%99%BE%E5%B2%81%E5%B1%B1%E5%BC%95%E7%94%A8%E5%A4%A9%E7%84%B6%E7%9F%BF%E6%B3%89%E6%B0%B4_570ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,159 basehttp 161 "GET /media/goods/%E4%B8%9C%E6%9D%A5%E7%B2%BE%E9%85%BF%E5%B0%8F%E9%BA%A6%E5%95%A4%E9%85%92330ml.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:02,159 basehttp 161 "GET /media/goods/%E9%93%B6%E9%B9%AD%E6%A1%82%E5%9C%86%E8%8E%B2%E5%AD%90%E5%85%AB%E5%AE%9D%E7%B2%A5360g.jpg HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:06,362 basehttp 161 "GET /api/skus/?page=5&keyword= HTTP/1.1" 200 3831
+INFO 2026-10-29 05:10:15,047 basehttp 161 "GET /expirysku/ HTTP/1.1" 200 31001
+INFO 2026-10-29 05:10:15,071 basehttp 161 "GET /static/js/user_center_expiry.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:18,285 basehttp 161 "GET /pos/promotion/add/ HTTP/1.1" 200 531446
+INFO 2026-10-29 05:10:18,356 basehttp 161 "GET /static/js/user_center_promotion_manage.js HTTP/1.1" 200 2892
+INFO 2026-10-29 05:10:21,666 basehttp 161 "GET /members/ HTTP/1.1" 200 29810
+INFO 2026-10-29 05:10:21,670 basehttp 161 "GET /static/js/user_center_member.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:21,712 basehttp 161 "GET /members/api/?page=1&keyword= HTTP/1.1" 200 3290
+INFO 2026-10-29 05:10:27,305 basehttp 161 "GET /spu-spec/add/ HTTP/1.1" 200 468227
+INFO 2026-10-29 05:10:27,333 basehttp 161 "GET /static/js/spu_specification_add.js HTTP/1.1" 200 1274
+INFO 2026-10-29 05:10:29,677 basehttp 161 "GET /listsupplier/ HTTP/1.1" 200 29632
+INFO 2026-10-29 05:10:29,682 basehttp 161 "GET /static/js/supplier_list.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:32,346 basehttp 161 "GET /channel-group/list/ HTTP/1.1" 200 36938
+INFO 2026-10-29 05:10:32,349 basehttp 161 "GET /static/js/channel_group_list.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:34,577 basehttp 161 "GET /spu/list/ HTTP/1.1" 200 30111
+INFO 2026-10-29 05:10:34,582 basehttp 161 "GET /static/js/spu_list.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:10:44,039 basehttp 161 "GET /spu/list/?page=2 HTTP/1.1" 200 30046
+INFO 2026-10-29 05:10:46,197 basehttp 161 "GET /spu/edit/3865/ HTTP/1.1" 200 445344
+INFO 2026-10-29 05:10:46,225 basehttp 161 "GET /static/js/spu_add.js HTTP/1.1" 200 3851
+INFO 2026-10-29 05:10:59,945 basehttp 161 "GET /spu/list/ HTTP/1.1" 200 30111
+INFO 2026-10-29 05:18:51,359 basehttp 161 "GET /logout/ HTTP/1.1" 302 0
+INFO 2026-10-29 05:18:51,493 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-29 05:18:55,412 basehttp 161 "GET /register/ HTTP/1.1" 200 4002
+INFO 2026-10-29 05:18:55,428 basehttp 161 "GET /static/js/register.js HTTP/1.1" 200 5863
+INFO 2026-10-29 05:18:55,428 basehttp 161 "GET /static/images/interval_line.png HTTP/1.1" 200 1123
+INFO 2026-10-29 05:18:55,430 basehttp 161 "GET /static/images/register_banner.png HTTP/1.1" 200 54894
+INFO 2026-10-29 05:18:55,454 basehttp 161 "GET /image_codes/c67dce89-a119-445f-823d-7b04ef249718/ HTTP/1.1" 200 3179
+INFO 2026-10-29 05:19:07,170 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-29 05:19:07,174 basehttp 161 "GET /static/js/login.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:19:12,607 basehttp 161 "GET /face/login/ HTTP/1.1" 200 9309
+INFO 2026-10-29 05:19:16,742 basehttp 161 "GET /login/ HTTP/1.1" 200 2689
+INFO 2026-10-29 05:34:02,861 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/apps/pos/models.py changed, reloading.
+INFO 2026-10-29 05:34:03,277 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-29 05:37:06,787 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/apps/pos/models.py changed, reloading.
+INFO 2026-10-29 05:37:07,184 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-29 05:37:44,640 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/apps/pos/models.py changed, reloading.
+INFO 2026-10-29 05:37:44,901 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-29 05:39:13,446 basehttp 161 "POST /login/ HTTP/1.1" 302 0
+INFO 2026-10-29 05:39:13,566 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-29 05:39:15,359 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-29 05:39:15,416 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-29 05:39:18,117 basehttp 161 "GET /info/ HTTP/1.1" 200 22570
+INFO 2026-10-29 05:39:18,186 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1111
+INFO 2026-10-29 05:39:22,162 basehttp 161 "GET /lottery/prize-level/ HTTP/1.1" 200 30338
+INFO 2026-10-29 05:39:22,165 basehttp 161 "GET /static/js/lottery/prize_level_list.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:39:26,426 basehttp 161 "GET /lottery/prize/ HTTP/1.1" 200 23615
+INFO 2026-10-29 05:39:26,464 basehttp 161 "GET /static/js/lottery/prize_list.js HTTP/1.1" 200 2046
+INFO 2026-10-29 05:39:29,568 basehttp 161 "GET /lottery/wheel/ HTTP/1.1" 200 25341
+INFO 2026-10-29 05:39:29,607 basehttp 161 "GET /static/js/lottery/lottery_wheel.js HTTP/1.1" 200 10112
+INFO 2026-10-29 05:39:33,368 basehttp 161 "GET /lottery/records/ HTTP/1.1" 200 28329
+INFO 2026-10-29 05:39:33,372 basehttp 161 "GET /static/js/lottery/lottery_record_list.js HTTP/1.1" 304 0
+INFO 2026-10-29 05:39:33,441 basehttp 161 "GET /lottery/api/records/?page=1 HTTP/1.1" 200 85
+INFO 2026-10-29 05:39:39,762 basehttp 161 "GET /members/ HTTP/1.1" 200 29810
+INFO 2026-10-29 05:39:39,805 basehttp 161 "GET /members/api/?page=1&keyword= HTTP/1.1" 200 3290
+INFO 2026-10-31 13:41:14,414 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 13:41:24,186 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-31 13:41:28,382 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-10-31 13:41:28,383 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+INFO 2026-10-31 13:41:28,384 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+WARNING 2026-10-31 13:41:28,388 log 230 Not Found: /apple-touch-icon-precomposed.png
+WARNING 2026-10-31 13:41:28,393 log 230 Not Found: /favicon.ico
+WARNING 2026-10-31 13:41:28,396 log 230 Not Found: /apple-touch-icon.png
+WARNING 2026-10-31 13:41:28,396 basehttp 161 "GET /apple-touch-icon-precomposed.png HTTP/1.1" 404 22918
+WARNING 2026-10-31 13:41:28,397 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+WARNING 2026-10-31 13:41:28,397 basehttp 161 "GET /apple-touch-icon.png HTTP/1.1" 404 22882
+INFO 2026-10-31 13:43:04,569 basehttp 161 "GET /pos/cashier/?terminal_id=STORE01-POS02 HTTP/1.1" 302 0
+INFO 2026-10-31 13:43:04,577 basehttp 161 "GET /login/?next=/pos/cashier/%3Fterminal_id%3DSTORE01-POS02 HTTP/1.1" 200 2689
+INFO 2026-10-31 13:43:04,599 basehttp 161 "GET /static/css/main.css HTTP/1.1" 200 41010
+INFO 2026-10-31 13:43:04,599 basehttp 161 "GET /static/js/axios-0.18.0.min.js HTTP/1.1" 200 12941
+INFO 2026-10-31 13:43:04,603 basehttp 161 "GET /static/js/common.js HTTP/1.1" 304 0
+INFO 2026-10-31 13:43:04,604 basehttp 161 "GET /static/images/logo.png HTTP/1.1" 200 18083
+INFO 2026-10-31 13:43:04,606 basehttp 161 "GET /static/js/vue-2.5.16.js HTTP/1.1" 200 289306
+INFO 2026-10-31 13:43:04,782 basehttp 161 "GET /static/js/login.js HTTP/1.1" 304 0
+INFO 2026-10-31 13:43:04,797 basehttp 161 "GET /static/images/icons02.png HTTP/1.1" 200 3935
+INFO 2026-10-31 13:43:04,799 basehttp 161 "GET /static/images/login_banner.png HTTP/1.1" 200 319312
+WARNING 2026-10-31 13:43:05,008 log 230 Not Found: /favicon.ico
+WARNING 2026-10-31 13:43:05,009 basehttp 161 "GET /favicon.ico HTTP/1.1" 404 22855
+INFO 2026-10-31 13:43:09,510 basehttp 161 "POST /login/?next=/pos/cashier/%3Fterminal_id%3DSTORE01-POS02 HTTP/1.1" 302 0
+INFO 2026-10-31 13:43:09,528 basehttp 161 "GET /pos/cashier/?terminal_id=STORE01-POS02 HTTP/1.1" 200 44913
+INFO 2026-10-31 13:43:39,755 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 378
+INFO 2026-10-31 13:43:49,927 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-31 13:43:54,569 basehttp 161 "GET /pos/suspended-orders/?terminal_id=STORE01-POS02 HTTP/1.1" 200 123
+INFO 2026-10-31 13:44:01,023 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:44:21,708 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:44:28,857 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:44:34,414 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:44:39,263 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:45:50,513 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:45:51,992 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:45:52,216 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:45:54,736 basehttp 161 "GET /pos/cashier/?terminal_id=STORE01-POS02 HTTP/1.1" 200 44913
+INFO 2026-10-31 13:46:16,333 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 13:46:26,845 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-31 13:46:31,056 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 13:47:03,523 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 13:47:03,877 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 13:47:26,545 basehttp 161 "GET /pos/cashier/?terminal_id=STORE01-POS02 HTTP/1.1" 200 44913
+INFO 2026-10-31 13:48:24,275 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 13:48:29,758 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 231
+INFO 2026-10-31 13:48:32,266 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 220
+INFO 2026-10-31 13:48:32,366 basehttp 161 "GET /pos/receipt/POS2026103113483289D39B/ HTTP/1.1" 200 5559
+INFO 2026-10-31 13:48:49,948 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 13:48:49,965 basehttp 161 "GET /static/js/jquery-1.12.4.min.js HTTP/1.1" 200 97163
+INFO 2026-10-31 13:48:50,832 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 13:48:50,867 basehttp 161 "GET /media/CtM3BVrRZa6ANO_sAAFti6upbx40753757.jpg HTTP/1.1" 200 120736
+INFO 2026-10-31 13:48:50,870 basehttp 161 "GET /media/CtM3BVrRcUeAHp9pAARfIK95am88523545.jpg HTTP/1.1" 200 258419
+INFO 2026-10-31 13:48:50,870 basehttp 161 "GET /media/CtM3BVrRchWAMc8rAARfIK95am88158618.jpg HTTP/1.1" 200 258419
+INFO 2026-10-31 13:48:50,871 basehttp 161 "GET /media/CtM3BVrPCAOAIKRBAAGvaeRBMfc0463515.jpg HTTP/1.1" 200 311088
+INFO 2026-10-31 13:49:27,579 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-31 13:49:27,676 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2824
+INFO 2026-10-31 13:49:32,233 basehttp 161 "GET /pos/transaction-details/?order_id=POS2026103113483289D39B HTTP/1.1" 200 13256
+INFO 2026-10-31 13:49:32,320 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS2026103113483289D39B HTTP/1.1" 200 392
+INFO 2026-10-31 13:49:41,442 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44913
+INFO 2026-10-31 13:49:43,076 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 13:49:43,158 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 13:49:46,475 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-31 13:49:46,556 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3733
+INFO 2026-10-31 13:58:54,825 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44913
+INFO 2026-10-31 13:59:02,860 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 13:59:02,955 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:05:17,383 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 14:05:17,729 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:05:23,506 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-10-31 14:05:23,821 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:18:52,532 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:21:31,348 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 14:21:31,652 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:21:59,978 basehttp 161 "GET /pos/cashier/?terminal_id=STORE004-POS004 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:22:04,940 basehttp 161 "GET /pos/cashier/?terminal_id=STORE004-POS004 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:22:07,827 basehttp 161 "GET /pos/cashier/?terminal_id=STORE004-POS004 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:22:18,965 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 14:22:22,114 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:22:24,265 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:22:39,006 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:22:40,053 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:22:46,329 basehttp 161 "GET /pos/cashier/?terminal_id=STORE003-POS003 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:23:00,912 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 14:23:07,278 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:23:09,460 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:23:26,127 basehttp 161 "GET /pos/cashier/?terminal_id=STORE00-POS003 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:23:29,618 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 14:23:33,167 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:23:34,369 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:23:34,648 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123
+INFO 2026-10-31 14:23:41,943 basehttp 161 "GET /pos/cashier/?terminal_id=STORE001-POS003 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:23:44,868 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 14:23:49,867 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 171
+INFO 2026-10-31 14:23:49,954 basehttp 161 "GET /pos/receipt/POS202610311423498FB7B3/ HTTP/1.1" 200 5373
+INFO 2026-10-31 14:24:00,034 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 295
+INFO 2026-10-31 14:24:03,839 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 171
+INFO 2026-10-31 14:24:03,923 basehttp 161 "GET /pos/receipt/POS20261031142403975131/ HTTP/1.1" 200 5373
+INFO 2026-10-31 14:31:50,765 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:31:50,996 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:31:56,116 basehttp 161 "GET /pos/transaction-details/ HTTP/1.1" 200 13256
+INFO 2026-10-31 14:31:56,191 basehttp 161 "GET /pos/get-transaction-details/?page=1 HTTP/1.1" 200 3633
+INFO 2026-10-31 14:32:02,920 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44913
+INFO 2026-10-31 14:32:04,849 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:32:04,919 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:32:08,152 basehttp 161 "GET /pos/transaction-records/ HTTP/1.1" 200 15306
+INFO 2026-10-31 14:32:08,225 basehttp 161 "GET /pos/get-transaction-records/?page=1 HTTP/1.1" 200 2796
+INFO 2026-10-31 14:32:10,289 basehttp 161 "GET /pos/transaction-details/?order_id=POS20261031142403975131 HTTP/1.1" 200 13256
+INFO 2026-10-31 14:32:10,359 basehttp 161 "GET /pos/get-transaction-details/?page=1&order_id=POS20261031142403975131 HTTP/1.1" 200 386
+INFO 2026-10-31 14:32:28,402 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44913
+INFO 2026-10-31 14:32:30,311 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:32:30,388 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:37:13,642 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:37:13,864 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:37:15,915 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-31 14:37:15,947 basehttp 161 "GET /media/CtM3BVrLmiKANEeLAAFfMRWFbY86177278.jpg HTTP/1.1" 200 106549
+INFO 2026-10-31 14:37:15,948 basehttp 161 "GET /media/CtM3BVrLmc-AJdVSAAEI5Wm7zaw8639396.jpg HTTP/1.1" 200 159493
+INFO 2026-10-31 14:37:15,988 basehttp 161 "GET /media/CtM3BVrLm_iAILnwAACbl1lbG3U8255973.jpg HTTP/1.1" 200 39831
+INFO 2026-10-31 14:37:15,988 basehttp 161 "GET /media/CtM3BVrLnHaATJWfAABcalxfbWk5995788.jpg HTTP/1.1" 200 23658
+INFO 2026-10-31 14:37:15,991 basehttp 161 "GET /media/CtM3BVrLmnaADtSKAAGlxZuk7uk4998927.jpg HTTP/1.1" 200 124318
+INFO 2026-10-31 14:37:15,992 basehttp 161 "GET /media/CtM3BVrMexWAfodJAAAhg8MeEWU8364862.jpg HTTP/1.1" 200 8579
+INFO 2026-10-31 14:37:15,992 basehttp 161 "GET /media/CtM3BVrLmkaAPIMJAAESCG7GAh43642702.jpg HTTP/1.1" 200 188373
+INFO 2026-10-31 14:37:15,993 basehttp 161 "GET /media/CtM3BVrMe2KAGXDKAAAVASh8SzY6938726.jpg HTTP/1.1" 200 5377
+INFO 2026-10-31 14:37:15,997 basehttp 161 "GET /media/CtM3BVrMgQuAM4-sAABPvjDmrZE7647305.jpg HTTP/1.1" 200 20414
+INFO 2026-10-31 14:37:15,997 basehttp 161 "GET /media/CtM3BVrMgX2AeXiGAABuWTn7Wr09762364.jpg HTTP/1.1" 200 28249
+INFO 2026-10-31 14:37:15,997 basehttp 161 "GET /media/CtM3BVrMgWyAH_f1AAAQuFJkR2o1196559.jpg HTTP/1.1" 200 4280
+INFO 2026-10-31 14:37:15,999 basehttp 161 "GET /media/CtM3BVrMgbiARBnzAABbhp78Lqs6191821.jpg HTTP/1.1" 200 23430
+INFO 2026-10-31 14:37:15,999 basehttp 161 "GET /static/images/icons.png HTTP/1.1" 200 7740
+INFO 2026-10-31 14:37:16,000 basehttp 161 "GET /media/CtM3BVrMgeuAYEocAABd3TzhhGw1571126.jpg HTTP/1.1" 200 24029
+INFO 2026-10-31 14:37:16,011 basehttp 161 "GET /media/CtM3BVrMgo6Aa3OTAAA82h3PXzw9976088.jpg HTTP/1.1" 200 15578
+INFO 2026-10-31 14:37:16,011 basehttp 161 "GET /media/CtM3BVrMg_qACjBsAAActVXQUoc6433633.jpg HTTP/1.1" 200 7349
+INFO 2026-10-31 14:37:16,012 basehttp 161 "GET /media/CtM3BVrMhBeAaZ9OAABuZHjPsV88472096.jpg HTTP/1.1" 200 28260
+INFO 2026-10-31 14:37:16,014 basehttp 161 "GET /media/CtM3BVrMgkaAWyHAAABbrVH9a7o5762009.jpg HTTP/1.1" 200 23469
+INFO 2026-10-31 14:37:16,016 basehttp 161 "GET /media/CtM3BVrMgmyAB_1AAABoaAzPPW86045138.jpg HTTP/1.1" 200 26728
+INFO 2026-10-31 14:37:16,017 basehttp 161 "GET /media/CtM3BVrMhDWAEwgEAABPce7je4w1228836.jpg HTTP/1.1" 200 20337
+INFO 2026-10-31 14:37:16,022 basehttp 161 "GET /media/CtM3BVrMhVCAFC8tAABonSNLGHA3584281.jpg HTTP/1.1" 200 26781
+INFO 2026-10-31 14:37:16,029 basehttp 161 "GET /media/CtM3BVrMhH6AAjD4AABS1vBu6x01229529.jpg HTTP/1.1" 200 21206
+INFO 2026-10-31 14:37:16,030 basehttp 161 "GET /media/CtM3BVrMhRCAB5hsAAAQZye4aIM5257140.jpg HTTP/1.1" 200 4199
+INFO 2026-10-31 14:37:16,032 basehttp 161 "GET /media/CtM3BVrMhYyAOjMVAABU1kCuf_48013827.jpg HTTP/1.1" 200 21718
+INFO 2026-10-31 14:37:16,032 basehttp 161 "GET /media/CtM3BVrMhFuAB5eZAAAaQIF-UNs3707070.jpg HTTP/1.1" 200 6720
+INFO 2026-10-31 14:37:16,033 basehttp 161 "GET /media/CtM3BVrMhW6Ac7QMAABd3TzhhGw0583536.jpg HTTP/1.1" 200 24029
+INFO 2026-10-31 14:37:16,036 basehttp 161 "GET /media/CtM3BVrMhaSAK3QLAAA7LKRGwzQ0348867.jpg HTTP/1.1" 200 15148
+INFO 2026-10-31 14:37:16,039 basehttp 161 "GET /media/CtM3BVrMhjOAdMNbAAAR1JGA_cA5064317.jpg HTTP/1.1" 200 4564
+INFO 2026-10-31 14:37:16,041 basehttp 161 "GET /media/CtM3BVrMhlSAP_27AAAW_YBdNEk8530912.jpg HTTP/1.1" 200 5885
+INFO 2026-10-31 14:37:16,042 basehttp 161 "GET /media/CtM3BVrMhveAOh8EAAA1ykQ-kAU6900992.jpg HTTP/1.1" 200 13770
+INFO 2026-10-31 14:37:16,043 basehttp 161 "GET /media/CtM3BVrMhyuAEf95AABFDj_owsg4241256.jpg HTTP/1.1" 200 17678
+INFO 2026-10-31 14:37:16,044 basehttp 161 "GET /media/CtM3BVrMh0qAavITAABOVXYg3SI5232882.jpg HTTP/1.1" 200 20053
+INFO 2026-10-31 14:37:16,044 basehttp 161 "GET /media/CtM3BVrMhpiAV3lJAABiLlkgy2Y9166507.jpg HTTP/1.1" 200 25134
+INFO 2026-10-31 14:37:16,048 basehttp 161 "GET /media/CtM3BVrMh4eAWdF2AAA-Fkkc5rM1921911.jpg HTTP/1.1" 200 15894
+INFO 2026-10-31 14:37:16,049 basehttp 161 "GET /media/CtM3BVrNsOuAQbJYAABoachTxTo8223966.jpg HTTP/1.1" 200 26729
+INFO 2026-10-31 14:37:16,050 basehttp 161 "GET /media/CtM3BVrMh62AUlDTAAA-SfqPszY5890026.jpg HTTP/1.1" 200 15945
+INFO 2026-10-31 14:37:16,050 basehttp 161 "GET /media/CtM3BVrNr0iAAbCEAABZEWPGxc48830214.jpg HTTP/1.1" 200 22801
+INFO 2026-10-31 14:37:16,051 basehttp 161 "GET /media/CtM3BVrNr6iAWKHsAAAcWfJ6OD00441704.jpg HTTP/1.1" 200 7257
+INFO 2026-10-31 14:37:16,052 basehttp 161 "GET /media/CtM3BVrNr2-AbNUxAABwpN-gR8E7784256.jpg HTTP/1.1" 200 28836
+INFO 2026-10-31 14:37:16,055 basehttp 161 "GET /media/CtM3BVrNsA2AQUMbAAAbb_vBV6I1599925.jpg HTTP/1.1" 200 7023
+INFO 2026-10-31 14:37:16,055 basehttp 161 "GET /media/CtM3BVrNsCuAUvllAAAOkY17G984349519.jpg HTTP/1.1" 200 3729
+INFO 2026-10-31 14:37:16,056 basehttp 161 "GET /media/CtM3BVrhyhmAehqbAAA3XtuXCto1322736.jpg HTTP/1.1" 200 14174
+INFO 2026-10-31 14:37:16,057 basehttp 161 "GET /media/CtM3BVrNsEGAZTfyAAAasplERbc8856337.jpg HTTP/1.1" 200 6834
+INFO 2026-10-31 14:37:16,058 basehttp 161 "GET /media/CtM3BVrNr8KAD6b2AAByGLpNQV01684706.jpg HTTP/1.1" 200 29208
+INFO 2026-10-31 14:37:16,058 basehttp 161 "GET /media/CtM3BVrNsGCAeDZeAABtIYY5-s41601603.jpg HTTP/1.1" 200 27937
+INFO 2026-10-31 14:37:16,061 basehttp 161 "GET /media/CtM3BVrNsHyANXdyAABeDo_Qzeg1095047.jpg HTTP/1.1" 200 24078
+INFO 2026-10-31 14:37:16,062 basehttp 161 "GET /media/CtM3BVrMisuAJnyWAABYJxXfN8w9822011.jpg HTTP/1.1" 200 22567
+INFO 2026-10-31 14:37:16,063 basehttp 161 "GET /media/CtM3BVrNrY-AdBacAAA7DYB8sjU0120233.jpg HTTP/1.1" 200 15117
+INFO 2026-10-31 14:37:16,064 basehttp 161 "GET /media/CtM3BVrMivSAUTWcAAANpJ-t9xg5938130.jpg HTTP/1.1" 200 3492
+INFO 2026-10-31 14:37:16,068 basehttp 161 "GET /media/CtM3BVrNsuuAQo25AAAmP_AGNMA9808303.jpg HTTP/1.1" 200 9791
+INFO 2026-10-31 14:37:16,069 basehttp 161 "GET /media/CtM3BVrNrkOAYXcbAABQocGJtes4517631.jpg HTTP/1.1" 200 20641
+INFO 2026-10-31 14:37:16,070 basehttp 161 "GET /media/CtM3BVrNrs2AMHPbAABMxVYJeMo0602527.jpg HTTP/1.1" 200 19653
+INFO 2026-10-31 14:37:16,071 basehttp 161 "GET /media/CtM3BVrNrq-AbFajAABb8Hp05302964728.jpg HTTP/1.1" 200 23536
+INFO 2026-10-31 14:37:16,072 basehttp 161 "GET /media/CtM3BVrNsbqAbi4CAABYmW4pmPA1782942.jpg HTTP/1.1" 200 22681
+INFO 2026-10-31 14:37:16,074 basehttp 161 "GET /media/CtM3BVrNrf-AJ1ZjAAB_vAApFkw8201014.jpg HTTP/1.1" 200 32700
+INFO 2026-10-31 14:37:16,076 basehttp 161 "GET /media/CtM3BVrNsxaAeU4HAAAkQDJCGSY6809195.jpg HTTP/1.1" 200 9280
+INFO 2026-10-31 14:37:16,077 basehttp 161 "GET /media/CtM3BVrNs8WAZsplAAB-c4wo3kI9077289.jpg HTTP/1.1" 200 32371
+INFO 2026-10-31 14:37:16,078 basehttp 161 "GET /media/CtM3BVrNs4KAIlJKAAAQmKypd2c1901811.jpg HTTP/1.1" 200 4248
+INFO 2026-10-31 14:37:16,080 basehttp 161 "GET /media/CtM3BVrNszaAMu2PAACwnbap8zI9797082.jpg HTTP/1.1" 200 45213
+INFO 2026-10-31 14:37:16,080 basehttp 161 "GET /media/CtM3BVrNtA6AFtbDAAAVJIjSdl43078544.jpg HTTP/1.1" 200 5412
+INFO 2026-10-31 14:37:16,081 basehttp 161 "GET /media/CtM3BVrNs-SAaLqBAAAPB44z-fw7327519.jpg HTTP/1.1" 200 3847
+INFO 2026-10-31 14:37:16,082 basehttp 161 "GET /media/CtM3BVrNtDGAdlzlAAAZZRjOIrQ5323041.jpg HTTP/1.1" 200 6501
+INFO 2026-10-31 14:37:16,084 basehttp 161 "GET /media/CtM3BVrNtOiAKex1AAAOZc14LLQ2319263.jpg HTTP/1.1" 200 3685
+INFO 2026-10-31 14:37:16,085 basehttp 161 "GET /media/CtM3BVrNtMWANuqTAACac0TCaxU2674435.jpg HTTP/1.1" 200 39539
+INFO 2026-10-31 14:37:16,086 basehttp 161 "GET /media/CtM3BVrNtUGACPW-AAAWNwYc_Yg9317761.jpg HTTP/1.1" 200 5687
+INFO 2026-10-31 14:37:16,088 basehttp 161 "GET /media/CtM3BVrNtRGAGUbMAACY-WS_oQg9101415.jpg HTTP/1.1" 200 39161
+INFO 2026-10-31 14:37:16,089 basehttp 161 "GET /media/CtM3BVrNtY2ABEOfAAAWaWuGKss3304555.jpg HTTP/1.1" 200 5737
+INFO 2026-10-31 14:37:16,090 basehttp 161 "GET /media/CtM3BVrNtamAdrqPAAAYsg3AvQ86108884.jpg HTTP/1.1" 200 6322
+INFO 2026-10-31 14:37:16,091 basehttp 161 "GET /media/CtM3BVrNtcOAYTH1AABVIz70wKU1556174.jpg HTTP/1.1" 200 21795
+INFO 2026-10-31 14:37:16,092 basehttp 161 "GET /media/CtM3BVrNtWKAUKPkAADhQEAcAgQ4155172.jpg HTTP/1.1" 200 57664
+INFO 2026-10-31 14:37:16,092 basehttp 161 "GET /media/CtM3BVrNteKAZhHCAAAMrIL-ugE2533088.jpg HTTP/1.1" 200 3244
+INFO 2026-10-31 14:37:16,092 basehttp 161 "GET /media/CtM3BVrNtf-AY0FGAAAZwGscZq42512400.jpg HTTP/1.1" 200 6592
+INFO 2026-10-31 14:37:36,012 basehttp 161 "GET /list/115/1/ HTTP/1.1" 200 109066
+INFO 2026-10-31 14:37:36,040 basehttp 161 "GET /media/CtM3BVrRa8iAZdz1AAFZsBqChgk2188464.jpg HTTP/1.1" 200 64626
+INFO 2026-10-31 14:37:36,040 basehttp 161 "GET /media/CtM3BVrRbI2ARekNAAFZsBqChgk3141998.jpg HTTP/1.1" 200 64626
+INFO 2026-10-31 14:37:36,070 basehttp 161 "GET /static/js/jquery.pagination.min.js HTTP/1.1" 200 2935
+INFO 2026-10-31 14:37:36,072 basehttp 161 "GET /media/CtM3BVrRbh2AX3JVAAFvJD02RWs4638828.jpg HTTP/1.1" 200 85492
+INFO 2026-10-31 14:37:36,105 basehttp 161 "GET /hot/115/ HTTP/1.1" 200 474
+INFO 2026-10-31 14:37:37,960 basehttp 161 "GET /detail/4/ HTTP/1.1" 200 112288
+INFO 2026-10-31 14:37:37,989 basehttp 161 "GET /static/images/goods/CtM3BVrRYpCAS9FFAADxmVbf5qw4487023.jpg HTTP/1.1" 200 61849
+INFO 2026-10-31 14:37:37,990 basehttp 161 "GET /static/images/goods/CtM3BVrRYoGAC2KAAADDtplWV_04901262.jpg HTTP/1.1" 200 50102
+INFO 2026-10-31 14:37:38,023 basehttp 161 "GET /static/js/detail.js HTTP/1.1" 200 6362
+INFO 2026-10-31 14:37:38,027 basehttp 161 "GET /static/images/goods/CtM3BVrRYp6ACUuEAAWXt1XYzNg5251947.jpg HTTP/1.1" 200 366519
+INFO 2026-10-31 14:37:38,027 basehttp 161 "GET /static/images/goods/CtM3BVrRYqmANdXMAAXn26rWyDY0861997.jpg HTTP/1.1" 200 387035
+INFO 2026-10-31 14:37:38,057 basehttp 161 "GET /hot/115/ HTTP/1.1" 200 474
+INFO 2026-10-31 14:37:38,065 basehttp 161 "GET /comments/4/ HTTP/1.1" 200 49
+INFO 2026-10-31 14:37:38,066 basehttp 161 "POST /browse_histories/ HTTP/1.1" 200 29
+INFO 2026-10-31 14:37:38,068 basehttp 161 "GET /carts/simple/ HTTP/1.1" 200 46
+INFO 2026-10-31 14:37:38,069 basehttp 161 "POST /detail/visit/115/ HTTP/1.1" 200 29
+INFO 2026-10-31 14:40:10,714 basehttp 161 "GET / HTTP/1.1" 200 136440
+INFO 2026-10-31 14:40:12,439 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:40:12,515 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:40:16,805 basehttp 161 "GET /pos/payment-config/ HTTP/1.1" 200 22027
+INFO 2026-10-31 14:40:16,824 basehttp 161 "GET /static/js/pos/payment_config.js HTTP/1.1" 304 0
+INFO 2026-10-31 14:40:23,799 basehttp 161 "GET /pos/payment-account/add/ HTTP/1.1" 200 27292
+INFO 2026-10-31 14:40:23,818 basehttp 161 "GET /static/js/pos/payment_account_form.js HTTP/1.1" 304 0
+INFO 2026-10-31 14:40:32,972 basehttp 161 "GET /pos/cashier/ HTTP/1.1" 200 44913
+INFO 2026-10-31 14:40:46,107 basehttp 161 "GET /info/ HTTP/1.1" 200 22556
+INFO 2026-10-31 14:40:46,198 basehttp 161 "GET /browse_histories/ HTTP/1.1" 200 1135
+INFO 2026-10-31 14:42:08,821 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 14:42:09,209 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:42:15,014 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/apps/pos/views.py changed, reloading.
+INFO 2026-10-31 14:42:15,332 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:45:56,632 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 14:45:56,980 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:46:17,173 autoreload 251 /Users/kingkong/Hot_Mall/hot_mall/settings/dev.py changed, reloading.
+INFO 2026-10-31 14:46:17,468 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:53:13,959 basehttp 161 "GET /pos/cashier/?terminal_id=STORE001-POS002 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:54:15,619 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 294
+INFO 2026-10-31 14:54:20,278 basehttp 161 "POST /pos/query-member/ HTTP/1.1" 200 229
+INFO 2026-10-31 14:54:28,026 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 221
+INFO 2026-10-31 14:54:28,121 basehttp 161 "GET /pos/receipt/POS202610311454288F9634/ HTTP/1.1" 200 5568
+INFO 2026-10-31 14:54:40,107 basehttp 161 "GET /pos/cashier/?terminal_id=STORE002-POS002 HTTP/1.1" 200 44913
+INFO 2026-10-31 14:54:44,682 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 294
+INFO 2026-10-31 14:54:46,101 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 171
+INFO 2026-10-31 14:54:46,208 basehttp 161 "GET /pos/receipt/POS2026103114544651311A/ HTTP/1.1" 200 5373
+INFO 2026-10-31 14:59:07,458 autoreload 637 Watching for file changes with StatReloader
+INFO 2026-10-31 14:59:34,887 basehttp 161 "POST /pos/scan/ HTTP/1.1" 200 294
+INFO 2026-10-31 14:59:41,305 basehttp 161 "POST /pos/create-order/ HTTP/1.1" 200 123

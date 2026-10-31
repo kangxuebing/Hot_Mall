@@ -626,9 +626,16 @@
         let currentSuspendedOrderId = null; // 当前取出的挂单ID
         let currentMember = null; // 当前选择的会员
         const createId = () => (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
-        const terminalId = '{{ pos_terminal_code }}';
+
+        // 从 URL 参数获取终端编号，如果 URL 中没有则尝试从 localStorage 读取
+        const urlParams = new URLSearchParams(window.location.search);
+        let terminalId = urlParams.get('terminal_id') || localStorage.getItem('pos_terminal_id') || '';
+
         if (!terminalId) {
-            showMessage('当前收银机未配置终端编号，请联系管理员', 'error');
+            showMessage('当前收银机未配置终端编号，请在URL中添加 ?terminal_id=STORE01-POS01', 'error');
+        } else {
+            // 保存到 localStorage，方便后续使用
+            localStorage.setItem('pos_terminal_id', terminalId);
         }
         
         // 条码输入处理

@@ -22,16 +22,72 @@ from datetime import datetime, date, timedelta
 
 
 def get_terminal_id(request):
-    """Return the configured logical terminal code, rejecting mismatched clients."""
+    """Return the configured logical terminal code, rejecting mismatched clients.
+
+    Supports three modes:
+    1. Empty string: Accept any terminal (for development)
+    2. Single terminal: Only accept that specific terminal
+    3. Comma-separated whitelist: Accept any terminal in the whitelist
+
+    Optional IP whitelist validation for production security:
+    If POS_ENABLE_IP_WHITELIST is True, validates both terminal code and IP address.
+    """
     configured_terminal = getattr(settings, 'POS_TERMINAL_CODE', '').strip()
     requested_terminal = (
         request.META.get('HTTP_X_POS_TERMINAL_CODE') or
         request.POST.get('terminal_id') or
         request.GET.get('terminal_id') or ''
     ).strip()
-    if configured_terminal:
-        return configured_terminal if requested_terminal == configured_terminal else None
+
+    # 获取客户端IP地址
+    client_ip = get_client_ip(request)
+
+    if not configured_terminal:
+        # 模式1：接受任意终端编号（开发环境）
+        return requested_terminal
+
+    if ',' in configured_terminal:
+        # 模式3：白名单模式（逗号分隔的多个终端编号）
+        allowed_terminals = [t.strip() for t in configured_terminal.split(',') if t.strip()]
+        if requested_terminal not in allowed_terminals:
+            return None
+    else:
+        # 模式2：单个终端模式
+        if requested_terminal != configured_terminal:
+            return None
+
+    # IP白名单验证（生产环境增强安全性）
+    if getattr(settings, 'POS_ENABLE_IP_WHITELIST', False):
+        ip_map = getattr(settings, 'POS_TERMINAL_IP_MAP', '').strip()
+        if ip_map:
+            # 解析IP映射配置：终端编号:IP地址,终端编号:IP地址
+            terminal_ip_dict = {}
+            for mapping in ip_map.split(','):
+                if ':' in mapping:
+                    term, ip = mapping.split(':', 1)
+                    terminal_ip_dict[term.strip()] = ip.strip()
+
+            # 验证终端编号和IP地址是否匹配
+            if requested_terminal in terminal_ip_dict:
+                allowed_ip = terminal_ip_dict[requested_terminal]
+                if client_ip != allowed_ip:
+                    # IP地址不匹配，拒绝请求
+                    return None
+            else:
+                # 终端编号不在IP映射中，拒绝请求
+                return None
+
     return requested_terminal
+
+
+def get_client_ip(request):
+    """Get the client's IP address from the request."""
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0].strip()
+    else:
+        ip = request.META.get('REMOTE_ADDR', '')
+    return ip
 
 
 def check_product_expiration(sku):
@@ -1176,4 +1232,154 @@ class PromotionDeleteView(LoginRequiredMixin, DeleteView):
         self.object = self.get_object()
         sku_name = self.object.sku.name
         self.object.delete()
-        return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': f'促销商品“{sku_name}”已删除。'})
+        return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': f'促销商品"{sku_name}"已删除。'})
+
+
+class PaymentConfigView(BasePosView):
+    """收银设置页面"""
+    left_menu_active = "payment-config"
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        from .models import PaymentAccount
+        payment_accounts = PaymentAccount.objects.all()
+        context = self.get_context_data()
+        context['payment_accounts'] = payment_accounts
+        context['is_superuser'] = request.user.is_superuser
+        return render(request, 'pos/payment_config.html', context)
+
+
+class PaymentAccountAddView(BasePosView):
+    """添加收款账户"""
+    left_menu_active = "payment-config"
+    template_name = 'pos/payment_account_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        context = self.get_context_data()
+        context['title'] = '添加收款账户'
+        context['is_superuser'] = request.user.is_superuser
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        if not request.user.is_superuser:
+            return JsonResponse({'success': False, 'message': '权限不足'})
+
+        try:
+            from .models import PaymentAccount
+            payment_type = int(request.POST.get('payment_type'))
+            account_name = request.POST.get('account_name')
+            account_number = request.POST.get('account_number')
+            merchant_id = request.POST.get('merchant_id', '')
+            api_key = request.POST.get('api_key', '')
+            app_id = request.POST.get('app_id', '')
+            is_active = request.POST.get('is_active') == '1'
+            remark = request.POST.get('remark', '')
+
+            PaymentAccount.objects.create(
+                payment_type=payment_type,
+                account_name=account_name,
+                account_number=account_number,
+                merchant_id=merchant_id,
+                api_key=api_key,
+                app_id=app_id,
+                is_active=is_active,
+                remark=remark
+            )
+
+            messages.success(request, f"收款账户「{account_name}」已添加。")
+            return redirect(reverse_lazy('pos:payment_config'))
+
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '添加收款账户'
+            context['is_superuser'] = request.user.is_superuser
+            context['error'] = f'添加失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class PaymentAccountEditView(BasePosView):
+    """编辑收款账户"""
+    left_menu_active = "payment-config"
+    template_name = 'pos/payment_account_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, pk):
+        from .models import PaymentAccount
+        try:
+            account = PaymentAccount.objects.get(id=pk)
+            context = self.get_context_data()
+            context['title'] = '编辑收款账户'
+            context['is_superuser'] = request.user.is_superuser
+            context['account'] = account
+            return render(request, self.template_name, context)
+        except PaymentAccount.DoesNotExist:
+            return redirect(reverse_lazy('pos:payment_config'))
+
+    def post(self, request, pk):
+        if not request.user.is_superuser:
+            return JsonResponse({'success': False, 'message': '权限不足'})
+
+        try:
+            from .models import PaymentAccount
+            account = PaymentAccount.objects.get(id=pk)
+            
+            account_name = request.POST.get('account_name')
+            account_number = request.POST.get('account_number')
+            merchant_id = request.POST.get('merchant_id', '')
+            api_key = request.POST.get('api_key', '')
+            app_id = request.POST.get('app_id', '')
+            is_active = request.POST.get('is_active') == '1'
+            remark = request.POST.get('remark', '')
+
+            account.account_name = account_name
+            account.account_number = account_number
+            account.merchant_id = merchant_id
+            account.api_key = api_key
+            account.app_id = app_id
+            account.is_active = is_active
+            account.remark = remark
+            account.save()
+
+            messages.success(request, f"收款账户「{account_name}」已更新。")
+            return redirect(reverse_lazy('pos:payment_config'))
+
+        except PaymentAccount.DoesNotExist:
+            return redirect(reverse_lazy('pos:payment_config'))
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '编辑收款账户'
+            context['is_superuser'] = request.user.is_superuser
+            context['account'] = None
+            context['error'] = f'更新失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class PaymentAccountDeleteView(LoginRequiredMixin, DeleteView):
+    """删除收款账户"""
+    from .models import PaymentAccount
+    model = PaymentAccount
+    success_url = reverse_lazy('pos:payment_config')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return JsonResponse({'code': 1, 'errmsg': '权限不足'}, status=403)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        account_name = self.object.account_name
+        self.object.delete()
+        return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': f'收款账户「{account_name}」已删除。'})
