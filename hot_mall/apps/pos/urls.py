@@ -30,4 +30,26 @@ urlpatterns = [
     path('payment-account/add/', views.PaymentAccountAddView.as_view(), name='payment_account_add'),
     path('payment-account/edit/<int:pk>/', views.PaymentAccountEditView.as_view(), name='payment_account_edit'),
     path('payment-account/delete/<int:pk>/', views.PaymentAccountDeleteView.as_view(), name='payment_account_delete'),
+    # 门店管理
+    path('store/', views.StoreListView.as_view(), name='store_list'),
+    path('store/add/', views.StoreAddView.as_view(), name='store_add'),
+    path('store/edit/<int:pk>/', views.StoreEditView.as_view(), name='store_edit'),
+    path('store/delete/<int:pk>/', views.StoreDeleteView.as_view(), name='store_delete'),
+    path('store/<int:store_pk>/terminals/', views.StoreTerminalListView.as_view(), name='store_terminal_list'),
+    path('store/<int:store_pk>/terminals/add/', views.StoreTerminalFormView.as_view(), name='store_terminal_add'),
+    path('store/<int:store_pk>/terminals/<int:pk>/edit/', views.StoreTerminalFormView.as_view(), name='store_terminal_edit'),
+    path('store/<int:store_pk>/terminals/<int:pk>/delete/', views.StoreTerminalDeleteView.as_view(), name='store_terminal_delete'),
+    # 用户-门店关联管理
+    path('user-store/', views.UserStoreListView.as_view(), name='user_store_list'),
+    path('user-store/add/', views.UserStoreAddView.as_view(), name='user_store_add'),
+    path('user-store/edit/<int:pk>/', views.UserStoreEditView.as_view(), name='user_store_edit'),
+    path('user-store/delete/<int:pk>/', views.UserStoreDeleteView.as_view(), name='user_store_delete'),
+    # 门店选择
+    path('select-store/', views.SelectStoreView.as_view(), name='select_store'),
+    # 门店库存初始化
+    path('init-stock/', views.InitStoreStockView.as_view(), name='init_store_stock'),
+    # 证书管理API
+    path('api/certificate/bind/', views.BindCertificateView.as_view(), name='bind_certificate'),
+    path('api/certificate/unbind/<int:pk>/', views.UnbindCertificateView.as_view(), name='unbind_certificate'),
+    path('api/certificate/verify/', views.VerifyCertificateView.as_view(), name='verify_certificate'),
 ]

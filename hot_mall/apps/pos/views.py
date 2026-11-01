@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.conf import settings
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,82 +11,178 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, View
 from django.contrib import messages
+import hashlib
+import ipaddress
+import re
 import uuid
 import json
+import logging
+from urllib.parse import unquote
 from decimal import Decimal
+from cryptography import x509
+from cryptography.hazmat.primitives import serialization
+from django.conf import settings
 from goods.models import SKU
-from .models import POSOrder, POSOrderItem, BarcodeScanner, SuspendedOrder, PromotionProduct
+from .models import POSOrder, POSOrderItem, BarcodeScanner, SuspendedOrder, PromotionProduct, Store, StoreStock, StoreTerminal, UserStore
 from users.models import User
 from datetime import datetime, date, timedelta
 
+logger = logging.getLogger(__name__)
+
 
 def get_terminal_id(request):
-    """Return the configured logical terminal code, rejecting mismatched clients.
+    """Validate store terminal code, client IP and mTLS certificate fingerprint."""
+    try:
+        requested_terminal = (
+            request.META.get('HTTP_X_POS_TERMINAL_CODE') or
+            request.POST.get('terminal_id') or
+            request.GET.get('terminal_id') or ''
+        ).strip()
 
-    Supports three modes:
-    1. Empty string: Accept any terminal (for development)
-    2. Single terminal: Only accept that specific terminal
-    3. Comma-separated whitelist: Accept any terminal in the whitelist
-
-    Optional IP whitelist validation for production security:
-    If POS_ENABLE_IP_WHITELIST is True, validates both terminal code and IP address.
-    """
-    configured_terminal = getattr(settings, 'POS_TERMINAL_CODE', '').strip()
-    requested_terminal = (
-        request.META.get('HTTP_X_POS_TERMINAL_CODE') or
-        request.POST.get('terminal_id') or
-        request.GET.get('terminal_id') or ''
-    ).strip()
-
-    # 获取客户端IP地址
-    client_ip = get_client_ip(request)
-
-    if not configured_terminal:
-        # 模式1：接受任意终端编号（开发环境）
-        return requested_terminal
-
-    if ',' in configured_terminal:
-        # 模式3：白名单模式（逗号分隔的多个终端编号）
-        allowed_terminals = [t.strip() for t in configured_terminal.split(',') if t.strip()]
-        if requested_terminal not in allowed_terminals:
-            return None
-    else:
-        # 模式2：单个终端模式
-        if requested_terminal != configured_terminal:
+        store_id = get_current_store_id(request)
+        if not store_id:
+            logger.warning(f"get_terminal_id: No store_id in session")
             return None
 
-    # IP白名单验证（生产环境增强安全性）
-    if getattr(settings, 'POS_ENABLE_IP_WHITELIST', False):
-        ip_map = getattr(settings, 'POS_TERMINAL_IP_MAP', '').strip()
-        if ip_map:
-            # 解析IP映射配置：终端编号:IP地址,终端编号:IP地址
-            terminal_ip_dict = {}
-            for mapping in ip_map.split(','):
-                if ':' in mapping:
-                    term, ip = mapping.split(':', 1)
-                    terminal_ip_dict[term.strip()] = ip.strip()
-
-            # 验证终端编号和IP地址是否匹配
-            if requested_terminal in terminal_ip_dict:
-                allowed_ip = terminal_ip_dict[requested_terminal]
-                if client_ip != allowed_ip:
-                    # IP地址不匹配，拒绝请求
-                    return None
-            else:
-                # 终端编号不在IP映射中，拒绝请求
+        # 开发环境：如果没有提供终端编号，使用默认终端或创建一个
+        if settings.DEBUG and not requested_terminal:
+            logger.info(f"get_terminal_id: DEBUG mode, no terminal_code provided, using default")
+            # 尝试获取门店的第一个终端
+            terminal = StoreTerminal.objects.filter(store_id=store_id, status=1).first()
+            if terminal:
+                logger.info(f"get_terminal_id: Using existing terminal {terminal.terminal_code}")
+                return str(terminal.terminal_code)
+            # 如果没有终端，创建一个默认终端
+            try:
+                store = Store.objects.get(id=store_id)
+                terminal = StoreTerminal.objects.create(
+                    store=store,
+                    terminal_code='DEFAULT_TERMINAL',
+                    name='默认收银终端',
+                    status=1
+                )
+                logger.info(f"get_terminal_id: Created default terminal")
+                return str(terminal.terminal_code)
+            except Exception as e:
+                logger.error(f"get_terminal_id: Failed to create default terminal: {e}")
                 return None
 
-    return requested_terminal
+        if not requested_terminal:
+            logger.warning(f"get_terminal_id: No terminal_code provided")
+            return None
+
+        terminal = StoreTerminal.objects.filter(
+            store_id=store_id,
+            terminal_code=requested_terminal,
+            status=1,
+        ).first()
+        if not terminal:
+            logger.warning(f"get_terminal_id: Terminal not found - store_id={store_id}, terminal_code={requested_terminal}")
+            # 开发环境：自动创建终端
+            if settings.DEBUG:
+                logger.info(f"get_terminal_id: DEBUG mode, auto-creating terminal {requested_terminal}")
+                try:
+                    store = Store.objects.get(id=store_id)
+                    terminal = StoreTerminal.objects.create(
+                        store=store,
+                        terminal_code=requested_terminal,
+                        name=f'自动创建终端-{requested_terminal}',
+                        status=1
+                    )
+                    logger.info(f"get_terminal_id: Auto-created terminal {requested_terminal}")
+                except Exception as e:
+                    logger.error(f"get_terminal_id: Failed to auto-create terminal: {e}")
+                    return None
+            else:
+                return None
+
+        # 开发环境跳过严格的 mTLS 验证
+        if settings.DEBUG:
+            logger.info(f"get_terminal_id: DEBUG mode, skipping mTLS validation for terminal {requested_terminal}")
+            return str(terminal.terminal_code)
+
+        # 生产环境进行完整的 mTLS 验证
+        if not terminal.ip_address or not terminal.certificate_fingerprint:
+            logger.warning(f"get_terminal_id: Terminal missing ip_address or certificate_fingerprint")
+            return None
+
+        try:
+            client_ip = ipaddress.ip_address(get_verified_client_ip(request))
+            terminal_ip = ipaddress.ip_address(terminal.ip_address)
+            certificate_fingerprint = get_verified_client_certificate_fingerprint(request)
+        except ValueError:
+            return None
+        except (TypeError, UnicodeError, x509.ExtensionNotFound):
+            return None
+        if client_ip != terminal_ip or certificate_fingerprint != terminal.certificate_fingerprint:
+            return None
+        return str(terminal.terminal_code)
+    except Exception as e:
+        logger.error(f"get_terminal_id: Unexpected error: {type(e).__name__}: {str(e)}", exc_info=True)
+        return None
 
 
-def get_client_ip(request):
-    """Get the client's IP address from the request."""
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0].strip()
-    else:
-        ip = request.META.get('REMOTE_ADDR', '')
-    return ip
+def get_trusted_proxy_networks():
+    """Parse proxy addresses/CIDRs allowed to assert verified mTLS metadata."""
+    configured = getattr(settings, 'POS_TRUSTED_TLS_PROXY_IPS', '')
+    networks = []
+    try:
+        for value in configured.split(','):
+            value = value.strip()
+            if value:
+                networks.append(ipaddress.ip_network(value, strict=False))
+    except ValueError:
+        return []
+    return networks
+
+
+def is_trusted_tls_proxy(request):
+    try:
+        peer_ip = ipaddress.ip_address((request.META.get('REMOTE_ADDR') or '').strip())
+    except ValueError:
+        return False
+    return any(peer_ip in network for network in get_trusted_proxy_networks())
+
+
+def get_verified_client_ip(request):
+    if not is_trusted_tls_proxy(request):
+        raise ValueError('请求不是来自可信TLS代理')
+    client_ip = (request.META.get('HTTP_X_VERIFIED_CLIENT_IP') or '').strip()
+    return str(ipaddress.ip_address(client_ip))
+
+
+def get_verified_client_certificate_fingerprint(request):
+    if not is_trusted_tls_proxy(request):
+        raise ValueError('请求不是来自可信TLS代理')
+    if request.META.get('HTTP_X_CLIENT_CERT_VERIFY') != 'SUCCESS':
+        raise ValueError('客户端证书未通过代理验证')
+
+    escaped_certificate = request.META.get('HTTP_X_VERIFIED_CLIENT_CERT', '')
+    certificate_pem = unquote(escaped_certificate).replace('\\n', '\n').strip()
+    if not certificate_pem:
+        raise ValueError('缺少客户端证书')
+
+    certificate = x509.load_pem_x509_certificate(certificate_pem.encode('ascii'))
+    certificate_der = certificate.public_bytes(serialization.Encoding.DER)
+    return hashlib.sha256(certificate_der).hexdigest()
+
+
+def get_current_store_id(request):
+    """返回用户当前可访问的启用门店，失效的选择会从会话中清除。"""
+    store_id = request.session.get('current_store_id')
+    if not store_id:
+        return None
+
+    stores = Store.objects.filter(id=store_id, status=1)
+    if not request.user.is_superuser:
+        stores = stores.filter(userstore__user=request.user)
+
+    store = stores.first()
+    if not store:
+        request.session.pop('current_store_id', None)
+        request.session.pop('current_store_name', None)
+        return None
+    return store.id
 
 
 def check_product_expiration(sku):
@@ -134,9 +229,19 @@ class CashierInterfaceView(BasePosView):
     left_menu_active = "cashier"
 
     def get(self, request):
+        store_id = get_current_store_id(request)
+        if not store_id:
+            return redirect(reverse_lazy('pos:select_store'))
         context = self.get_context_data()
         context['is_superuser'] = request.user.is_superuser
-        context['pos_terminal_code'] = getattr(settings, 'POS_TERMINAL_CODE', '')
+        terminals = list(
+            StoreTerminal.objects.filter(store_id=store_id, status=1).values(
+                'terminal_code', 'name', 'ip_address'
+            )
+        )
+        context['pos_terminals'] = terminals
+        context['current_store_name'] = request.session.get('current_store_name', '')
+        context['current_store_name'] = request.session.get('current_store_name', '')
         return render(request, 'pos/cashier.html', context)
 
 
@@ -155,10 +260,27 @@ class ScanBarcodeView(LoginRequiredMixin, View):
 
         try:
             sku = SKU.objects.get(barcode=barcode, is_launched=True)
-            
+
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
+            # 查询门店库存
+            store_stock = StoreStock.objects.filter(store_id=store_id, sku=sku).first()
+            if not store_stock:
+                # 未初始化的SKU在该门店库存为0，不从全局库存隐式分配。
+                store_stock = StoreStock.objects.create(
+                    store_id=store_id,
+                    sku=sku,
+                    stock=0,
+                    near_expiry_num=0,
+                    expired_num=0
+                )
+
             # 检查商品保质期状态（仅用于信息显示，不阻止销售）
             is_valid, expiration_message = check_product_expiration(sku)
-            
+
             return JsonResponse({
                 'success': True,
                 'sku': {
@@ -166,12 +288,12 @@ class ScanBarcodeView(LoginRequiredMixin, View):
                     'name': sku.name,
                     'caption': sku.caption,
                     'price': str(sku.price),
-                    'stock': sku.stock,
+                    'stock': store_stock.stock,  # 使用门店库存
                     'barcode': sku.barcode,
                     'default_image': sku.default_image.url if sku.default_image else '',
                     'expiration_date': str(sku.expiration_date) if sku.expiration_date else None,
-                    'near_expiry_num': sku.near_expiry_num,
-                    'expired_num': sku.expired_num,
+                    'near_expiry_num': store_stock.near_expiry_num,  # 使用门店临保质期数量
+                    'expired_num': store_stock.expired_num,  # 使用门店过期数量
                     'expiration_message': expiration_message  # 添加保质期状态信息
                 }
             })
@@ -267,6 +389,17 @@ class CreateOrderView(LoginRequiredMixin, View):
 
                 cashier = request.user
 
+                # 获取当前门店ID
+                store_id = get_current_store_id(request)
+                if not store_id:
+                    return JsonResponse({'success': False, 'message': '请先选择门店'})
+
+                # 获取门店信息
+                try:
+                    store = Store.objects.get(id=store_id)
+                except Store.DoesNotExist:
+                    return JsonResponse({'success': False, 'message': '门店不存在'})
+
                 # 获取会员信息
                 member = None
                 member_discount_rate = Decimal('1.00')
@@ -280,7 +413,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                 # 计算总金额和折扣
                 total_amount = Decimal('0')
                 order_items = []
-                
+
                 # 检查每个商品的促销信息
                 for item_data in items:
                     sku_id = item_data.get('sku_id')
@@ -288,20 +421,40 @@ class CreateOrderView(LoginRequiredMixin, View):
 
                     sku = SKU.objects.select_for_update().get(id=sku_id)
                     original_price = sku.price
-                    
+
+                    # 查询门店库存
+                    store_stock = StoreStock.objects.select_for_update().filter(store_id=store_id, sku=sku).first()
+                    if not store_stock:
+                        # 未初始化的SKU在该门店库存为0，不从全局库存隐式分配。
+                        store_stock = StoreStock.objects.create(
+                            store_id=store_id,
+                            sku=sku,
+                            stock=0,
+                            near_expiry_num=0,
+                            expired_num=0
+                        )
+
                     # 检查库存是否充足（考虑过期和临保质期商品）
-                    available_stock = sku.stock - sku.expired_num - sku.near_expiry_num
+                    available_stock = store_stock.stock - store_stock.expired_num - store_stock.near_expiry_num
                     if quantity > available_stock:
                         return JsonResponse({
-                            'success': False, 
-                            'message': f'商品 {sku.name} 库存不足。需要：{quantity}，可用库存：{available_stock}（总库存：{sku.stock}，过期商品：{sku.expired_num}，临保质期商品：{sku.near_expiry_num}）'
+                            'success': False,
+                            'message': f'商品 {sku.name} 库存不足。需要：{quantity}，可用库存：{available_stock}（总库存：{store_stock.stock}，过期商品：{store_stock.expired_num}，临保质期商品：{store_stock.near_expiry_num}）'
                         })
-                    
-                    # 检查商品促销
+
+                    # 检查商品促销（优先查询门店级促销，再查询全局促销）
                     promotion = PromotionProduct.objects.filter(
-                        sku=sku, 
+                        sku=sku,
+                        store_id=store_id,
                         is_active=True
                     ).first()
+                    if not promotion:
+                        # 如果没有门店级促销，查询全局促销
+                        promotion = PromotionProduct.objects.filter(
+                            sku=sku,
+                            store__isnull=True,
+                            is_active=True
+                        ).first()
                     
                     # 确定最终价格和折扣类型
                     if not member:
@@ -363,6 +516,7 @@ class CreateOrderView(LoginRequiredMixin, View):
                 total_count = sum(item['quantity'] for item in order_items)
                 order = POSOrder.objects.create(
                     order_id=order_id,
+                    store=store,  # 添加门店字段
                     cashier=cashier,
                     terminal_id=terminal_id,
                     client_request_id=client_request_id,
@@ -392,13 +546,13 @@ class CreateOrderView(LoginRequiredMixin, View):
                     sku = item['sku']
                     quantity = item['quantity']
 
-                    # 扣减库存（使用乐观锁防止超卖）
+                    # 扣减门店库存（使用乐观锁防止超卖）
                     while True:
-                        origin_stock = sku.stock
-                        origin_near_expiry = sku.near_expiry_num
-                        origin_expired = sku.expired_num
+                        store_stock_obj = StoreStock.objects.select_for_update().get(store_id=store_id, sku=sku)
+                        origin_stock = store_stock_obj.stock
+                        origin_near_expiry = store_stock_obj.near_expiry_num
+                        origin_expired = store_stock_obj.expired_num
                         new_stock = origin_stock - quantity
-                        new_sales = sku.sales + quantity
 
                         if new_stock < 0:
                             raise Exception(f'商品 {sku.name} 库存不足')
@@ -423,21 +577,23 @@ class CreateOrderView(LoginRequiredMixin, View):
                                 # 临保质期商品，增加临保质期数量
                                 new_near_expiry = origin_near_expiry + quantity
 
-                        # 乐观锁更新库存、销量和临保质期/过期数量
-                        ret = SKU.objects.filter(
-                            id=sku.id, 
+                        # 乐观锁更新门店库存和临保质期/过期数量
+                        ret = StoreStock.objects.filter(
+                            id=store_stock_obj.id,
                             stock=origin_stock,
                             near_expiry_num=origin_near_expiry,
                             expired_num=origin_expired
                         ).update(
                             stock=new_stock,
-                            sales=new_sales,
                             near_expiry_num=new_near_expiry,
                             expired_num=new_expired
                         )
 
                         if ret > 0:
                             break  # 更新成功
+
+                    # 同时更新SKU表的销量（用于全局统计）
+                    SKU.objects.filter(id=sku.id).update(sales=models.F('sales') + quantity)
 
                     # 计算商品折扣率
                     original_price = item['sku'].price
@@ -488,14 +644,25 @@ class CheckStockView(LoginRequiredMixin, View):
         quantity = request.POST.get('quantity', 1)
 
         try:
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
             sku = SKU.objects.get(id=sku_id)
-            if sku.stock < int(quantity):
+
+            # 查询门店库存
+            store_stock = StoreStock.objects.filter(store_id=store_id, sku=sku).first()
+            if not store_stock:
+                return JsonResponse({'success': False, 'message': '该商品尚未初始化到此门店，当前库存: 0', 'stock': 0})
+
+            if store_stock.stock < int(quantity):
                 return JsonResponse({
                     'success': False,
-                    'message': f'库存不足，当前库存: {sku.stock}'
+                    'message': f'库存不足，当前库存: {store_stock.stock}'
                 })
 
-            return JsonResponse({'success': True, 'stock': sku.stock})
+            return JsonResponse({'success': True, 'stock': store_stock.stock})
         except SKU.DoesNotExist:
             return JsonResponse({'success': False, 'message': '商品不存在'})
         except Exception as e:
@@ -528,7 +695,7 @@ class ReceiptPreviewView(BasePosView):
 
     def get(self, request, order_id):
         try:
-            order = POSOrder.objects.get(order_id=order_id)
+            order = POSOrder.objects.select_related('store', 'cashier', 'member').get(order_id=order_id)
             order_items = order.items.all()
             context = self.get_context_data(order=order, order_items=order_items)
             return render(request, 'pos/receipt.html', context)
@@ -548,15 +715,20 @@ class PrintReceiptView(LoginRequiredMixin, View):
         order_id = request.POST.get('order_id')
 
         try:
-            order = POSOrder.objects.get(order_id=order_id)
+            order = POSOrder.objects.select_related('store', 'cashier', 'member').get(order_id=order_id)
             order_items = order.items.all()
 
             # 生成小票内容
+            store_label = (
+                f'{order.store.store_code} - {order.store.store_name}'
+                if order.store else '未关联门店'
+            )
             receipt_content = f"""
 ================================
            HOT MALL 收银小票
 ================================
 订单号: {order.order_id}
+门店: {store_label}
 终端编号: {order.terminal_id}
 时间: {order.create_time.strftime('%Y-%m-%d %H:%M:%S')}
 收银员: {order.cashier.username}
@@ -624,22 +796,36 @@ class SuspendOrderView(LoginRequiredMixin, View):
         return super().dispatch(*args, **kwargs)
 
     def post(self, request):
-        cart_data = request.POST.get('cart_data', '[]')
-        remark = request.POST.get('remark', '')
-        member_id = request.POST.get('member_id', '')
-        terminal_id = get_terminal_id(request)
-
         try:
-            cart = json.loads(cart_data)
-        except json.JSONDecodeError:
-            return JsonResponse({'success': False, 'message': '购物车数据格式错误'})
+            cart_data = request.POST.get('cart_data', '[]')
+            remark = request.POST.get('remark', '')
+            member_id = request.POST.get('member_id', '')
+            terminal_id = get_terminal_id(request)
 
-        if not cart:
-            return JsonResponse({'success': False, 'message': '购物车为空'})
-        if not terminal_id:
-            return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
+            logger.info(f"SuspendOrder - terminal_id: {terminal_id}, member_id: {member_id}")
 
-        try:
+            try:
+                cart = json.loads(cart_data)
+            except json.JSONDecodeError as e:
+                logger.error(f"SuspendOrder - JSON decode error: {e}")
+                return JsonResponse({'success': False, 'message': '购物车数据格式错误'})
+
+            if not cart:
+                return JsonResponse({'success': False, 'message': '购物车为空'})
+            if not terminal_id:
+                return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
+
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
+            # 获取门店信息
+            try:
+                store = Store.objects.get(id=store_id)
+            except Store.DoesNotExist:
+                return JsonResponse({'success': False, 'message': '门店不存在'})
+
             cashier = request.user
 
             # 计算总金额和商品数量
@@ -648,24 +834,53 @@ class SuspendOrderView(LoginRequiredMixin, View):
 
             for item in cart:
                 quantity = item.get('quantity', 1)
-                price = Decimal(str(item.get('price', 0)))
+                price_str = str(item.get('price', 0))
+                try:
+                    price = Decimal(price_str)
+                except Exception as e:
+                    logger.error(f"SuspendOrder - Invalid price format: {price_str}, error: {e}")
+                    return JsonResponse({'success': False, 'message': f'商品价格格式错误: {price_str}'})
                 total_amount += price * quantity
                 total_count += quantity
 
             member = None
             if member_id:
-                member = User.objects.filter(id=member_id).first()
+                try:
+                    # 确保 member_id 是整数
+                    member_id_int = int(member_id)
+                    member = User.objects.get(id=member_id_int)
+                except (ValueError, TypeError) as e:
+                    logger.warning(f"SuspendOrder - Invalid member_id format: {member_id}, error: {e}")
+                    # 继续执行，不绑定会员
+                except User.DoesNotExist as e:
+                    logger.warning(f"SuspendOrder - Member not found: {member_id}, error: {e}")
+                    # 继续执行，不绑定会员
+
+            logger.info(f"SuspendOrder - Creating order - store: {store.id}, cashier: {cashier.id}, terminal: {terminal_id}, member: {member.id if member else None}")
 
             # 创建挂单
-            suspended_order = SuspendedOrder.objects.create(
-                cashier=cashier,
-                terminal_id=terminal_id,
-                member=member,
-                total_count=total_count,
-                total_amount=total_amount,
-                cart_data=cart_data,
-                remark=remark
-            )
+            try:
+                suspended_order = SuspendedOrder.objects.create(
+                    store=store,  # 添加门店字段
+                    cashier=cashier,
+                    terminal_id=str(terminal_id) if terminal_id else '',  # 确保是字符串
+                    member=member,
+                    total_count=total_count,
+                    total_amount=total_amount,
+                    cart_data=cart_data,
+                    remark=remark
+                )
+            except Exception as create_error:
+                logger.error(f"SuspendOrder - Failed to create SuspendedOrder: {type(create_error).__name__}: {str(create_error)}", exc_info=True)
+                # 尝试获取详细的验证错误信息
+                if hasattr(create_error, 'message_dict'):
+                    logger.error(f"SuspendOrder - Validation errors: {create_error.message_dict}")
+                    # 返回更友好的错误信息
+                    error_details = []
+                    for field, errors in create_error.message_dict.items():
+                        error_details.append(f"{field}: {', '.join(errors)}")
+                    return JsonResponse({'success': False, 'message': f'创建挂单失败: {"; ".join(error_details)}'})
+                return JsonResponse({'success': False, 'message': f'创建挂单失败: {str(create_error)}'})
 
             return JsonResponse({
                 'success': True,
@@ -674,6 +889,8 @@ class SuspendOrderView(LoginRequiredMixin, View):
             })
 
         except Exception as e:
+            logger.error(f"SuspendOrder - Outer Exception: {type(e).__name__}: {str(e)}", exc_info=True)
+            logger.error(f"SuspendOrder - Request data: POST={dict(request.POST)}, GET={dict(request.GET)}")
             return JsonResponse({'success': False, 'message': f'挂单失败: {str(e)}'})
 
 
@@ -690,8 +907,14 @@ class GetSuspendedOrdersView(LoginRequiredMixin, View):
             terminal_id = get_terminal_id(request)
             if not terminal_id:
                 return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
+
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
             suspended_orders = SuspendedOrder.objects.filter(
-                cashier=request.user, terminal_id=terminal_id
+                cashier=request.user, terminal_id=terminal_id, store_id=store_id
             ).order_by('-create_time')
 
             order_list = []
@@ -732,9 +955,14 @@ class ResumeOrderView(LoginRequiredMixin, View):
         if not terminal_id:
             return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
+        # 获取当前门店ID
+        store_id = get_current_store_id(request)
+        if not store_id:
+            return JsonResponse({'success': False, 'message': '请先选择门店'})
+
         try:
             suspended_order = SuspendedOrder.objects.get(
-                id=suspended_order_id, cashier=request.user, terminal_id=terminal_id
+                id=suspended_order_id, cashier=request.user, terminal_id=terminal_id, store_id=store_id
             )
 
             # 获取购物车数据
@@ -781,10 +1009,15 @@ class DeleteSuspendedOrderView(LoginRequiredMixin, View):
         if not terminal_id:
             return JsonResponse({'success': False, 'message': '收银终端未配置或终端标识不匹配'})
 
+        # 获取当前门店ID
+        store_id = get_current_store_id(request)
+        if not store_id:
+            return JsonResponse({'success': False, 'message': '请先选择门店'})
+
         try:
             with transaction.atomic():
                 suspended_order = SuspendedOrder.objects.select_for_update().get(
-                    id=suspended_order_id, cashier=request.user, terminal_id=terminal_id
+                    id=suspended_order_id, cashier=request.user, terminal_id=terminal_id, store_id=store_id
                 )
                 suspended_order.delete()
 
@@ -829,8 +1062,15 @@ class GetTransactionDetailsView(LoginRequiredMixin, View):
         order_id = request.GET.get('order_id', '')
 
         try:
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
             # 构建查询条件（已修复排序问题）
-            order_items = POSOrderItem.objects.select_related('order', 'sku').order_by('-order__create_time')
+            order_items = POSOrderItem.objects.select_related('order', 'sku').filter(
+                order__store_id=store_id
+            ).order_by('-order__create_time')
 
             if start_date:
                 try:
@@ -903,8 +1143,13 @@ class GetTransactionRecordsView(LoginRequiredMixin, View):
         order_id = request.GET.get('order_id', '')
 
         try:
+            # 获取当前门店ID
+            store_id = get_current_store_id(request)
+            if not store_id:
+                return JsonResponse({'success': False, 'message': '请先选择门店'})
+
             # 构建查询条件（已修复排序问题）
-            orders = POSOrder.objects.order_by('-create_time')
+            orders = POSOrder.objects.filter(store_id=store_id).order_by('-create_time')
 
             # 时区兼容日期筛选 核心修复
             if start_date:
@@ -1383,3 +1628,636 @@ class PaymentAccountDeleteView(LoginRequiredMixin, DeleteView):
         account_name = self.object.account_name
         self.object.delete()
         return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': f'收款账户「{account_name}」已删除。'})
+
+
+# ==================== 门店管理 ====================
+
+class StoreListView(BasePosView):
+    """门店列表页面"""
+    left_menu_active = "store"
+    template_name = 'pos/store_list.html'
+
+    def get(self, request):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+
+        stores = Store.objects.all().order_by('store_code')
+        context = self.get_context_data()
+        context['is_superuser'] = request.user.is_superuser
+        context['stores'] = stores
+        return render(request, self.template_name, context)
+
+
+class StoreAddView(BasePosView, View):
+    """添加门店"""
+    left_menu_active = "store-add"
+    template_name = 'pos/store_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        context = self.get_context_data()
+        context['title'] = '添加门店'
+        context['is_superuser'] = request.user.is_superuser
+        context['store'] = None
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        try:
+            store_code = request.POST.get('store_code')
+            store_name = request.POST.get('store_name')
+            address = request.POST.get('address')
+            phone = request.POST.get('phone', '')
+            manager = request.POST.get('manager', '')
+            status = request.POST.get('status', '1')
+            business_hours = request.POST.get('business_hours', '')
+
+            if not store_code or not store_name or not address:
+                context = self.get_context_data()
+                context['title'] = '添加门店'
+                context['is_superuser'] = request.user.is_superuser
+                context['error'] = '门店编号、名称和地址不能为空'
+                return render(request, self.template_name, context)
+
+            # 检查门店编号是否已存在
+            if Store.objects.filter(store_code=store_code).exists():
+                context = self.get_context_data()
+                context['title'] = '添加门店'
+                context['is_superuser'] = request.user.is_superuser
+                context['error'] = '门店编号已存在'
+                return render(request, self.template_name, context)
+
+            Store.objects.create(
+                store_code=store_code,
+                store_name=store_name,
+                address=address,
+                phone=phone,
+                manager=manager,
+                status=int(status),
+                business_hours=business_hours
+            )
+
+            messages.success(request, f"门店「{store_name}」已添加。")
+            return redirect(reverse_lazy('pos:store_list'))
+
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '添加门店'
+            context['is_superuser'] = request.user.is_superuser
+            context['error'] = f'添加失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class StoreEditView(BasePosView, View):
+    """编辑门店"""
+    left_menu_active = "store-edit"
+    template_name = 'pos/store_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, pk):
+        try:
+            store = Store.objects.get(pk=pk)
+            context = self.get_context_data()
+            context['title'] = '编辑门店'
+            context['is_superuser'] = request.user.is_superuser
+            context['store'] = store
+            return render(request, self.template_name, context)
+        except Store.DoesNotExist:
+            return redirect(reverse_lazy('pos:store_list'))
+
+    def post(self, request, pk):
+        try:
+            store = Store.objects.get(pk=pk)
+
+            store_code = request.POST.get('store_code')
+            store_name = request.POST.get('store_name')
+            address = request.POST.get('address')
+            phone = request.POST.get('phone', '')
+            manager = request.POST.get('manager', '')
+            status = request.POST.get('status', '1')
+            business_hours = request.POST.get('business_hours', '')
+
+            if not store_code or not store_name or not address:
+                context = self.get_context_data()
+                context['title'] = '编辑门店'
+                context['is_superuser'] = request.user.is_superuser
+                context['store'] = store
+                context['error'] = '门店编号、名称和地址不能为空'
+                return render(request, self.template_name, context)
+
+            # 检查门店编号是否被其他门店使用
+            if Store.objects.filter(store_code=store_code).exclude(pk=pk).exists():
+                context = self.get_context_data()
+                context['title'] = '编辑门店'
+                context['is_superuser'] = request.user.is_superuser
+                context['store'] = store
+                context['error'] = '门店编号已被其他门店使用'
+                return render(request, self.template_name, context)
+
+            store.store_code = store_code
+            store.store_name = store_name
+            store.address = address
+            store.phone = phone
+            store.manager = manager
+            store.status = int(status)
+            store.business_hours = business_hours
+            store.save()
+
+            messages.success(request, f"门店「{store_name}」已更新。")
+            return redirect(reverse_lazy('pos:store_list'))
+
+        except Store.DoesNotExist:
+            return redirect(reverse_lazy('pos:store_list'))
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '编辑门店'
+            context['is_superuser'] = request.user.is_superuser
+            context['store'] = store
+            context['error'] = f'更新失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class StoreTerminalListView(BasePosView):
+    """门店收银终端列表。"""
+    left_menu_active = 'store'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, store_pk):
+        store = get_object_or_404(Store, pk=store_pk)
+        terminals = StoreTerminal.objects.filter(store=store)
+        return render(request, 'pos/store_terminal_list.html', self.get_context_data(
+            store=store, terminals=terminals, is_superuser=True,
+        ))
+
+
+class StoreTerminalFormView(BasePosView, View):
+    """新增或编辑门店收银终端。"""
+    left_menu_active = 'store'
+    template_name = 'pos/store_terminal_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, store_pk, pk=None):
+        store = get_object_or_404(Store, pk=store_pk)
+        terminal = get_object_or_404(StoreTerminal, pk=pk, store=store) if pk else None
+        title = '编辑收银终端' if terminal else '添加收银终端'
+        return render(request, self.template_name, self.get_context_data(
+            store=store, terminal=terminal, title=title, is_superuser=True,
+        ))
+
+    def post(self, request, store_pk, pk=None):
+        store = get_object_or_404(Store, pk=store_pk)
+        terminal = get_object_or_404(StoreTerminal, pk=pk, store=store) if pk else None
+        terminal_code = request.POST.get('terminal_code', '').strip()
+        name = request.POST.get('name', '').strip()
+        ip_address = request.POST.get('ip_address', '').strip()
+        certificate_fingerprint = request.POST.get('certificate_fingerprint', '').strip().lower()
+        status = request.POST.get('status', '1')
+        title = '编辑收银终端' if terminal else '添加收银终端'
+
+        duplicate = StoreTerminal.objects.filter(terminal_code=terminal_code)
+        duplicate_fingerprint = StoreTerminal.objects.filter(
+            certificate_fingerprint=certificate_fingerprint
+        ) if certificate_fingerprint else StoreTerminal.objects.none()
+        if terminal:
+            duplicate = duplicate.exclude(pk=terminal.pk)
+            duplicate_fingerprint = duplicate_fingerprint.exclude(pk=terminal.pk)
+        error = ''
+        if not terminal_code or not name:
+            error = '终端编号和名称不能为空'
+        elif not ip_address:
+            error = '终端IP地址不能为空'
+        elif len(terminal_code) > 100 or len(name) > 100:
+            error = '终端编号和名称不能超过100个字符'
+        elif len(ip_address) > 45:
+            error = '终端IP地址长度无效'
+        else:
+            try:
+                ip_address = ipaddress.ip_address(ip_address).compressed
+            except ValueError:
+                error = '请输入有效的IPv4或IPv6地址'
+
+        if not error and status not in ('0', '1'):
+            error = '终端状态无效'
+        elif not error and status == '1' and not re.fullmatch(r'[0-9a-f]{64}', certificate_fingerprint):
+            error = '启用终端必须填写有效的SHA-256客户端证书指纹'
+        elif not error and duplicate_fingerprint.exists():
+            error = '客户端证书指纹已绑定其他终端'
+        elif not error and duplicate.exists():
+            error = '终端编号已被使用'
+
+        if error:
+            return render(request, self.template_name, self.get_context_data(
+                store=store, terminal=terminal, title=title, error=error, is_superuser=True,
+            ))
+
+        if terminal is None:
+            StoreTerminal.objects.create(
+                store=store, terminal_code=terminal_code, name=name,
+                ip_address=ip_address, certificate_fingerprint=certificate_fingerprint,
+                status=int(status),
+            )
+        else:
+            terminal.terminal_code = terminal_code
+            terminal.name = name
+            terminal.ip_address = ip_address
+            terminal.certificate_fingerprint = certificate_fingerprint
+            terminal.status = int(status)
+            terminal.save()
+        messages.success(request, f'收银终端「{name}」已保存。')
+        return redirect(reverse_lazy('pos:store_terminal_list', kwargs={'store_pk': store.pk}))
+
+
+class StoreTerminalDeleteView(LoginRequiredMixin, View):
+    """删除门店收银终端。"""
+
+    def post(self, request, store_pk, pk):
+        if not request.user.is_superuser:
+            return JsonResponse({'code': 1, 'errmsg': '权限不足'}, status=403)
+        terminal = get_object_or_404(StoreTerminal, pk=pk, store_id=store_pk)
+        name = terminal.name
+        terminal.delete()
+        return JsonResponse({'code': 0, 'message': f'收银终端「{name}」已删除。'})
+
+
+class StoreDeleteView(LoginRequiredMixin, DeleteView):
+    """删除门店"""
+    model = Store
+    success_url = reverse_lazy('pos:store_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return JsonResponse({'code': 1, 'errmsg': '权限不足'}, status=403)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        store_name = self.object.store_name
+        self.object.delete()
+        return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': f'门店「{store_name}」已删除。'})
+
+
+# ==================== 用户-门店关联管理 ====================
+
+class UserStoreListView(BasePosView):
+    """用户-门店关联列表页面"""
+    left_menu_active = "user-store"
+    template_name = 'pos/user_store_list.html'
+
+    def get(self, request):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+
+        user_stores = UserStore.objects.select_related('user', 'store').all().order_by('user', 'store')
+        context = self.get_context_data()
+        context['is_superuser'] = request.user.is_superuser
+        context['user_stores'] = user_stores
+        return render(request, self.template_name, context)
+
+
+class UserStoreAddView(BasePosView, View):
+    """添加用户-门店关联"""
+    left_menu_active = "user-store-add"
+    template_name = 'pos/user_store_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        users = User.objects.all()
+        stores = Store.objects.filter(status=1)
+        context = self.get_context_data()
+        context['title'] = '添加用户-门店关联'
+        context['is_superuser'] = request.user.is_superuser
+        context['users'] = users
+        context['stores'] = stores
+        context['user_store'] = None
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        try:
+            user_id = request.POST.get('user_id')
+            store_id = request.POST.get('store_id')
+            role = request.POST.get('role', '2')
+
+            if not user_id or not store_id:
+                context = self.get_context_data()
+                context['title'] = '添加用户-门店关联'
+                context['is_superuser'] = request.user.is_superuser
+                context['users'] = User.objects.all()
+                context['stores'] = Store.objects.filter(status=1)
+                context['error'] = '用户和门店不能为空'
+                return render(request, self.template_name, context)
+
+            # 检查关联是否已存在
+            if UserStore.objects.filter(user_id=user_id, store_id=store_id).exists():
+                context = self.get_context_data()
+                context['title'] = '添加用户-门店关联'
+                context['is_superuser'] = request.user.is_superuser
+                context['users'] = User.objects.all()
+                context['stores'] = Store.objects.filter(status=1)
+                context['error'] = '该用户已关联此门店'
+                return render(request, self.template_name, context)
+
+            UserStore.objects.create(
+                user_id=user_id,
+                store_id=store_id,
+                role=int(role)
+            )
+
+            messages.success(request, "用户-门店关联已添加。")
+            return redirect(reverse_lazy('pos:user_store_list'))
+
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '添加用户-门店关联'
+            context['is_superuser'] = request.user.is_superuser
+            context['users'] = User.objects.all()
+            context['stores'] = Store.objects.filter(status=1)
+            context['error'] = f'添加失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class UserStoreDeleteView(LoginRequiredMixin, DeleteView):
+    """删除用户-门店关联"""
+    model = UserStore
+    success_url = reverse_lazy('pos:user_store_list')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return JsonResponse({'code': 1, 'errmsg': '权限不足'}, status=403)
+        return super().dispatch(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.delete()
+        return JsonResponse({'code': 0, 'errmsg': 'OK', 'message': '用户-门店关联已删除。'})
+
+
+class UserStoreEditView(BasePosView, View):
+    """修改用户在门店中的角色。"""
+    left_menu_active = "user-store"
+    template_name = 'pos/user_store_form.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, pk):
+        user_store = get_object_or_404(UserStore.objects.select_related('user', 'store'), pk=pk)
+        return render(request, self.template_name, self.get_context_data(
+            title='编辑用户-门店关联', is_superuser=True,
+            users=User.objects.all(), stores=Store.objects.filter(status=1),
+            user_store=user_store,
+        ))
+
+    def post(self, request, pk):
+        user_store = get_object_or_404(UserStore, pk=pk)
+        role = request.POST.get('role', '')
+        valid_roles = {str(value) for value, _ in UserStore.ROLE_CHOICES}
+        if role not in valid_roles:
+            return render(request, self.template_name, self.get_context_data(
+                title='编辑用户-门店关联', is_superuser=True,
+                users=User.objects.all(), stores=Store.objects.filter(status=1),
+                user_store=user_store, error='请选择有效角色',
+            ))
+
+        user_store.role = int(role)
+        user_store.save(update_fields=['role', 'update_time'])
+        messages.success(request, '用户门店角色已更新。')
+        return redirect(reverse_lazy('pos:user_store_list'))
+
+
+# ==================== 门店选择 ====================
+
+class SelectStoreView(LoginRequiredMixin, View):
+    """选择门店"""
+
+    def get(self, request):
+        # 获取用户可访问的门店
+        if request.user.is_superuser:
+            # 超级管理员可以访问所有门店
+            stores = Store.objects.filter(status=1)
+        else:
+            # 普通用户只能访问关联的门店
+            stores = Store.objects.filter(userstore__user=request.user, status=1).distinct()
+
+        current_store_id = get_current_store_id(request)
+
+        context = {
+            'stores': stores,
+            'current_store_id': current_store_id,
+            'current_store_name': request.session.get('current_store_name', ''),
+        }
+        return render(request, 'pos/select_store.html', context)
+
+    def post(self, request):
+        store_id = request.POST.get('store_id')
+        if not store_id:
+            return JsonResponse({'success': False, 'message': '请选择门店'})
+
+        try:
+            # 验证用户是否有权限访问该门店
+            if request.user.is_superuser:
+                store = Store.objects.get(id=store_id, status=1)
+            else:
+                user_store = UserStore.objects.get(user=request.user, store_id=store_id)
+                store = user_store.store
+                if store.status != 1:
+                    return JsonResponse({'success': False, 'message': '该门店已停用'})
+
+            # 设置当前门店到Session
+            request.session['current_store_id'] = store.id
+            request.session['current_store_name'] = store.store_name
+
+            return JsonResponse({'success': True, 'message': f'已切换到门店：{store.store_name}'})
+
+        except Store.DoesNotExist:
+            return JsonResponse({'success': False, 'message': '门店不存在'})
+        except UserStore.DoesNotExist:
+            return JsonResponse({'success': False, 'message': '您没有权限访问该门店'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'切换门店失败: {str(e)}'})
+
+
+# ==================== 门店库存初始化 ====================
+
+class InitStoreStockView(BasePosView, View):
+    """门店库存初始化"""
+    left_menu_active = "init-stock"
+    template_name = 'pos/init_store_stock.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return redirect(reverse_lazy('contents:index'))
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request):
+        stores = Store.objects.filter(status=1)
+        context = self.get_context_data()
+        context['title'] = '门店库存初始化'
+        context['is_superuser'] = request.user.is_superuser
+        context['stores'] = stores
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        try:
+            store_id = request.POST.get('store_id')
+            if not store_id:
+                context = self.get_context_data()
+                context['title'] = '门店库存初始化'
+                context['is_superuser'] = request.user.is_superuser
+                context['stores'] = Store.objects.filter(status=1)
+                context['error'] = '请选择门店'
+                return render(request, self.template_name, context)
+
+            store = Store.objects.get(id=store_id, status=1)
+
+            # 获取所有SKU
+            skus = SKU.objects.all()
+            created_count = 0
+            updated_count = 0
+
+            with transaction.atomic():
+                for sku in skus:
+                    _, created = StoreStock.objects.get_or_create(
+                        store=store,
+                        sku=sku,
+                        defaults={
+                            'stock': sku.stock,
+                            'near_expiry_num': sku.near_expiry_num,
+                            'expired_num': sku.expired_num
+                        }
+                    )
+
+                    if created:
+                        created_count += 1
+                    else:
+                        updated_count += 1
+
+            messages.success(request, f"门店「{store.store_name}」库存初始化完成。新增：{created_count}，已存在：{updated_count}。")
+            return redirect(reverse_lazy('pos:init_store_stock'))
+
+        except Store.DoesNotExist:
+            context = self.get_context_data()
+            context['title'] = '门店库存初始化'
+            context['is_superuser'] = request.user.is_superuser
+            context['stores'] = Store.objects.filter(status=1)
+            context['error'] = '门店不存在'
+            return render(request, self.template_name, context)
+        except Exception as e:
+            context = self.get_context_data()
+            context['title'] = '门店库存初始化'
+            context['is_superuser'] = request.user.is_superuser
+            context['stores'] = Store.objects.filter(status=1)
+            context['error'] = f'初始化失败: {str(e)}'
+            return render(request, self.template_name, context)
+
+
+class BindCertificateView(LoginRequiredMixin, View):
+    """绑定客户端证书到收银终端"""
+
+    def post(self, request):
+        terminal_id = request.POST.get('terminal_id')
+        certificate_pem = request.POST.get('certificate_pem')
+
+        if not terminal_id or not certificate_pem:
+            return JsonResponse({'success': False, 'message': '缺少必要参数'}, status=400)
+
+        try:
+            from hot_mall.utils.mtls_utils import get_certificate_fingerprint_from_pem
+
+            # Calculate certificate fingerprint
+            fingerprint = get_certificate_fingerprint_from_pem(certificate_pem)
+
+            # Get terminal
+            terminal = get_object_or_404(StoreTerminal, id=terminal_id)
+
+            # Update terminal with certificate fingerprint
+            terminal.certificate_fingerprint = fingerprint
+            terminal.save()
+
+            return JsonResponse({
+                'success': True,
+                'message': '证书绑定成功',
+                'fingerprint': fingerprint
+            })
+        except ValueError as e:
+            return JsonResponse({'success': False, 'message': f'证书解析失败: {str(e)}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'绑定失败: {str(e)}'}, status=500)
+
+
+class UnbindCertificateView(LoginRequiredMixin, View):
+    """解绑收银终端的客户端证书"""
+
+    def post(self, request, pk):
+        try:
+            terminal = get_object_or_404(StoreTerminal, id=pk)
+            terminal.certificate_fingerprint = ''
+            terminal.save()
+
+            return JsonResponse({'success': True, 'message': '证书解绑成功'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'解绑失败: {str(e)}'}, status=500)
+
+
+class VerifyCertificateView(View):
+    """验证客户端证书（用于测试）"""
+
+    def post(self, request):
+        certificate_pem = request.POST.get('certificate_pem')
+        terminal_code = request.POST.get('terminal_code')
+
+        if not certificate_pem or not terminal_code:
+            return JsonResponse({'success': False, 'message': '缺少必要参数'}, status=400)
+
+        try:
+            from hot_mall.utils.mtls_utils import (
+                get_certificate_fingerprint_from_pem,
+                verify_certificate_binding
+            )
+
+            # Calculate certificate fingerprint
+            fingerprint = get_certificate_fingerprint_from_pem(certificate_pem)
+
+            # Verify binding
+            result = verify_certificate_binding(fingerprint, terminal_code)
+
+            # Map reason codes to user-friendly messages
+            error_messages = {
+                'TERMINAL_NOT_FOUND': '收银终端不存在或终端标识不匹配',
+                'TERMINAL_DISABLED': '收银终端已停用',
+                'CERTIFICATE_NOT_CONFIGURED': '收银终端未配置客户端证书',
+                'CERTIFICATE_MISMATCH': '客户端证书与终端不匹配'
+            }
+
+            return JsonResponse({
+                'success': True,
+                'valid': result['valid'],
+                'fingerprint': fingerprint,
+                'reason': result.get('reason'),
+                'terminal_id': result.get('terminal_id'),
+                'message': '证书验证通过' if result['valid'] else error_messages.get(result.get('reason'), '证书验证失败')
+            })
+        except ValueError as e:
+            return JsonResponse({'success': False, 'message': f'证书解析失败: {str(e)}'}, status=400)
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': f'验证失败: {str(e)}'}, status=500)

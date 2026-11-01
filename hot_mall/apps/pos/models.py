@@ -28,6 +28,33 @@ class Store(BaseModel):
         return f"{self.store_code} - {self.store_name}"
 
 
+class StoreTerminal(BaseModel):
+    """门店收银终端配置，每台收银机对应一条记录。"""
+    store = models.ForeignKey(
+        Store, on_delete=models.CASCADE, related_name='terminals', verbose_name="门店"
+    )
+    terminal_code = models.CharField(max_length=100, unique=True, verbose_name="终端编号")
+    name = models.CharField(max_length=100, verbose_name="终端名称")
+    ip_address = models.CharField(max_length=45, default='', verbose_name="终端IP地址")
+    certificate_fingerprint = models.CharField(
+        max_length=64, default='', blank=True, verbose_name="客户端证书SHA-256指纹"
+    )
+    STATUS_CHOICES = (
+        (1, "启用"),
+        (0, "停用"),
+    )
+    status = models.SmallIntegerField(choices=STATUS_CHOICES, default=1, verbose_name="状态")
+
+    class Meta:
+        db_table = "tb_store_terminal"
+        verbose_name = '门店收银终端'
+        verbose_name_plural = verbose_name
+        ordering = ['store', 'terminal_code']
+
+    def __str__(self):
+        return f"{self.store.store_name} - {self.name} ({self.terminal_code})"
+
+
 class UserStore(BaseModel):
     """用户-门店关联表"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
@@ -78,8 +105,9 @@ class PromotionProduct(BaseModel):
         (1, "固定折扣率"),
         (2, "固定金额优惠"),
     )
-    
+
     sku = models.ForeignKey(SKU, on_delete=models.CASCADE, verbose_name="商品SKU")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, verbose_name="门店")
     discount_type = models.SmallIntegerField(choices=DISCOUNT_TYPE_CHOICES, default=1, verbose_name="折扣类型")
     discount_rate = models.DecimalField(max_digits=3, decimal_places=2, default=1.00, verbose_name="折扣率")
     discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="优惠金额")
@@ -120,6 +148,7 @@ class POSOrder(BaseModel):
     )
     
     order_id = models.CharField(max_length=64, primary_key=True, verbose_name="订单号")
+    store = models.ForeignKey(Store, on_delete=models.PROTECT, null=True, blank=True, verbose_name="门店")
     cashier = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="收银员", related_name="cashier_orders")
     terminal_id = models.CharField(max_length=100, default='', db_index=True, verbose_name="收银终端")
     client_request_id = models.CharField(max_length=64, unique=True, null=True, blank=True, verbose_name="客户端请求号")
@@ -172,14 +201,15 @@ class BarcodeScanner(BaseModel):
         (2, "离线"),
         (3, "故障"),
     )
-    
+
     name = models.CharField(max_length=50, verbose_name="设备名称")
     device_id = models.CharField(max_length=100, unique=True, verbose_name="设备ID")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, verbose_name="门店")
     port = models.CharField(max_length=50, verbose_name="串口端口")
     baud_rate = models.IntegerField(default=9600, verbose_name="波特率")
     status = models.SmallIntegerField(choices=DEVICE_STATUS_CHOICES, default=2, verbose_name="设备状态")
     last_active = models.DateTimeField(null=True, blank=True, verbose_name="最后活跃时间")
-    
+
     class Meta:
         db_table = "tb_barcode_scanner"
         verbose_name = '条码扫描器'
@@ -191,6 +221,7 @@ class BarcodeScanner(BaseModel):
 
 class SuspendedOrder(BaseModel):
     """挂单"""
+    store = models.ForeignKey(Store, on_delete=models.PROTECT, null=True, blank=True, verbose_name="门店")
     cashier = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="收银员")
     terminal_id = models.CharField(max_length=100, default='', db_index=True, verbose_name="收银终端")
     member = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="会员", related_name="suspended_orders")
@@ -216,8 +247,9 @@ class PaymentAccount(BaseModel):
         (3, "微信支付"),
         (4, "银行卡"),
     )
-    
-    payment_type = models.SmallIntegerField(choices=PAYMENT_TYPE_CHOICES, unique=True, verbose_name="支付方式")
+
+    payment_type = models.SmallIntegerField(choices=PAYMENT_TYPE_CHOICES, verbose_name="支付方式")
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, null=True, blank=True, verbose_name="门店")
     account_name = models.CharField(max_length=100, verbose_name="账户名称")
     account_number = models.CharField(max_length=200, verbose_name="账号/商户号")
     merchant_id = models.CharField(max_length=200, blank=True, default='', verbose_name="商户ID")
@@ -225,11 +257,12 @@ class PaymentAccount(BaseModel):
     app_id = models.CharField(max_length=200, blank=True, default='', verbose_name="应用ID")
     is_active = models.BooleanField(default=True, verbose_name="是否启用")
     remark = models.TextField(blank=True, default='', verbose_name="备注")
-    
+
     class Meta:
         db_table = "tb_payment_account"
         verbose_name = '收款账户配置'
         verbose_name_plural = verbose_name
+        unique_together = [['payment_type', 'store']]  # 同一门店的同一支付方式只能有一个配置
     
     def __str__(self):
         return f"{self.get_payment_type_display()} - {self.account_name}"

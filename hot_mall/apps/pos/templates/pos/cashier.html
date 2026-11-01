@@ -42,6 +42,20 @@
             align-items: center;
             gap: 10px;
         }
+        .header .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .terminal-select {
+            max-width: 220px;
+            min-height: 38px;
+            padding: 6px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            border-radius: 5px;
+            color: #222;
+            background: #fff;
+        }
         .header .back-btn {
             background: rgba(255, 255, 255, 0.2);
             color: white;
@@ -510,9 +524,20 @@
         <div class="header">
             <a href="/info" class="back-btn">← 返回用户中心</a>
             <h1>🏪 收银台</h1>
-            <div class="scanner-status">
-                <div class="status-indicator"></div>
-                <span>USB扫描器已连接</span>
+            <div class="header-actions">
+                <span>{{ current_store_name }}</span>
+                <select id="terminalSelect" class="terminal-select" aria-label="收银终端">
+                    {% for terminal in pos_terminals %}
+                    <option value="{{ terminal.terminal_code }}">{{ terminal.name }}（{{ terminal.terminal_code }}）</option>
+                    {% empty %}
+                    <option value="">未配置收银终端</option>
+                    {% endfor %}
+                </select>
+                <a href="/pos/select-store/" class="back-btn">🏬 切换门店</a>
+                <div class="scanner-status">
+                    <div class="status-indicator"></div>
+                    <span>USB扫描器已连接</span>
+                </div>
             </div>
         </div>
         
@@ -629,14 +654,25 @@
 
         // 从 URL 参数获取终端编号，如果 URL 中没有则尝试从 localStorage 读取
         const urlParams = new URLSearchParams(window.location.search);
-        let terminalId = urlParams.get('terminal_id') || localStorage.getItem('pos_terminal_id') || '';
+        const terminalSelect = document.getElementById('terminalSelect');
+        const requestedTerminal = urlParams.get('terminal_id') || localStorage.getItem('pos_terminal_id') || '';
+        if (requestedTerminal && Array.from(terminalSelect.options).some(option => option.value === requestedTerminal)) {
+            terminalSelect.value = requestedTerminal;
+        }
+        let terminalId = terminalSelect.value || '';
 
         if (!terminalId) {
-            showMessage('当前收银机未配置终端编号，请在URL中添加 ?terminal_id=STORE01-POS01', 'error');
+            showMessage('当前门店尚未配置可用收银终端，请联系管理员配置', 'error');
         } else {
             // 保存到 localStorage，方便后续使用
             localStorage.setItem('pos_terminal_id', terminalId);
         }
+        terminalSelect.addEventListener('change', function() {
+            terminalId = this.value;
+            if (terminalId) {
+                localStorage.setItem('pos_terminal_id', terminalId);
+            }
+        });
         
         // 条码输入处理
         document.getElementById('barcodeInput').addEventListener('keypress', function(e) {

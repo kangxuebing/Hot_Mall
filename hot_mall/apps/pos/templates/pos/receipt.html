@@ -135,6 +135,11 @@
         
         <div class="receipt-info">
             <p><strong>订单号:</strong> {{ order.order_id }}</p>
+            {% if order.store %}
+            <p><strong>门店:</strong> {{ order.store.store_code }} - {{ order.store.store_name }}</p>
+            {% else %}
+            <p><strong>门店:</strong> 未关联门店</p>
+            {% endif %}
             <p><strong>终端编号:</strong> {{ order.terminal_id }}</p>
             <p><strong>时间:</strong> {{ order.create_time|date:"Y-m-d H:i:s" }}</p>
             <p><strong>收银员:</strong> {{ order.cashier.username }}</p>

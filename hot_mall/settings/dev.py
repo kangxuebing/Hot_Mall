@@ -34,7 +34,14 @@ SECRET_KEY = 'pk&k!oyoa!q56h!2!4ek5(vhxsq=su4xx%9ng^tt+j_^9+3sm4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+# 开发环境禁用 CSRF 验证以便测试
+CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -66,6 +73,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'hot_mall.license_middleware.LicenseMiddleware',
+    'hot_mall.mtls_middleware.MTLSAuthenticationMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -81,22 +89,16 @@ LICENSE_PUBLIC_KEY = os.getenv('LICENSE_PUBLIC_KEY', '')
 LICENSE_PUBLIC_KEY_FILE = os.getenv(
     'LICENSE_PUBLIC_KEY_FILE', os.path.join(LOCAL_LICENSE_DIR, 'public.pem')
 )
-# 每台收银机部署一个唯一的逻辑终端编号，例如 STORE01-POS03。
-# 方式1：单个终端编号（只接受该终端的请求）
-# 方式2：多个终端编号白名单（逗号分隔，支持多台收银机）
-# 方式3：空字符串（接受任意终端编号的请求，仅用于开发环境）
-# 通过环境变量配置，与生产环境保持一致
-POS_TERMINAL_CODE = os.getenv('POS_TERMINAL_CODE', '')
+# 仅信任这些TLS终止代理转发的mTLS客户端证书和客户端IP。
+# 开发环境信任本地回环地址用于测试
+POS_TRUSTED_TLS_PROXY_IPS = os.getenv('POS_TRUSTED_TLS_PROXY_IPS', '127.0.0.1,::1')
 
-# 收银机IP白名单（可选，用于生产环境增强安全性）
-# 格式：终端编号:IP地址,终端编号:IP地址
-# 例如：'STORE01-POS01:192.168.1.101,STORE01-POS02:192.168.1.102'
-# 如果启用，会同时验证终端编号和IP地址
-POS_TERMINAL_IP_MAP = os.getenv('POS_TERMINAL_IP_MAP', '')
-
-# 是否启用IP白名单验证（True/False）
-# 生产环境强烈建议启用此选项
-POS_ENABLE_IP_WHITELIST = os.getenv('POS_ENABLE_IP_WHITELIST', 'False').lower() == 'true'
+# mTLS配置
+MTLS_ENABLED = os.getenv('MTLS_ENABLED', 'False').lower() == 'true'  # 开发环境默认开启用于测试
+MTLS_CLIENT_CERT_HEADER = os.getenv('MTLS_CLIENT_CERT_HEADER', 'HTTP_X_CLIENT_CERT')  # 客户端证书HTTP头
+MTLS_EXEMPT_PATHS = [
+    '/pos/api/certificate/verify/',  # 证书验证测试接口
+]  # 免除mTLS检查的路径
 
 ROOT_URLCONF = 'hot_mall.urls'
 

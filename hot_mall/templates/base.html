@@ -473,6 +473,20 @@
                            {% if left_menu_active == 'transaction-details' %}class="active"{% endif %}>
                             <i class="fa fa-file-text-o"></i>交易记录明细
                         </a>
+                        {% if is_superuser %}
+                        <a href="{{ url('pos:store_list') }}"
+                           {% if left_menu_active == 'store' %}class="active"{% endif %}>
+                            <i class="fa fa-building"></i>门店管理
+                        </a>
+                        <a href="{{ url('pos:user_store_list') }}"
+                           {% if left_menu_active == 'user-store' %}class="active"{% endif %}>
+                            <i class="fa fa-users"></i>用户门店权限
+                        </a>
+                        <a href="{{ url('pos:init_store_stock') }}"
+                           {% if left_menu_active == 'init-stock' %}class="active"{% endif %}>
+                            <i class="fa fa-cubes"></i>库存初始化
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
                 <!-- 10. 抽奖游戏管理 -->
