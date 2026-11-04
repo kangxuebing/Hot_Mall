@@ -4,7 +4,7 @@ asgiref==3.7.2
 sqlparse==0.4.4
 
 # Environment Variables
-python-dotenv==1.0.0
+python-dotenv==0.21.1
 
 # Database
 mysqlclient==2.1.1

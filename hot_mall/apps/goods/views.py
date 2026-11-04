@@ -946,8 +946,23 @@ class SKUSpecificationCreateView(LoginRequiredMixin, CreateView):
         context['is_superuser'] = self.request.user.is_superuser
         context['left_menu_active'] = 'sku_specification-add'
         context['skus'] = SKU.objects.all()
-        context['specs'] = SPUSpecification.objects.all()
-        context['options'] = SpecificationOption.objects.all()
+        # 按name去重，只保留每个name的第一条记录
+        seen_specs = set()
+        unique_specs = []
+        for spec in SPUSpecification.objects.all().order_by('name'):
+            if spec.name not in seen_specs:
+                seen_specs.add(spec.name)
+                unique_specs.append(spec)
+        context['specs'] = unique_specs
+
+        # 按value去重，只保留每个value的第一条记录
+        seen_options = set()
+        unique_options = []
+        for opt in SpecificationOption.objects.all().order_by('value'):
+            if opt.value not in seen_options:
+                seen_options.add(opt.value)
+                unique_options.append(opt)
+        context['options'] = unique_options
         return context
 
     def form_valid(self, form):
@@ -966,8 +981,23 @@ class SKUSpecificationUpdateView(LoginRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['skus'] = SKU.objects.all()
-        context['specs'] = SPUSpecification.objects.all()
-        context['options'] = SpecificationOption.objects.all()
+        # 按name去重，只保留每个name的第一条记录
+        seen_specs = set()
+        unique_specs = []
+        for spec in SPUSpecification.objects.all().order_by('name'):
+            if spec.name not in seen_specs:
+                seen_specs.add(spec.name)
+                unique_specs.append(spec)
+        context['specs'] = unique_specs
+
+        # 按value去重，只保留每个value的第一条记录
+        seen_options = set()
+        unique_options = []
+        for opt in SpecificationOption.objects.all().order_by('value'):
+            if opt.value not in seen_options:
+                seen_options.add(opt.value)
+                unique_options.append(opt)
+        context['options'] = unique_options
         context['title'] = '编辑SKU规格'
         context['is_superuser'] = self.request.user.is_superuser
         context['left_menu_active'] = 'sku_specification'
